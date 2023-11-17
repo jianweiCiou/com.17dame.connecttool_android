@@ -1,8 +1,7 @@
 # 17dame Connect Tool for Android 
 17dame connect tool: ConnectTool provides registration, login, Authorize,get access token, refresh token and user information. 
 ## Table of Contents 
-- [Installation](#installation)
-    - [Unity Package](#unity-package) 
+- [Installation](#installation) 
 - [Setting](#setting)
 - [Flow](#operating)
 - [ConnectTool function](#function) 
@@ -17,6 +16,10 @@
 ### Minimum SDK
 Your application needs to support minimum SDK version 22. 
 
+## Installation
+- Downliad libary:[connecttool.aar](https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/Tutorial/connecttool.aar)
+- Connect Tool AAR Tutorial-v1.0.0.pdf : [View](https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/Tutorial/Connect%20Tool%20AAR%20Tutorial-v1.0.0.pdf)
+  
 ## Setting
 - Open \app\src\main\AndroidManifest.xml to add:
 ```xml
@@ -95,6 +98,9 @@ _connectTool.connectBasic = new ConnectBasic()
 _connectTool.CreateAccountInitData(_email,_password);
 ```
 - `email`,`Password` are required.
+> [!IMPORTANT]  
+> - Password must have at least one `uppercase letter`/`lowercase letter`/`symbol`. (exp: Zy-11111) 
+> - Password length must be 6 or more.
 - Send ConnectTool.SendRegisterData().
 - Return StatusCode check.
   
@@ -104,6 +110,9 @@ _connectTool.CreateAccountInitData(_email,_password);
 _connectTool.CreateAccountInitData(_email,_password);
 ```
 - `email`,`Password` are required.
+
+  Must have at least one  `uppercase letter`/`lowercase letter`/`symbol`
+  
 - Send ConnectTool.SendLoginData().
 - Return StatusCode check.
 
