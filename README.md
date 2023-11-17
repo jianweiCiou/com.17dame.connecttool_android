@@ -98,6 +98,9 @@ _connectTool.connectBasic = new ConnectBasic()
 _connectTool.CreateAccountInitData(_email,_password);
 ```
 - `email`,`Password` are required.
+> [!IMPORTANT]  
+> - Password must have at least one `uppercase letter`/`lowercase letter`/`symbol`. (exp: Zy-11111) 
+> - Password length must be 6 or more.
 - Send ConnectTool.SendRegisterData().
 - Return StatusCode check.
   
@@ -107,6 +110,9 @@ _connectTool.CreateAccountInitData(_email,_password);
 _connectTool.CreateAccountInitData(_email,_password);
 ```
 - `email`,`Password` are required.
+
+  Must have at least one  `uppercase letter`/`lowercase letter`/`symbol`
+  
 - Send ConnectTool.SendLoginData().
 - Return StatusCode check.
 
