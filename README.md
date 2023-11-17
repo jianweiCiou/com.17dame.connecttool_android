@@ -128,16 +128,16 @@ Step
 3. Retrieve code through onDeepLinkActivated.
 4. Execute GetConnectToken_Coroutine to obtain access_token.
 ### GetConnectToken_Coroutine 
-- `code` is required. 
-- `code` can be obtained through ConnectTool set or onDeepLinkActivated function.
+- `connectTool.code` is required. 
+- `connectTool.code` can be obtained through ConnectTool set or onDeepLinkActivated function.
 - Return ConnectTokenModel
 
 ### GetRefreshToken_Coroutine  
-- `refresh_token` in ConnectTool can't be null.
+- `connectTool.refresh_token` is required.  
 - Return ConnectTokenModel.
 
 ### GetMe_Coroutine 
-- `access_token` is required.  
+- `connectTool.access_token` is required.  
 - Return MeInfo.
 
 
