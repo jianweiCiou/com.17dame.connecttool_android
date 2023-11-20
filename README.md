@@ -24,7 +24,7 @@ Your application needs to support minimum SDK version 22.
 - Open \app\src\main\AndroidManifest.xml to add:
 ```xml
 <uses-permission android:name="android.permission.INTERNET" />
-```
+``` 
 ```xml
 <intent-filter>
   <action android:name="android.intent.action.VIEW" />
@@ -38,7 +38,13 @@ Your application needs to support minimum SDK version 22.
 - Add implementation to build.gradle : 
 ```txt
 dependencies { 
-   ... 
+   ...
+    // post request
+    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+    implementation 'com.squareup.okhttp3:okhttp:3.4.1'
+
     implementation(project(":connecttool"))
 }
 ```
@@ -99,7 +105,7 @@ _connectTool.CreateAccountInitData(_email,_password);
 ```
 - `email`,`Password` are required.
 > [!IMPORTANT]  
-> - Password must have at least one `uppercase letter`/`lowercase letter`/`symbol`. (exp: Zy-11111) 
+> - Password must have at least one `uppercase letter`/`lowercase letter`/`symbol`. (i.e., Zy-11111) 
 > - Password length must be 6 or more.
 - Send ConnectTool.SendRegisterData().
 - Return StatusCode check.
