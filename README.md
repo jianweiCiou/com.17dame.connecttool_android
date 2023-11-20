@@ -24,7 +24,7 @@ Your application needs to support minimum SDK version 22.
 - Open \app\src\main\AndroidManifest.xml to add:
 ```xml
 <uses-permission android:name="android.permission.INTERNET" />
-```
+``` 
 ```xml
 <intent-filter>
   <action android:name="android.intent.action.VIEW" />
@@ -38,7 +38,13 @@ Your application needs to support minimum SDK version 22.
 - Add implementation to build.gradle : 
 ```txt
 dependencies { 
-   ... 
+   ...
+    // post request
+    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+    implementation 'com.squareup.okhttp3:okhttp:3.4.1'
+
     implementation(project(":connecttool"))
 }
 ```
