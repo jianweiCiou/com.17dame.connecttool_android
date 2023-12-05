@@ -155,6 +155,9 @@ Step
 - `connectTool.access_token` is required.  
 - Return MeInfo.
 
+## 3DS page
+OTP code : 1234567
+
 
 ## Model 
 ```mermaid 
