@@ -154,7 +154,21 @@ Step
 ### GetMe_Coroutine 
 - `connectTool.access_token` is required.  
 - Return MeInfo.
-
+## Payment function
+### ConsumeSP   
+- To use the SP Coin held by user, please use the createPayment function.
+- `spCoin`,`rebate` are required.
+- `connectTool.access_token` is required.  
+```java  
+     int spCoin = 5; 
+     int rebate = 3;
+    _connectTool.createPayment(new CreatePaymentCallback() {
+        @Override
+        public void callback(PaymentResponse value) {
+            Log.v(TAG, "PaymentResponse callback : " + value);
+        }
+    }, spCoin, rebate);
+```
 ## 3DS page
 OTP code : 1234567
 
@@ -198,6 +212,14 @@ classDiagram
       +message
       +requestNumber
     }
+
+    PaymentResponse{
+      +transactionId
+      +spCoin
+      +rebate
+      +orderStatus 
+    }
+
 
 ```
 
