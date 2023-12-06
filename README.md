@@ -157,11 +157,13 @@ Step
 ## Payment function
 ### ConsumeSP   
 - To use the SP Coin held by user, please use the createPayment function.
-- `spCoin`,`rebate` are required.
+- `spCoin`,`rebate`,`orderNo` are required.
+-  Game developers can customize the rules of `orderNo`
 - `connectTool.access_token` is required.  
 ```java  
      int spCoin = 5; 
      int rebate = 3;
+     String orderNo = UUID.randomUUID().toString();
     _connectTool.createPayment(new CreatePaymentCallback() {
         @Override
         public void callback(PaymentResponse value) {
