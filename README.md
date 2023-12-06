@@ -213,7 +213,7 @@ classDiagram
       +requestNumber
     }
 
-    PaymentResponse{
+    class PaymentResponse{
       +transactionId
       +spCoin
       +rebate
