@@ -6,57 +6,7 @@
     android:background="@color/cardview_dark_background"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:id="@+id/layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical"
-        tools:ignore="ExtraText">
 
-        <Button
-            android:id="@+id/RegisterButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Register" />
-
-        <Button
-            android:id="@+id/LoginButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Login" />
-
-        <Button
-            android:id="@+id/getConnectAuthorizeButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Authorize" />
-
-        <Button
-            android:id="@+id/postConnectTokenButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ConnectToken" />
-
-
-        <Button
-            android:id="@+id/postConnectRefreshTokenButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Refresh Token" />
-
-        <Button
-            android:id="@+id/getMeButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Me Info" />
-
-        <TextView
-            android:id="@+id/PackageResourcePathText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="30sp" />
-    </LinearLayout>
 
 
 

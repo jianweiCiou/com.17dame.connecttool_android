@@ -2,27 +2,28 @@ package com.r17dame.connecttool.datamodel;
 
 import com.google.gson.annotations.SerializedName;
 
-public class MeInfo {
+public class PaymentResponse {
+
     @SerializedName("data")
-    public MeData data;
+    public PaymentData data;
     @SerializedName("status")
     public int status;
     @SerializedName("message")
     public String message;
+    @SerializedName("detailMessage")
+    public String detailMessage;
+
     @SerializedName("requestNumber")
     public String requestNumber;
 
-    public class MeData {
-        @SerializedName("email")
-        public String email;
-        @SerializedName("nickName")
-        public String nickName;
-        @SerializedName("avatarUrl")
-        public String avatarUrl;
+    public class PaymentData {
+        @SerializedName("transactionId")
+        public String transactionId;
         @SerializedName("spCoin")
-        public String spCoin;
+        public int spCoin;
         @SerializedName("rebate")
-        public String rebate;
+        public int rebate;
+        @SerializedName("orderStatus")
+        public int orderStatus;
     }
 }
-

@@ -5,6 +5,20 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+
+//    const currencyOptions = ref([
+//            { key: 1, value: 'USD' },
+//            { key: 2, value: 'TWD' },
+//            { key: 4, value: 'CNY' },
+//            { key: 8, value: 'JPY' },
+//            { key: 16, value: 'KRW' },
+//            { key: 32, value: 'VND' },
+//            { key: 64, value: 'THB' },
+//            { key: 128, value: 'MYR' },
+//            { key: 256, value: 'SGD' }
+//            ])
+
+
 class APIClient {
 
     private static Retrofit retrofit = null;

@@ -1,0 +1,29 @@
+<resources>
+    <string name="access_token">access_token</string>
+    <string name="refresh_token">refresh_token</string>
+
+    <string name="purchase_purchaseOrderId">purchase_purchaseOrderId</string>
+    <string name="purchase_tradeNo">purchase_tradeNo</string>
+    <string name="purchase_requestNumber">purchase_requestNumber</string>
+
+    <string name="purchase_payMethod">purchase_payMethod</string>
+    <string name="purchase_prime">purchase_prime</string>
+    <string name="purchase_payGateway">purchase_payGateway</string>
+
+    <string name="purchaseOrderList_requestNumber">purchaseOrderList_requestNumber</string>
+
+    <string name="purchaseOrderOne_requestNumber">purchaseOrderOne_requestNumber</string>
+    <string name="purchaseOrderOne_tradeNo">purchaseOrderOne_tradeNo</string>
+
+
+    <string name="CreatePayment_requestNumber">CreatePayment_requestNumber</string>
+    <string name="CreatePayment_orderNo">CreatePayment_orderNo</string>
+    <string name="CreatePayment_spCoin">CreatePayment_spCoin</string>
+    <string name="CreatePayment_rebate">CreatePayment_rebate</string>
+    <string name="CreatePayment_date">CreatePayment_date</string>
+
+
+    <string name="getUserCards_requestNumber">getUserCards_requestNumber</string>
+
+
+</resources>
