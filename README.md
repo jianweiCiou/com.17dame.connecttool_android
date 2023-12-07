@@ -9,7 +9,9 @@
     - [SendLoginData](#SendLoginData)
     - [OpenAuthorizeURL](#OpenAuthorizeURL)
     - [GetConnectToken_Coroutine](#GetConnectToken_Coroutine)
-    - [GetRefreshToken_Coroutine](#GetRefreshToken_Coroutine)  
+    - [GetRefreshToken_Coroutine](#GetRefreshToken_Coroutine)
+- [Payment function](#PaymentFunction)
+    - [ConsumeSP](#ConsumeSP)
 - [Model](#model) 
 
 ## Prerequisites
@@ -154,6 +156,45 @@ Step
 ### GetMe_Coroutine 
 - `connectTool.access_token` is required.  
 - Return MeInfo.
+## Payment function
+### Call ConsumeSP Api  
+- To use the SP Coin held by user, please use the createPayment function.
+- `spCoin`,`rebate`,`orderNo` are required.
+- `orderNo` must be unique.
+-  Game developers can customize the rules of `orderNo`
+- `connectTool.access_token` is required.  
+```java  
+     int spCoin = 5; 
+     int rebate = 3;
+     String orderNo = UUID.randomUUID().toString();
+    _connectTool.createPayment(new CreatePaymentCallback() {
+        @Override
+        public void callback(PaymentResponse value) {
+            Log.v(TAG, "PaymentResponse callback : " + value);
+        }
+    }, spCoin, rebate);
+```
+
+### Open ConsumeSP page 
+- To use the SP Coin held by user, please use the createPayment function.
+- `consume_spCoin`,`consume_rebate`,`orderNo`,`GameName`,`productName` are required.
+- `orderNo` must be unique.
+-  Game developers can customize the rules of `orderNo` 
+- `GameName` 
+- Usage : 
+```java  
+OpenConsumeSPButton.setOnClickListener(view -> {
+        int consume_spCoin = 5;
+        int consume_rebate = 3;
+        String orderNo = UUID.randomUUID().toString();
+        String GameName = "Game Name";
+        String productName = "Ten diamonds"; 
+        _connectTool.OpenConsumeSPURL(consume_spCoin,consume_rebate,orderNo,GameName,productName);
+});
+```
+
+## 3DS page
+OTP code : 1234567
 
 
 ## Model 
@@ -195,6 +236,14 @@ classDiagram
       +message
       +requestNumber
     }
+
+    class PaymentResponse{
+      +transactionId
+      +spCoin
+      +rebate
+      +orderStatus 
+    }
+
 
 ```
 
