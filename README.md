@@ -16,11 +16,11 @@
 
 ## Prerequisites
 ### Minimum SDK
-Your application needs to support minimum SDK version 22. 
+Your application needs to support minimum SDK version 26. 
 
 ## Installation
-- Downliad libary:[connecttool.aar](https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/Tutorial/connecttool.aar)
-- Connect Tool AAR Tutorial-v1.0.0.pdf : [View](https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/Tutorial/Connect%20Tool%20AAR%20Tutorial-v1.0.0.pdf)
+- Downliad libary:[connecttool-v1.3.1.aar](https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/Tutorial/connecttool-v1.3.1.aar)
+- Connect Tool AAR Tutorial-v1.3.1.pdf : [View](https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/Tutorial/Connect%20Tool%20AAR%20Tutorial-v1.0.0.pdf)
   
 ## Setting
 - Open \app\src\main\AndroidManifest.xml to add:
