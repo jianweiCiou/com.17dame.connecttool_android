@@ -90,8 +90,8 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
                     "");
 
             _connectTool.CreateAccountInitData(
-                    "jianwei.ciou@gmail.com",
-                    "Abc-12356");
+                    "",
+                    "");
 
             // deepLink
             Intent appLinkIntent = getIntent();
