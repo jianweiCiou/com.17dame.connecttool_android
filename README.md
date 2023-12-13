@@ -178,6 +178,25 @@ Step
     }, spCoin, rebate);
 ```
 
+PaymentResponse example :
+```json
+{
+  "data": {
+    "transactionId": "T2023121300000007",
+    "spCoin": 50,
+    "rebate": 3,
+    "orderStatus": "Completed"
+  },
+  "status": 0,
+  "message": null,
+  "detailMessage": null,
+  "requestNumber": "f278af68-da56-4d50-b019-5c3985a45344"
+}
+```
+transactionId : Consumption SP Coin record ID.
+orderStatus(Completed) : Complete SP coin deduction.
+status(0) : Complete SP coin deduction.
+
 ### Open ConsumeSP page 
 - To use the SP Coin held by user, please use the createPayment function.
 - `consume_spCoin`,`consume_rebate`,`orderNo`,`GameName`,`productName` are required.
