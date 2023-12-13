@@ -11,7 +11,8 @@
     - [GetConnectToken_Coroutine](#GetConnectToken_Coroutine)
     - [GetRefreshToken_Coroutine](#GetRefreshToken_Coroutine)
 - [Payment function](#PaymentFunction)
-    - [ConsumeSP](#ConsumeSP)
+    - [Call ConsumeSP Api](#CallConsumeSPApi) 
+    - [Call Open ConsumeSP page ](#OpenConsumeSPpage) 
 - [Model](#model) 
 
 ## Prerequisites
