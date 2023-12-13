@@ -3,7 +3,6 @@ package com.r17dame.connecttool.datamodel;
 import com.google.gson.annotations.SerializedName;
 
 public class PaymentResponse {
-
     @SerializedName("data")
     public PaymentData data;
     @SerializedName("status")
@@ -24,6 +23,6 @@ public class PaymentResponse {
         @SerializedName("rebate")
         public int rebate;
         @SerializedName("orderStatus")
-        public int orderStatus;
+        public String orderStatus;
     }
 }
