@@ -1,5 +1,7 @@
 # CHANGELOG.md
-
+## 1.3.2 (unreleased)
+Fix:
+  -  PaymentResponse null problem.
 ## 1.3.1 (unreleased)
 Features:
   - Change minSdk 22 to minSdk 26.
