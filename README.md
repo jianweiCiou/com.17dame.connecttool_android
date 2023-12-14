@@ -259,6 +259,12 @@ sequenceDiagram
 | --- | --- |--- |--- |--- |--- |--- |--- |--- |--- |
 | key  | 1 |2 |4 |8 |16 |32 |64 |128 |256 |   
 
+#### PayMethods
+| Method  | Credit Card |Credit Card(Bind) |Apple Pay |Google Pay | 
+| --- | --- |--- |--- |--- | 
+| key  | 0 |1 |2 |3 | 
+
+
 ### Open ConsumeSP page  
 - To use the SP Coin held by user, please use the createPayment function.
 - `consume_spCoin`,`consume_rebate`,`orderNo`,`GameName`,`productName` are required.
