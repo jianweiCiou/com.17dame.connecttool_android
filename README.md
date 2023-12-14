@@ -223,7 +223,8 @@ Open SP Coin Recharge page.
     _connectTool.OpenRechargeURL(currencyCode);
 ```
 > [!NOTE]  
-> - notifyUrl :  A URL customized by the game developer. We will proactively notify this Url after completing the purchase. Please bring in get parameters to be verified on the game server side.
+> - notifyUrl :  A URL customized by the game developer. We will send this URL automatically when the purchase is completed. Please bring parameters to verified in game server.
+
 `currencyCode` : Please refer to [Currency Code](#currency-code)
 
 #### Recharge flow
