@@ -335,33 +335,22 @@ sequenceDiagram
 
 
     alt Clinet’s SPCoin is affordable 
-    S->>C: Client’s purchase intention back to the App
-    C-->>C: Send CreateSPCoinOrder() 
-    else Insufficient SPCoin
-    S-->>S: Open Recharge page
+        S->>C: Client’s purchase intention back to the App
+    
+        activate C
+            C-->>hs: Send CreateSPCoinOrder() request 
+            note over hs: Verify client consumption request 
+            hs-->>C: App get CreateSPCoinResponse
+        deactivate C
+    else Insufficient SPCoin 
+        S-->>S: Open Recharge page
     end
-
-    activate S 
-
-        S->>hs:Send getPrime()
-        
-        activate hs
-            note over hs: Verification request
-            hs-->>S: Send prime back
-        deactivate hs 
-        S->>S: CreatePurchaseOrder(spCoinItemPriceId)
  
-        activate S
-            note over S: Get tradeNo
-        deactivate S
-  
-        S->>hs:PayWithBindPrime(tradeNo) 
-        hs-->>S: Complete purchase of SP Coin
-    deactivate S 
  
     S->>C: Return to App 
 
     note over C: Get consume_state
+   
    
 ```
 
