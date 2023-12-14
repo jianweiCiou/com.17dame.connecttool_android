@@ -12,7 +12,7 @@
     - [GetRefreshToken_Coroutine](#GetRefreshToken-Coroutine)
 - [Payment Flow](#PaymentFlow) 
 - [Payment function](#PaymentFunction)
-    - [Open Recharge page](#Open-Recharge-page) 
+    - [Open Recharge page](##open-recharge-page) 
     - [Call Open ConsumeSP page](#OpenConsumeSPpage) 
 - [Model](#model) 
 
