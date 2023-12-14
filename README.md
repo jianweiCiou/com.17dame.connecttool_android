@@ -213,6 +213,7 @@ orderStatus(Completed) : Complete SP coin deduction.
 status(0) : Complete SP coin deduction.
 
 ### Open Recharge page 
+#### Recharge flow
 ```mermaid 
 sequenceDiagram
     autonumber
@@ -245,10 +246,13 @@ sequenceDiagram
     S->>C: Return to App 
 
 ``` 
-1.  currencyCode :
-2.  
-3.  
-4.   
+1.  After selecting CurrencyCode, open the Recharge page.
+2.  Confirming the purchase item, obtain authorization prime from the third-party payment.
+3.  After verifying request, host will receive the prime code.
+4.  Bring spCoinItemPriceId into backend to generate tradeNo.
+5.  PayWithBindPrime brings prime and tradeNo to the backend and third-party payment, and opens the transaction page.
+6.  Bring back transaction results.
+7.  Return to App.
 
 #### Currency Code
 | Code  | USD |TWD |CNY |JPY |KRW |VND |THB |MYR |SGD |  
