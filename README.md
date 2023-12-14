@@ -216,19 +216,22 @@ status(0) : Complete SP coin deduction.
 Open SP Coin Recharge page. 
 ```java
     // Step1. Set purchase notifyUrl,
-    _connectTool.set_purchase_notifyUrl("");
+    _connectTool.set_purchase_notifyData(notifyUrl,state);
 
     // Step2. Set currencyCode
-    String currencyCode = "2";
+    String currencyCode = "2"; 
     _connectTool.OpenRechargeURL(currencyCode);
 ```
+`currencyCode` : Please refer to [Currency Code](#currency-code)
+
 > [!NOTE]  
 > - notifyUrl :NotifyUrl is a URL customized by the game developer. We will post NotifyUrl automatically when the purchase is completed.
-> - state :
+> - state : State is customized by game developer, which will be returned to game app after purchase complete. (Deeplink QueryParameter => `purchase_state`)
 
 i.e., NotifyUrl response.body : 
+``` JSON
 {
-  "PayMethod": 3,
+  "PayMethod": 3, 
   "TradeNo": "PAC2023121400000245",
   "SPCoin": 1160,
   "Rebate": 40,
@@ -240,6 +243,7 @@ i.e., NotifyUrl response.body :
   "TotalAmt": 545.0000,
   "CreatedOn": "2023-12-14T07:13:19.0375746+00:00"
 }
+```
 
 Encrypted content (No "Sign" string): 
 ``` JSON
@@ -266,25 +270,8 @@ Create "Sign" method:
   var signature = rsa.SignData(bytes, 0, bytes.Length, HashAlgorithmName.SHA256,RSASignaturePadding.Pkcs1);
   var xSignature = Convert.ToBase64String(signature);
 ```
+ 
 
-``` JSON
-{
-  "PayMethod": [PayMethods](#PayMethods),
-  "TradeNo": "PAC2023121400000245",
-  "SPCoin": 1160,
-  "Rebate": 40,
-  "State": "M1 State_GooglePay",
-  "NotifyUrl": "https://localhost:7109/ACPayNotify/TradeNotify",
-  "Sign": "KxWFrnWPGquIAC/Pt1WPvX5operr5uHaPWG2YP8X28e6nLalfLCTZlq+liXijWrcJo1Ha9JzMC+9VbcZeG3pcin63xoBkKfEtdV9QbnT6pnxXH+pS8pEWNmQIQKKkDrxjkMZ3OjcY/CC9TW+mDURCYj8vu8EHB9zDJ1sGOP7y4o2aNRa+ZK/SxC9eZKV5l6P7Y/iv88DH7wiTbQ5qVw5FhwJLuqfi3gCOn4aVsmjc270jU9mP6TgdTUo5y2FHtYXAbsQP/07h2gJeTwQf/nO6gHVs3Ur8/t3hHtIwqCGBNQl6/TYwf6rSXRdMoBUjdLGm5GpBA5Pq7mzBqYI3UDheg==",
-  "Status": 2,
-  "CurrencyCode": "TWD",
-  "TotalAmt": 545.0000,
-  "CreatedOn": "2023-12-14T07:13:19.0375746+00:00"
-}
-```
-
-
-`currencyCode` : Please refer to [Currency Code](#currency-code)
 
 #### Recharge flow
 ```mermaid 
@@ -329,7 +316,7 @@ sequenceDiagram
     S->>C: Return to App  
 ``` 
 1.  After selecting CurrencyCode, open the Recharge page.
-2.  Call connectTool.set_purchase_notifyData: Set data to be brought back to App and Server.
+2.  Call connectTool.set_purchase_notifyData: Set data to be brought back to App and Server. 
 3.  After Payment complete, host will call NotifyUrl automatically.
 4.  If NotifyUrl & state are not set, only the results page.
 5.  Confirming the purchase item, obtain authorization prime from the third-party payment.
@@ -358,14 +345,17 @@ sequenceDiagram
 - `GameName` 
 - Usage : 
 ```java  
-OpenConsumeSPButton.setOnClickListener(view -> {
-        int consume_spCoin = 5;
-        int consume_rebate = 3;
-        String orderNo = UUID.randomUUID().toString();
-        String GameName = "Game Name";
-        String productName = "Ten diamonds"; 
-        _connectTool.OpenConsumeSPURL(consume_spCoin,consume_rebate,orderNo,GameName,productName);
-});
+                String notifyUrl = "";// NotifyUrl is a URL customized by the game developer
+                String state = "Custom state";// Custom state ,
+                // Step1. Set notifyUrl and state,
+                _connectTool.set_purchase_notifyData(notifyUrl, state);
+
+                int consume_spCoin = 50;
+                int consume_rebate = 20;
+                String orderNo = UUID.randomUUID().toString();
+                String GameName = "Good 18 Game";
+                String productName = "10 of the best diamonds";
+                _connectTool.OpenConsumeSPURL(consume_spCoin, consume_rebate, orderNo, GameName, productName);
 ```
 
 ## 3DS page
