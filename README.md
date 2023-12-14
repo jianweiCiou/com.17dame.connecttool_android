@@ -248,9 +248,9 @@ sequenceDiagram
 1.  currencyCode :
 2.  
 3.  
-4.  
+4.   
 
-[Currency Code](#currency-code)
+### Currency Code
 | Code  | USD |TWD |CNY |JPY |KRW |VND |THB |MYR |SGD |  
 | --- | --- |--- |--- |--- |--- |--- |--- |--- |--- |
 | key  | 1 |2 |4 |8 |16 |32 |64 |128 |256 |   
