@@ -222,8 +222,8 @@ Open SP Coin Recharge page.
     String currencyCode = "2"; 
     _connectTool.OpenRechargeURL(currencyCode);
 ```
-`notifyUrl` & `state` : Please refer to [Currency Code](#currency-code)
-`currencyCode` : Please refer to [Currency Code](#currency-code)
+- `notifyUrl` & `state` : Please refer to [Currency Code](#currency-code)
+- `currencyCode` : Please refer to [Currency Code](#currency-code)
 
 
 #### Recharge flow
@@ -298,18 +298,23 @@ sequenceDiagram
 - `GameName` 
 - Usage : 
 ```java  
-                String notifyUrl = "";// NotifyUrl is a URL customized by the game developer
-                String state = "Custom state";// Custom state ,
-                // Step1. Set notifyUrl and state,
-                _connectTool.set_purchase_notifyData(notifyUrl, state);
+    String notifyUrl = "";// NotifyUrl is a URL customized by the game developer
+    String state = "Custom state";// Custom state ,
+    // Step1. Set notifyUrl and state,
+    _connectTool.set_purchase_notifyData(notifyUrl, state);
 
-                int consume_spCoin = 50;
-                int consume_rebate = 20;
-                String orderNo = UUID.randomUUID().toString();
-                String GameName = "Good 18 Game";
-                String productName = "10 of the best diamonds";
-                _connectTool.OpenConsumeSPURL(consume_spCoin, consume_rebate, orderNo, GameName, productName);
+    int consume_spCoin = 50;
+    int consume_rebate = 20;
+    String orderNo = UUID.randomUUID().toString();
+    String GameName = "Good 18 Game";
+    String productName = "10 of the best diamonds";
+    _connectTool.OpenConsumeSPURL(consume_spCoin, consume_rebate, orderNo, GameName, productName);
 ```
+#### ConsumeSP flow
+```mermaid 
+```
+
+
 ## NotifyUrl & State
 > [!NOTE]  
 > - notifyUrl :NotifyUrl is a URL customized by the game developer. We will post NotifyUrl automatically when the purchase is completed.
@@ -383,6 +388,7 @@ Encrypted ConsumeSP content (No "Sign" string):
   "NotifyUrl": "https://localhost:7109/ACPayNotify/TradeNotify"
 }
 ```
+- Create "Sign" to verify : Please refer to [Create sign to verify](#create-sign-to-verify)
 
 
 
