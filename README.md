@@ -223,7 +223,66 @@ Open SP Coin Recharge page.
     _connectTool.OpenRechargeURL(currencyCode);
 ```
 > [!NOTE]  
-> - notifyUrl :NotifyUrl is a URL customized by the game developer. We will send this URL automatically when the purchase is completed. Please bring parameters to verified in game server.
+> - notifyUrl :NotifyUrl is a URL customized by the game developer. We will post NotifyUrl automatically when the purchase is completed.
+> - state :
+
+i.e., NotifyUrl response.body : 
+{
+  "PayMethod": 3,
+  "TradeNo": "PAC2023121400000245",
+  "SPCoin": 1160,
+  "Rebate": 40,
+  "State": "M1 State_GooglePay",
+  "NotifyUrl": "https://localhost:7109/ACPayNotify/TradeNotify",
+  "Sign": "KxWFrnWPGquIAC/Pt1WPvX5operr5uHaPWG2YP8X28e6nLalfLCTZlq+liXijWrcJo1Ha9JzMC+9VbcZeG3pcin63xoBkKfEtdV9QbnT6pnxXH+pS8pEWNmQIQKKkDrxjkMZ3OjcY/CC9TW+mDURCYj8vu8EHB9zDJ1sGOP7y4o2aNRa+ZK/SxC9eZKV5l6P7Y/iv88DH7wiTbQ5qVw5FhwJLuqfi3gCOn4aVsmjc270jU9mP6TgdTUo5y2FHtYXAbsQP/07h2gJeTwQf/nO6gHVs3Ur8/t3hHtIwqCGBNQl6/TYwf6rSXRdMoBUjdLGm5GpBA5Pq7mzBqYI3UDheg==",
+  "Status": 2,
+  "CurrencyCode": "TWD",
+  "TotalAmt": 545.0000,
+  "CreatedOn": "2023-12-14T07:13:19.0375746+00:00"
+}
+
+Encrypted content (No "Sign" string): 
+``` JSON
+{
+  "PayMethod": 3,
+  "TradeNo": "PAC2023121400000245",
+  "SPCoin": 1160,
+  "Rebate": 40,
+  "State": "M1 State_GooglePay",
+  "NotifyUrl": "https://localhost:7109/ACPayNotify/TradeNotify",
+  "Status": 2,
+  "CurrencyCode": "TWD",
+  "TotalAmt": 545.0000,
+  "CreatedOn": "2023-12-14T07:13:19.0375746+00:00"
+} 
+```
+
+Create "Sign" method: 
+```JavaScript
+ var rsa = RSA.Create();
+  rsa.ImportFromPem(privateKey);
+  var bytes = Encoding.UTF8.GetBytes(data);
+  // sign
+  var signature = rsa.SignData(bytes, 0, bytes.Length, HashAlgorithmName.SHA256,RSASignaturePadding.Pkcs1);
+  var xSignature = Convert.ToBase64String(signature);
+```
+
+``` JSON
+{
+  "PayMethod": [PayMethods](#PayMethods),
+  "TradeNo": "PAC2023121400000245",
+  "SPCoin": 1160,
+  "Rebate": 40,
+  "State": "M1 State_GooglePay",
+  "NotifyUrl": "https://localhost:7109/ACPayNotify/TradeNotify",
+  "Sign": "KxWFrnWPGquIAC/Pt1WPvX5operr5uHaPWG2YP8X28e6nLalfLCTZlq+liXijWrcJo1Ha9JzMC+9VbcZeG3pcin63xoBkKfEtdV9QbnT6pnxXH+pS8pEWNmQIQKKkDrxjkMZ3OjcY/CC9TW+mDURCYj8vu8EHB9zDJ1sGOP7y4o2aNRa+ZK/SxC9eZKV5l6P7Y/iv88DH7wiTbQ5qVw5FhwJLuqfi3gCOn4aVsmjc270jU9mP6TgdTUo5y2FHtYXAbsQP/07h2gJeTwQf/nO6gHVs3Ur8/t3hHtIwqCGBNQl6/TYwf6rSXRdMoBUjdLGm5GpBA5Pq7mzBqYI3UDheg==",
+  "Status": 2,
+  "CurrencyCode": "TWD",
+  "TotalAmt": 545.0000,
+  "CreatedOn": "2023-12-14T07:13:19.0375746+00:00"
+}
+```
+
 
 `currencyCode` : Please refer to [Currency Code](#currency-code)
 
