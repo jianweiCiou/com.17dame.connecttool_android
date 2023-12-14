@@ -390,6 +390,12 @@ Response body:
   "requestNumber": "ebe4ae28-dda1-499d-bdbc-1066ce080a6f"
 }
 ```
+#### OrderStatuses
+| Failed  | WaitingForPayment |Processing |Completed |Refund |Cancel |PaymentExpired | 
+| --- | --- |--- |--- |--- |  --- | --- | 
+ 
+
+
 
 ## NotifyUrl & State
 > [!NOTE]  
