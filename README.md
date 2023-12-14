@@ -355,6 +355,42 @@ sequenceDiagram
 ```
 
 
+### Query ConsumeSP By transactionId 
+- Obtain transaction data after consuming SPCoin.
+```java
+                try {
+                    String transactionId = "T2023121400000025";
+
+                    _connectTool.Get_SPCoin_tx(transactionId,new GetSPCoinTxCallback() {
+                        @Override
+                        public void callback(SPCoinTxResponse value) {
+                            Log.v(TAG, "SPCoinTxResponse callback : " + value.status);
+                        }
+                    });
+                } catch (NoSuchAlgorithmException e) {
+                    throw new RuntimeException(e);
+                }
+```
+	
+Response body:
+``` JSON
+{
+  "data": {
+    "transactionId": "T2023121400000025",
+    "spCoin": 50,
+    "rebate": 20,
+    "orderStatus": "Completed",
+    "state": "Custom state",
+    "notifyUrl": null,
+    "sign": null
+  },
+  "status": 1000,
+  "message": null,
+  "detailMessage": null,
+  "requestNumber": "ebe4ae28-dda1-499d-bdbc-1066ce080a6f"
+}
+```
+
 ## NotifyUrl & State
 > [!NOTE]  
 > - notifyUrl :NotifyUrl is a URL customized by the game developer. We will post NotifyUrl automatically when the purchase is completed.
