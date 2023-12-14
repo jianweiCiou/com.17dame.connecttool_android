@@ -311,7 +311,58 @@ sequenceDiagram
     _connectTool.OpenConsumeSPURL(consume_spCoin, consume_rebate, orderNo, GameName, productName);
 ```
 #### ConsumeSP flow
-```mermaid 
+```mermaid
+sequenceDiagram
+    autonumber
+    participant GS as Game Server
+    participant C as Game App
+    participant S as host
+    participant hs as host Sever
+
+    
+
+    C->>S: OpenConsumeSPURL()
+    
+    activate S
+            alt Set NotifyUrl & state 
+                S->>C: App deeplink get consume_state
+                hs-->>GS: After Consume complete, call NotifyUrl
+            else No NotifyUrl and state
+                C->>S: Open results page
+            end
+    deactivate S
+    note over S: Client confirms SPCoin info to be consumed
+
+
+    alt Clinet’s SPCoin is affordable 
+    S->>C: Client’s purchase intention back to the App
+    C-->>C: Send CreateSPCoinOrder() 
+    else Insufficient SPCoin
+    S-->>S: Open Recharge page
+    end
+
+    activate S 
+
+        S->>hs:Send getPrime()
+        
+        activate hs
+            note over hs: Verification request
+            hs-->>S: Send prime back
+        deactivate hs 
+        S->>S: CreatePurchaseOrder(spCoinItemPriceId)
+ 
+        activate S
+            note over S: Get tradeNo
+        deactivate S
+  
+        S->>hs:PayWithBindPrime(tradeNo) 
+        hs-->>S: Complete purchase of SP Coin
+    deactivate S 
+ 
+    S->>C: Return to App 
+
+    note over C: Get consume_state
+   
 ```
 
 
