@@ -12,7 +12,7 @@
     - [GetRefreshToken_Coroutine](#GetRefreshToken_Coroutine)
 - [Payment function](#PaymentFunction)
     - [Call ConsumeSP Api](#CallConsumeSPApi) 
-    - [Call Open ConsumeSP page ](#OpenConsumeSPpage) 
+    - [Call Open ConsumeSP page](#OpenConsumeSPpage) 
 - [Model](#model) 
 
 ## Prerequisites
@@ -148,6 +148,13 @@ Step
 2. Open Login page.
 3. Retrieve code through onDeepLinkActivated.
 4. Execute GetConnectToken_Coroutine to obtain access_token.
+
+### OpenLogoutURL
+- Log out from the host.
+```java  
+    _connectTool.OpenLogoutURL();
+```
+
 ### GetConnectToken_Coroutine 
 - `connectTool.code` is required. 
 - `connectTool.code` can be obtained through ConnectTool set or onDeepLinkActivated function.
