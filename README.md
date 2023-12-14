@@ -245,7 +245,7 @@ sequenceDiagram
             alt Set NotifyUrl & state 
             S-->>C: App deeplink get state
             S-->>GS: After Payment complete, call NotifyUrl
-            else No NotifyUrl or state
+            else No NotifyUrl and state
                 S-->>S: Only results page
             end
             note over S: Create order, Select payment 
