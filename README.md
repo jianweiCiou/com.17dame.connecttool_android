@@ -250,8 +250,8 @@ sequenceDiagram
 3.  
 4.  
 
-
-| CurrencyCode  | USD |TWD |CNY |JPY |KRW |VND |THB |MYR |SGD |  
+[Currency Code](#CurrencyCode)
+| Code  | USD |TWD |CNY |JPY |KRW |VND |THB |MYR |SGD |  
 | --- | --- |--- |--- |--- |--- |--- |--- |--- |--- |
 | key  | 1 |2 |4 |8 |16 |32 |64 |128 |256 |   
 
