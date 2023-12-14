@@ -213,6 +213,19 @@ orderStatus(Completed) : Complete SP coin deduction.
 status(0) : Complete SP coin deduction.
 
 ### Open Recharge page 
+Open SP Coin Recharge page. 
+```java
+    // Step1. Set purchase notifyUrl,
+    _connectTool.set_purchase_notifyUrl("");
+
+    // Step2. Set currencyCode
+    String currencyCode = "2";
+    _connectTool.OpenRechargeURL(currencyCode);
+```
+> [!NOTE]  
+> - notifyUrl :  A URL customized by the game developer. We will proactively notify this Url after completing the purchase. Please bring in get parameters to be verified on the game server side.
+`currencyCode` : Please refer to [Currency Code](#currency-code)
+
 #### Recharge flow
 ```mermaid 
 sequenceDiagram
