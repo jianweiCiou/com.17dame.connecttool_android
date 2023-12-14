@@ -8,11 +8,11 @@
     - [SendRegisterData](#SendRegisterData)
     - [SendLoginData](#SendLoginData)
     - [OpenAuthorizeURL](#OpenAuthorizeURL)
-    - [GetConnectToken_Coroutine](#GetConnectToken_Coroutine)
-    - [GetRefreshToken_Coroutine](#GetRefreshToken_Coroutine)
+    - [GetConnectToken_Coroutine](#GetConnectToken-Coroutine)
+    - [GetRefreshToken_Coroutine](#GetRefreshToken-Coroutine)
 - [Payment Flow](#PaymentFlow) 
 - [Payment function](#PaymentFunction)
-    - [Open_Recharge_page](#Open_Recharge_page) 
+    - [Open Recharge page](#Open-Recharge-page) 
     - [Call Open ConsumeSP page](#OpenConsumeSPpage) 
 - [Model](#model) 
 
@@ -212,7 +212,7 @@ transactionId : Consumption SP Coin record ID.
 orderStatus(Completed) : Complete SP coin deduction.
 status(0) : Complete SP coin deduction.
 
-### Open_Recharge_page 
+### Open Recharge page 
 ```mermaid 
 sequenceDiagram
     autonumber
