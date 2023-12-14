@@ -3,15 +3,16 @@
 ## Table of Contents 
 - [Installation](#installation) 
 - [Setting](#setting)
-- [Flow](#operating)
+- [Authorize Flow](#operating)
 - [ConnectTool function](#function) 
     - [SendRegisterData](#SendRegisterData)
     - [SendLoginData](#SendLoginData)
     - [OpenAuthorizeURL](#OpenAuthorizeURL)
     - [GetConnectToken_Coroutine](#GetConnectToken_Coroutine)
     - [GetRefreshToken_Coroutine](#GetRefreshToken_Coroutine)
+- [Payment Flow](#PaymentFlow) 
 - [Payment function](#PaymentFunction)
-    - [Call ConsumeSP Api](#CallConsumeSPApi) 
+    - [Open_Recharge_page](#Open_Recharge_page) 
     - [Call Open ConsumeSP page](#OpenConsumeSPpage) 
 - [Model](#model) 
 
@@ -55,7 +56,7 @@ dependencies {
 }
 ```
 
-## Flow
+## Authorize Flow
 Here is a simple flow chart:
 ```mermaid 
 graph TD;
@@ -167,7 +168,13 @@ Step
 ### GetMe_Coroutine 
 - `connectTool.access_token` is required.  
 - Return MeInfo.
+
+## Payment Flow
 ## Payment function
+
+### CreatePurchaseOrder
+ 
+
 ### Call ConsumeSP Api  
 - To use the SP Coin held by user, please use the createPayment function.
 - `spCoin`,`rebate`,`orderNo` are required.
@@ -205,7 +212,50 @@ transactionId : Consumption SP Coin record ID.
 orderStatus(Completed) : Complete SP coin deduction.
 status(0) : Complete SP coin deduction.
 
-### Open ConsumeSP page 
+### Open_Recharge_page 
+```mermaid 
+sequenceDiagram
+    autonumber
+    participant C as Game App
+    participant S as host
+    participant payment as third-party payment
+    C->>S: OpenRechargeURL()
+    activate S
+    
+        activate S
+            note over S: Create order, Select payment 
+        deactivate S
+
+        S->>payment:Send getPrime()
+        
+        activate payment
+            note over payment: Verification request
+            payment-->>S: Send prime back
+        deactivate payment 
+        S->>S: CreatePurchaseOrder(spCoinItemPriceId)
+ 
+        activate S
+            note over S: Get tradeNo
+        deactivate S
+  
+        S->>payment:PayWithBindPrime(tradeNo) 
+        payment-->>S: Complete purchase of SP Coin
+    deactivate S 
+ 
+    S->>C: Return to App 
+
+``` 
+1.  currencyCode :
+2.  
+3.  
+4.  
+
+
+| CurrencyCode  | USD |TWD |CNY |JPY |KRW |VND |THB |MYR |SGD |  
+| --- | --- |--- |--- |--- |--- |--- |--- |--- |--- |
+| key  | 1 |2 |4 |8 |16 |32 |64 |128 |256 |   
+
+### Open ConsumeSP page  
 - To use the SP Coin held by user, please use the createPayment function.
 - `consume_spCoin`,`consume_rebate`,`orderNo`,`GameName`,`productName` are required.
 - `orderNo` must be unique.
