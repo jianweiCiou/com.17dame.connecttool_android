@@ -12,7 +12,7 @@
     - [GetRefreshToken_Coroutine](#GetRefreshToken-Coroutine)
 - [Payment Flow](#PaymentFlow) 
 - [Payment function](#PaymentFunction)
-    - [Open Recharge page](##open-recharge-page) 
+    - [Open Recharge page](#open-recharge-page) 
     - [Call Open ConsumeSP page](#OpenConsumeSPpage) 
 - [Model](#model) 
 
@@ -222,55 +222,8 @@ Open SP Coin Recharge page.
     String currencyCode = "2"; 
     _connectTool.OpenRechargeURL(currencyCode);
 ```
+`notifyUrl` & `state` : Please refer to [Currency Code](#currency-code)
 `currencyCode` : Please refer to [Currency Code](#currency-code)
-
-> [!NOTE]  
-> - notifyUrl :NotifyUrl is a URL customized by the game developer. We will post NotifyUrl automatically when the purchase is completed.
-> - state : State is customized by game developer, which will be returned to game app after purchase complete. (Deeplink QueryParameter => `purchase_state`)
-
-i.e., NotifyUrl response.body : 
-``` JSON
-{
-  "PayMethod": 3, 
-  "TradeNo": "PAC2023121400000245",
-  "SPCoin": 1160,
-  "Rebate": 40,
-  "State": "M1 State_GooglePay",
-  "NotifyUrl": "https://localhost:7109/ACPayNotify/TradeNotify",
-  "Sign": "KxWFrnWPGquIAC/Pt1WPvX5operr5uHaPWG2YP8X28e6nLalfLCTZlq+liXijWrcJo1Ha9JzMC+9VbcZeG3pcin63xoBkKfEtdV9QbnT6pnxXH+pS8pEWNmQIQKKkDrxjkMZ3OjcY/CC9TW+mDURCYj8vu8EHB9zDJ1sGOP7y4o2aNRa+ZK/SxC9eZKV5l6P7Y/iv88DH7wiTbQ5qVw5FhwJLuqfi3gCOn4aVsmjc270jU9mP6TgdTUo5y2FHtYXAbsQP/07h2gJeTwQf/nO6gHVs3Ur8/t3hHtIwqCGBNQl6/TYwf6rSXRdMoBUjdLGm5GpBA5Pq7mzBqYI3UDheg==",
-  "Status": 2,
-  "CurrencyCode": "TWD",
-  "TotalAmt": 545.0000,
-  "CreatedOn": "2023-12-14T07:13:19.0375746+00:00"
-}
-```
-
-Encrypted content (No "Sign" string): 
-``` JSON
-{
-  "PayMethod": 3,
-  "TradeNo": "PAC2023121400000245",
-  "SPCoin": 1160,
-  "Rebate": 40,
-  "State": "M1 State_GooglePay",
-  "NotifyUrl": "https://localhost:7109/ACPayNotify/TradeNotify",
-  "Status": 2,
-  "CurrencyCode": "TWD",
-  "TotalAmt": 545.0000,
-  "CreatedOn": "2023-12-14T07:13:19.0375746+00:00"
-} 
-```
-
-Create "Sign" method: 
-```JavaScript
- var rsa = RSA.Create();
-  rsa.ImportFromPem(privateKey);
-  var bytes = Encoding.UTF8.GetBytes(data);
-  // sign
-  var signature = rsa.SignData(bytes, 0, bytes.Length, HashAlgorithmName.SHA256,RSASignaturePadding.Pkcs1);
-  var xSignature = Convert.ToBase64String(signature);
-```
- 
 
 
 #### Recharge flow
@@ -357,6 +310,81 @@ sequenceDiagram
                 String productName = "10 of the best diamonds";
                 _connectTool.OpenConsumeSPURL(consume_spCoin, consume_rebate, orderNo, GameName, productName);
 ```
+## NotifyUrl & State
+> [!NOTE]  
+> - notifyUrl :NotifyUrl is a URL customized by the game developer. We will post NotifyUrl automatically when the purchase is completed.
+> - state : State is customized by game developer, which will be returned to game app after purchase complete. (Deeplink QueryParameter => `purchase_state`)
+
+### Recharge NotifyUrl
+#### Recharge NotifyUrl response.body : 
+``` JSON
+{
+  "PayMethod": 3, 
+  "TradeNo": "PAC2023121400000245",
+  "SPCoin": 1160,
+  "Rebate": 40,
+  "State": "M1 State_GooglePay",
+  "NotifyUrl": "https://localhost:7109/ACPayNotify/TradeNotify",
+  "Sign": "KxWFrnWPGquIAC/Pt1WPvX5operr5uHaPWG2YP8X28e6nLalfLCTZlq+liXijWrcJo1Ha9JzMC+9VbcZeG3pcin63xoBkKfEtdV9QbnT6pnxXH+pS8pEWNmQIQKKkDrxjkMZ3OjcY/CC9TW+mDURCYj8vu8EHB9zDJ1sGOP7y4o2aNRa+ZK/SxC9eZKV5l6P7Y/iv88DH7wiTbQ5qVw5FhwJLuqfi3gCOn4aVsmjc270jU9mP6TgdTUo5y2FHtYXAbsQP/07h2gJeTwQf/nO6gHVs3Ur8/t3hHtIwqCGBNQl6/TYwf6rSXRdMoBUjdLGm5GpBA5Pq7mzBqYI3UDheg==",
+  "Status": 2,
+  "CurrencyCode": "TWD",
+  "TotalAmt": 545.0000,
+  "CreatedOn": "2023-12-14T07:13:19.0375746+00:00"
+}
+```
+
+Encrypted Recharge content (No "Sign" string): 
+``` JSON
+{
+  "PayMethod": 3,
+  "TradeNo": "PAC2023121400000245",
+  "SPCoin": 1160,
+  "Rebate": 40,
+  "State": "M1 State_GooglePay",
+  "NotifyUrl": "https://localhost:7109/ACPayNotify/TradeNotify",
+  "Status": 2,
+  "CurrencyCode": "TWD",
+  "TotalAmt": 545.0000,
+  "CreatedOn": "2023-12-14T07:13:19.0375746+00:00"
+} 
+```
+
+#### Create "Sign" to verify: 
+```JavaScript
+ var rsa = RSA.Create();
+  rsa.ImportFromPem(privateKey);
+  var bytes = Encoding.UTF8.GetBytes(data);
+  // sign
+  var signature = rsa.SignData(bytes, 0, bytes.Length, HashAlgorithmName.SHA256,RSASignaturePadding.Pkcs1);
+  var xSignature = Convert.ToBase64String(signature);
+```
+### ConsumeSP NotifyUrl
+#### ConsumeSP NotifyUrl response.body : 
+``` JSON
+{
+  "TransactionId": "T2023121400000021",
+  "SPCoin": 10,
+  "Rebate": 10,
+  "OrderStatus": 3,
+  "State": "M13 Order",
+  "NotifyUrl": "https://localhost:7109/ACPayNotify/TradeNotify",
+  "Sign": "gMq6sjIVFNZfv+NU/V477x8apy1flFiReyuEfR6gUT0FCWjEDRnmTG1hYwJW+vyYOhtxTNC8T+P2IMz/WNCzH5rIN6wlJ+uvh0/15V9ZujFSUeCzVQbKaJ+MTK5KUXErX2sv7JQvnu0C+k0b43rzgjgRr3XyiHcZnzv3/r683vO0HdBkIX18LHO9uPEJTk3Bbwd5+twc1G6TXToEEf/Vkb6hOd7FpGXp61ljHkIi4HeLPS1FAHdOaJHcFkpTGIF4Ilrbb/IiQSlAGP4R6VclT50hpEXIWtN89ztR8+VnHfTmK27oPyKwDoO1dXZ8EmwB8zxG/ilNIERN+bmP2lcDnw=="
+}
+```
+
+Encrypted ConsumeSP content (No "Sign" string): 
+``` JSON
+{
+  "TransactionId": "T2023121400000021",
+  "SPCoin": 10,
+  "Rebate": 10,
+  "OrderStatus": 3,
+  "State": "M13 Order",
+  "NotifyUrl": "https://localhost:7109/ACPayNotify/TradeNotify"
+}
+```
+
+
 
 ## 3DS page
 OTP code : 1234567
