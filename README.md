@@ -223,7 +223,7 @@ Open SP Coin Recharge page.
     _connectTool.OpenRechargeURL(currencyCode);
 ```
 > [!NOTE]  
-> - notifyUrl :  A URL customized by the game developer. We will send this URL automatically when the purchase is completed. Please bring parameters to verified in game server.
+> - notifyUrl :NotifyUrl is a URL customized by the game developer. We will send this URL automatically when the purchase is completed. Please bring parameters to verified in game server.
 
 `currencyCode` : Please refer to [Currency Code](#currency-code)
 
@@ -231,13 +231,23 @@ Open SP Coin Recharge page.
 ```mermaid 
 sequenceDiagram
     autonumber
+    participant GS as Game App
     participant C as Game App
     participant S as host
     participant payment as third-party payment
+
+    
+
     C->>S: OpenRechargeURL()
     activate S
     
         activate S
+            alt Set NotifyUrl & state 
+            S-->>C: App deeplink get state
+            S-->>GS: After Payment complete, call NotifyUrl
+            else No NotifyUrl or state
+                S-->>S: Only results page
+            end
             note over S: Create order, Select payment 
         deactivate S
 
@@ -257,16 +267,18 @@ sequenceDiagram
         payment-->>S: Complete purchase of SP Coin
     deactivate S 
  
-    S->>C: Return to App 
-
+    S->>C: Return to App  
 ``` 
 1.  After selecting CurrencyCode, open the Recharge page.
-2.  Confirming the purchase item, obtain authorization prime from the third-party payment.
-3.  After verifying request, host will receive the prime code.
-4.  Bring spCoinItemPriceId into backend to generate tradeNo.
-5.  PayWithBindPrime brings prime and tradeNo to the backend and third-party payment, and opens the transaction page.
-6.  Bring back transaction results.
-7.  Return to App.
+2.  Call connectTool.set_purchase_notifyData: Set data to be brought back to App and Server.
+3.  After Payment complete, host will call NotifyUrl automatically.
+4.  If NotifyUrl & state are not set, only the results page.
+5.  Confirming the purchase item, obtain authorization prime from the third-party payment.
+6.  After verifying request, host will receive the prime code.
+7.  Bring spCoinItemPriceId into backend to generate tradeNo.
+8.  PayWithBindPrime brings prime and tradeNo to the backend and third-party payment, and opens the transaction page.
+9.  Bring back transaction results.
+10.  Return to App.
 
 #### Currency Code
 | Code  | USD |TWD |CNY |JPY |KRW |VND |THB |MYR |SGD |  
