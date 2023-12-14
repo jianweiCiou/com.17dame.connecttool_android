@@ -231,7 +231,7 @@ Open SP Coin Recharge page.
 ```mermaid 
 sequenceDiagram
     autonumber
-    participant GS as Game App
+    participant GS as Game Server
     participant C as Game App
     participant S as host
     participant payment as third-party payment
