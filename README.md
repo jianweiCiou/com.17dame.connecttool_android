@@ -129,6 +129,14 @@ _connectTool.CreateAccountInitData(_email,_password);
 - Send ConnectTool.SendLoginData().
 - Return StatusCode check.
 
+### OpenLogoutURL　
+- Log out from the host page; 
+```java  
+LogoutButton.setOnClickListener(view -> {
+	_connectTool.OpenLogoutURL();
+});
+``` 
+ 
 ### OpenAuthorizeURL　 
 - `connectBasic.client_id` is required. 
 - Open host page to log in.
