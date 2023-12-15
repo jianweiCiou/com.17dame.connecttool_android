@@ -7,7 +7,7 @@
 - [ConnectTool function](#connecttool-function) 
     - [SendRegisterData](#sendregisterdata)
     - [SendLoginData](#sendlogindata)
-    - [OpenRegisterURL, OpenLoginURL ,OpenLogoutURL](#openlogouturl)
+    - [OpenRegisterURL, OpenLoginURL ,OpenLogoutURL](#openregisterurl-openloginurl-openlogouturl)
     - [OpenAuthorizeURL](#openauthorizeurl)
     - [GetConnectToken_Coroutine](#getconnecttoken_coroutine)
     - [GetRefreshToken_Coroutine](#getrefreshtoken_coroutine)
