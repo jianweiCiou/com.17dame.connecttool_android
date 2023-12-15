@@ -15,7 +15,7 @@
     - [Recharge flow](#recharge-flow)  
     - [Open Recharge page](#open-recharge-page)
     - [GetPurchaseOrderList](#getpurchaseorderlist)
-    - [GetPurchaseOrderOne](#getpurchaseorderlist)
+    - [GetPurchaseOrderOne](#getpurchaseorderone)
 - [ConsumeSP function](#consumesp-function)
     - [ConsumeSP flow](#consumesp-flow)  
     - [Open ConsumeSP page](#open-consumesp-page) 
@@ -240,12 +240,16 @@ sequenceDiagram
 ### Open Recharge page 
 Open SP Coin Recharge page. 
 ```java
-    // Step1. Set purchase notifyUrl,
-    _connectTool.set_purchase_notifyData(notifyUrl,state);
+String notifyUrl = "";// NotifyUrl is a URL customized by the game developer
+String state = "Custom state";// Custom state ,
+// Step1. Set notifyUrl and state,
+_connectTool.set_purchase_notifyData(notifyUrl, state);
 
-    // Step2. Set currencyCode
-    String currencyCode = "2"; 
-    _connectTool.OpenRechargeURL(currencyCode);
+// Step2. Set currencyCode
+String currencyCode = "2";
+
+// Step3. Open Recharge Page
+_connectTool.OpenRechargeURL(currencyCode, notifyUrl, state);
 ```
 - `notifyUrl` & `state` : Please refer to [Currency Code](#currency-code)
 - `currencyCode` : Please refer to [Currency Code](#currency-code)
@@ -410,7 +414,7 @@ sequenceDiagram
 
 
 ### Create SPCoin Order Api
-- To use the SP Coin held by user, please use the createPayment function.
+- Generate an SPCoin consumption through SDK.
 - `spCoin`,`rebate`,`orderNo` are required.
 - `orderNo` must be unique.
 -  Game developers can customize the rules of `orderNo`
