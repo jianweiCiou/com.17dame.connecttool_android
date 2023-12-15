@@ -7,7 +7,7 @@
 - [ConnectTool function](#connecttool-function) 
     - [SendRegisterData](#sendregisterdata)
     - [SendLoginData](#sendlogindata)
-    - [OpenLogoutURL](#openlogouturl)
+    - [OpenRegisterURL, OpenLoginURL ,OpenLogoutURL](#openlogouturl)
     - [OpenAuthorizeURL](#openauthorizeurl)
     - [GetConnectToken_Coroutine](#getconnecttoken_coroutine)
     - [GetRefreshToken_Coroutine](#getrefreshtoken_coroutine)
@@ -139,9 +139,18 @@ _connectTool.CreateAccountInitData(_email,_password);
 - Send ConnectTool.SendLoginData().
 - Return StatusCode check.
 
-### OpenLogoutURL　
-- Log out from the host page; 
-```java  
+### OpenRegisterURL, OpenLoginURL ,OpenLogoutURL　
+Open the host page, perform registration, login and logout
+```java
+// Register
+Register_pageButton.setOnClickListener(view -> {
+_connectTool.OpenRegisterURL();
+});
+// Login
+Login_pageButton.setOnClickListener(view -> {
+_connectTool.OpenLoginURL();
+});
+// Logout
 LogoutButton.setOnClickListener(view -> {
 	_connectTool.OpenLogoutURL();
 });
