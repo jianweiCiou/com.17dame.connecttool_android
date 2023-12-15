@@ -15,10 +15,10 @@
     - [Open Recharge page](#open-recharge-page) 
     - [Open ConsumeSP page](#open-consumesp-page) 
     - [Call ConsumeSP Api](#call-consumesp-api)
+    - [Query ConsumeSP By transactionId](#query-consumesp-by-transactionid)
 - [NotifyUrl & State](#notifyurl--state)
     - [Recharge NotifyUrl](#recharge-notifyurl)
     - [ConsumeSP NotifyUrl](#consumesp-notifyurl)
-    
 - [Model](#model) 
 
 ## Prerequisites
