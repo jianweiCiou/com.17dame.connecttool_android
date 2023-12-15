@@ -14,7 +14,8 @@
 - [Recharge function](#recharge-function)
     - [Recharge flow](#recharge-flow)  
     - [Open Recharge page](#open-recharge-page)
-    - [GetPurchaseOrderList](# )
+    - [GetPurchaseOrderList](#getpurchaseorderlist)
+    - [GetPurchaseOrderOne](#getpurchaseorderlist)
 - [ConsumeSP function](#consumesp-function)
     - [ConsumeSP flow](#consumesp-flow)  
     - [Open ConsumeSP page](#open-consumesp-page) 
@@ -260,8 +261,7 @@ Open SP Coin Recharge page.
 | key  | 0 |1 |2 |3 | 
 
 ### GetPurchaseOrderList
-取得SP Coin 訂單列表
-
+Get the order list for purchasing SP Coin.
 ```java
 GetPurchaseOrderListButton.setOnClickListener(view -> {
 	try {
@@ -301,6 +301,49 @@ Response :
   "requestNumber": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
 }
 ```
+> [!NOTE]  
+> The Response of PurchaseOrderList will not have NotifyUrl and Sign.
+
+
+### GetPurchaseOrderOne
+Get a single SP Coin order via tradeNo.
+```java
+try {
+	String tradeNo = "PAC2023121400000261";
+	_connectTool.GetPurchaseOrderOne(new PurchaseOrderCallback() {
+		@Override
+		public void callback(PurchaseOrderOneResponse value) {
+			Log.v(TAG, "PurchaseOrderOneResponse callback : " + value);
+		}
+	}, tradeNo);
+} catch (NoSuchAlgorithmException e) {
+	throw new RuntimeException(e);
+}
+```
+Response :
+```json
+{
+  "data": {
+    "payMethod": 0,
+    "tradeNo": "PAC2023121400000261",
+    "spCoin": 120,
+    "rebate": 0,
+    "state": "Custom state",
+    "notifyUrl": "",
+    "sign": null,
+    "status": 0,
+    "currencyCode": "TWD",
+    "totalAmt": 56,
+    "createdOn": "2023-12-14T19:17:32.3789489+00:00"
+  },
+  "status": 1000,
+  "message": null,
+  "detailMessage": null,
+  "requestNumber": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+}
+```
+> [!NOTE]  
+> The Response of GetPurchaseOrderOne will not have NotifyUrl and Sign.
 
 ## ConsumeSP function
 ### ConsumeSP flow
@@ -449,9 +492,7 @@ Response body:
 | Failed  | WaitingForPayment |Processing |Completed |Refund |Cancel |PaymentExpired | 
 | --- | --- |--- |--- |--- |  --- | --- | 
  
-
-
-
+ 
 ## NotifyUrl & State
 > [!NOTE]  
 > - notifyUrl :NotifyUrl is a URL customized by the game developer. We will post NotifyUrl automatically when the purchase is completed.
