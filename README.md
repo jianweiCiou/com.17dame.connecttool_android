@@ -11,10 +11,11 @@
     - [OpenAuthorizeURL](#openauthorizeurl)
     - [GetConnectToken_Coroutine](#getconnecttoken_coroutine)
     - [GetRefreshToken_Coroutine](#getrefreshtoken_coroutine)
-- [Payment function](#payment-function)
+- [Recharge function](#payment-function)
     - [Open Recharge page](#open-recharge-page) 
+- [ConsumeSP function](#payment-function)
     - [Open ConsumeSP page](#open-consumesp-page) 
-    - [Call ConsumeSP Api](#call-consumesp-api)
+    - [Create Consume SP Order Api](#call-consumesp-api) 
     - [Query ConsumeSP By transactionId](#query-consumesp-by-transactionid)
 - [NotifyUrl & State](#notifyurl--state)
     - [Recharge NotifyUrl](#recharge-notifyurl)
@@ -176,7 +177,8 @@ Step
 - `connectTool.access_token` is required.  
 - Return MeInfo.
 
-## Payment function 
+ 
+## Recharge function 
 ### Open Recharge page 
 Open SP Coin Recharge page. 
 ```java
@@ -254,6 +256,8 @@ sequenceDiagram
 | key  | 0 |1 |2 |3 | 
 
 
+## ConsumeSP function
+
 ### Open ConsumeSP page  
 - To use the SP Coin held by user, please use the createPayment function.
 - `consume_spCoin`,`consume_rebate`,`orderNo`,`GameName`,`productName` are required.
@@ -316,7 +320,7 @@ sequenceDiagram
     note over C: Get consume_state 
 ```
 
-### Call ConsumeSP Api  
+### Create SPCoin Order Api
 - To use the SP Coin held by user, please use the createPayment function.
 - `spCoin`,`rebate`,`orderNo` are required.
 - `orderNo` must be unique.
