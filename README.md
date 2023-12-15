@@ -11,9 +11,14 @@
     - [OpenAuthorizeURL](#openauthorizeurl)
     - [GetConnectToken_Coroutine](#getconnecttoken_coroutine)
     - [GetRefreshToken_Coroutine](#getrefreshtoken_coroutine)
-- [Payment function](#PaymentFunction)
+- [Payment function](#payment-function)
     - [Open Recharge page](#open-recharge-page) 
-    - [Call Open ConsumeSP page](#OpenConsumeSPpage) 
+    - [Open ConsumeSP page](#open-consumesp-page) 
+    - [Call ConsumeSP Api](#call-consumesp-api)
+- [NotifyUrl & State](#notifyurl--state)
+    - [Recharge NotifyUrl](#recharge-notifyurl)
+    - [ConsumeSP NotifyUrl](#consumesp-notifyurl)
+    
 - [Model](#model) 
 
 ## Prerequisites
@@ -171,45 +176,7 @@ Step
 - `connectTool.access_token` is required.  
 - Return MeInfo.
 
-## Payment function
-
-### Call ConsumeSP Api  
-- To use the SP Coin held by user, please use the createPayment function.
-- `spCoin`,`rebate`,`orderNo` are required.
-- `orderNo` must be unique.
--  Game developers can customize the rules of `orderNo`
-- `connectTool.access_token` is required.  
-```java  
-     int spCoin = 5; 
-     int rebate = 3;
-     String orderNo = UUID.randomUUID().toString();
-    _connectTool.createPayment(new CreatePaymentCallback() {
-        @Override
-        public void callback(PaymentResponse value) {
-            Log.v(TAG, "PaymentResponse callback : " + value);
-        }
-    }, spCoin, rebate);
-```
-
-PaymentResponse example :
-```json
-{
-  "data": {
-    "transactionId": "T2023121300000007",
-    "spCoin": 50,
-    "rebate": 3,
-    "orderStatus": "Completed"
-  },
-  "status": 0,
-  "message": null,
-  "detailMessage": null,
-  "requestNumber": "f278af68-da56-4d50-b019-5c3985a45344"
-}
-```
-transactionId : Consumption SP Coin record ID.
-orderStatus(Completed) : Complete SP coin deduction.
-status(0) : Complete SP coin deduction.
-
+## Payment function 
 ### Open Recharge page 
 Open SP Coin Recharge page. 
 ```java
@@ -222,7 +189,6 @@ Open SP Coin Recharge page.
 ```
 - `notifyUrl` & `state` : Please refer to [Currency Code](#currency-code)
 - `currencyCode` : Please refer to [Currency Code](#currency-code)
-
 
 #### Recharge flow
 ```mermaid 
@@ -347,10 +313,45 @@ sequenceDiagram
  
     S->>C: Return to App 
 
-    note over C: Get consume_state
-   
-   
+    note over C: Get consume_state 
 ```
+
+### Call ConsumeSP Api  
+- To use the SP Coin held by user, please use the createPayment function.
+- `spCoin`,`rebate`,`orderNo` are required.
+- `orderNo` must be unique.
+-  Game developers can customize the rules of `orderNo`
+- `connectTool.access_token` is required.  
+```java  
+     int spCoin = 5; 
+     int rebate = 3;
+     String orderNo = UUID.randomUUID().toString();
+    _connectTool.createPayment(new CreatePaymentCallback() {
+        @Override
+        public void callback(PaymentResponse value) {
+            Log.v(TAG, "PaymentResponse callback : " + value);
+        }
+    }, spCoin, rebate);
+```
+
+PaymentResponse example :
+```json
+{
+  "data": {
+    "transactionId": "T2023121300000007",
+    "spCoin": 50,
+    "rebate": 3,
+    "orderStatus": "Completed"
+  },
+  "status": 0,
+  "message": null,
+  "detailMessage": null,
+  "requestNumber": "f278af68-da56-4d50-b019-5c3985a45344"
+}
+```
+transactionId : Consumption SP Coin record ID.
+orderStatus(Completed) : Complete SP coin deduction.
+status(0) : Complete SP coin deduction.
 
 
 ### Query ConsumeSP By transactionId 
@@ -470,11 +471,7 @@ Encrypted ConsumeSP content (No "Sign" string):
 ```
 - Create "Sign" to verify : Please refer to [Create sign to verify](#create-sign-to-verify)
 
-
-
-## 3DS page
-OTP code : 1234567
-
+ 
 
 ## Model 
 ```mermaid 
