@@ -461,9 +461,9 @@ PaymentResponse example :
   "requestNumber": "f278af68-da56-4d50-b019-5c3985a45344"
 }
 ```
-transactionId : Consumption SP Coin record ID.
-orderStatus(Completed) : Complete SP coin deduction.
-status(0) : Complete SP coin deduction.
+- transactionId : Consumption SP Coin record ID.
+- orderStatus(Completed) : Complete SP coin deduction.
+- status(0) : Complete SP coin deduction.
 
 
 ### Query ConsumeSP By transactionId 
