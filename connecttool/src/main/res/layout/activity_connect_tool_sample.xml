@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Create" />
+            android:text="SDK Create" />
 
         <LinearLayout
             android:id="@+id/layout3"
@@ -38,6 +38,37 @@
                 android:text="Login" />
         </LinearLayout>
 
+
+        <TextView
+            android:id="@+id/textView_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Page access" />
+
+        <LinearLayout
+            android:id="@+id/layout3_access"
+            android:layout_width="wrap_content"
+            android:layout_height="110px"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/Register_pageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Register Link" />
+
+            <Button
+                android:id="@+id/Login_pageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Login Link" />
+            <Button
+                android:id="@+id/LogoutButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Logout Link" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/textView_Get_a"
@@ -140,13 +171,11 @@
             android:layout_width="wrap_content"
             android:layout_height="110px"
             android:gravity="center_horizontal">
-
             <Button
                 android:id="@+id/rechargeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Recharge" />
-
+                android:text="Recharge Link" />
         </LinearLayout>
 
         <TextView
@@ -179,6 +208,17 @@
                 android:layout_height="100px"
                 android:layout_weight="1"
                 android:text="" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/layout_Query_d"
+            android:layout_width="wrap_content"
+            android:layout_height="110px"
+            android:gravity="center_horizontal">
+            <Button
+                android:id="@+id/QueryConsumeSPButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Query SPCoin tx" />
         </LinearLayout>
 
         <TextView

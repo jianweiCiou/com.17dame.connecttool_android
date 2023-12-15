@@ -3,12 +3,15 @@
     <string name="refresh_token">refresh_token</string>
 
     <string name="purchase_purchaseOrderId">purchase_purchaseOrderId</string>
+    <string name="purchase_spCoinItemPriceId">purchase_spCoinItemPriceId</string>
     <string name="purchase_tradeNo">purchase_tradeNo</string>
     <string name="purchase_requestNumber">purchase_requestNumber</string>
-
     <string name="purchase_payMethod">purchase_payMethod</string>
     <string name="purchase_prime">purchase_prime</string>
     <string name="purchase_payGateway">purchase_payGateway</string>
+    <string name="purchase_notifyUrl">purchase_notifyUrl</string>
+    <string name="purchase_state">purchase_state</string>
+
 
     <string name="purchaseOrderList_requestNumber">purchaseOrderList_requestNumber</string>
 
