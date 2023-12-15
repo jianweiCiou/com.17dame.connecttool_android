@@ -260,7 +260,7 @@ String currencyCode = "2";
 // Step3. Open Recharge Page
 _connectTool.OpenRechargeURL(currencyCode, notifyUrl, state);
 ```
-- `notifyUrl` & `state` : Please refer to [Currency Code](#currency-code)
+- `notifyUrl` & `state` : Please refer to [NotifyUrl & State](#notifyurl--state)
 - `currencyCode` : Please refer to [Currency Code](#currency-code)
 
 #### Currency Code
