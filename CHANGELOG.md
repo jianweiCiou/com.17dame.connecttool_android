@@ -2,6 +2,19 @@
 ## 1.3.2 (unreleased)
 Fix:
   -  PaymentResponse null problem.
+Features:
+  - Add SendLogout
+  - Add OpenRechargeURL
+  - Add OpenConsumeSPURL
+  - Add OpenRegisterURL
+  - Add OpenLoginURL
+  - Add OpenLogoutURL
+  - Add OpenConsumeSPResultURL
+  - Add Get_SPCoin_tx
+  - Add set_purchase_notifyData
+  - Add set_purchase_notifyData
+  - Add CreateSPCoinOrder
+ 
 ## 1.3.1 (unreleased)
 Features:
   - Change minSdk 22 to minSdk 26.
