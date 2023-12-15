@@ -469,18 +469,18 @@ PaymentResponse example :
 ### Query ConsumeSP By transactionId 
 - Obtain transaction data after consuming SPCoin.
 ```java
-                try {
-                    String transactionId = "T2023121400000025";
+try {
+	String transactionId = "T2023121400000025";
 
-                    _connectTool.Get_SPCoin_tx(transactionId,new GetSPCoinTxCallback() {
-                        @Override
-                        public void callback(SPCoinTxResponse value) {
-                            Log.v(TAG, "SPCoinTxResponse callback : " + value.status);
-                        }
-                    });
-                } catch (NoSuchAlgorithmException e) {
-                    throw new RuntimeException(e);
-                }
+	_connectTool.Get_SPCoin_tx(transactionId,new GetSPCoinTxCallback() {
+		@Override
+		public void callback(SPCoinTxResponse value) {
+			Log.v(TAG, "SPCoinTxResponse callback : " + value.status);
+		}
+	});
+} catch (NoSuchAlgorithmException e) {
+	throw new RuntimeException(e);
+}
 ```
 	
 Response body:
