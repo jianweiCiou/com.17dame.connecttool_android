@@ -13,9 +13,10 @@
     - [GetRefreshToken_Coroutine](#getrefreshtoken_coroutine)
 - [Recharge function](#recharge-function)
     - [Recharge flow](#recharge-flow)  
-    - [Open Recharge page](#open-recharge-page) 
-- [ConsumeSP function](#payment-function)
-    - [ConsumeSP flow](#recharge-flow)  
+    - [Open Recharge page](#open-recharge-page)
+    - [GetPurchaseOrderList](# )
+- [ConsumeSP function](#consumesp-function)
+    - [ConsumeSP flow](#consumesp-flow)  
     - [Open ConsumeSP page](#open-consumesp-page) 
     - [Create Consume SP Order Api](#call-consumesp-api) 
     - [Query ConsumeSP By transactionId](#query-consumesp-by-transactionid)
@@ -248,7 +249,6 @@ Open SP Coin Recharge page.
 - `notifyUrl` & `state` : Please refer to [Currency Code](#currency-code)
 - `currencyCode` : Please refer to [Currency Code](#currency-code)
 
-
 #### Currency Code
 | Code  | USD |TWD |CNY |JPY |KRW |VND |THB |MYR |SGD |  
 | --- | --- |--- |--- |--- |--- |--- |--- |--- |--- |
@@ -259,6 +259,48 @@ Open SP Coin Recharge page.
 | --- | --- |--- |--- |--- | 
 | key  | 0 |1 |2 |3 | 
 
+### GetPurchaseOrderList
+取得SP Coin 訂單列表
+
+```java
+GetPurchaseOrderListButton.setOnClickListener(view -> {
+	try {
+		_connectTool.GetPurchaseOrderList(new GetPurchaseOrderListCallback() {
+			@Override
+			public void callback(PurchaseOrderListResponse value) {
+				Log.v(TAG, "PurchaseOrderListResponse callback : " + value);
+			}
+		});
+	} catch (NoSuchAlgorithmException e) {
+		throw new RuntimeException(e);
+	}
+});
+```
+Response :
+```json
+{
+  "data": [
+    {
+      "payMethod": 0,
+      "tradeNo": "PAC2023121400000261",
+      "spCoin": 120,
+      "rebate": 0,
+      "state": "Custom state",
+      "notifyUrl": "",
+      "sign": null,
+      "status": 0,
+      "currencyCode": "TWD",
+      "totalAmt": 56,
+      "createdOn": "2023-12-14T19:17:32.3789489+00:00"
+    },
+    ...
+  ],
+  "status": 1000,
+  "message": null,
+  "detailMessage": null,
+  "requestNumber": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+}
+```
 
 ## ConsumeSP function
 ### ConsumeSP flow
