@@ -7,10 +7,10 @@
 - [ConnectTool function](#connecttool-function) 
     - [SendRegisterData](#sendregisterdata)
     - [SendLoginData](#sendlogindata)
+    - [OpenLogoutURL](#openlogouturl)
     - [OpenAuthorizeURL](#openauthorizeurl)
-    - [GetConnectToken_Coroutine](#GetConnectToken-Coroutine)
-    - [GetRefreshToken_Coroutine](#GetRefreshToken-Coroutine)
-- [Payment Flow](#PaymentFlow) 
+    - [GetConnectToken_Coroutine](#getconnecttoken_coroutine)
+    - [GetRefreshToken_Coroutine](#getrefreshtoken_coroutine)
 - [Payment function](#PaymentFunction)
     - [Open Recharge page](#open-recharge-page) 
     - [Call Open ConsumeSP page](#OpenConsumeSPpage) 
@@ -143,26 +143,20 @@ LogoutButton.setOnClickListener(view -> {
 - You will get `code` from redirect_uri's parameter after logs in.
 
 ```java  
-            // deepLink
-            Intent appLinkIntent = getIntent();
-            String appLinkAction = appLinkIntent.getAction();
-            Uri appLinkData = appLinkIntent.getData();
-            if (appLinkData != null && appLinkData.isHierarchical()) {
-                String uri = this.getIntent().getDataString();
-                _connectTool.code = appLinkData.getQueryParameter("code");
-            }
+// deepLink
+Intent appLinkIntent = getIntent();
+String appLinkAction = appLinkIntent.getAction();
+Uri appLinkData = appLinkIntent.getData();
+if (appLinkData != null && appLinkData.isHierarchical()) {
+	String uri = this.getIntent().getDataString();
+	_connectTool.code = appLinkData.getQueryParameter("code");
+}
 ```
 Step 
 1. Execute Authorize through ConnectTool.
 2. Open Login page.
 3. Retrieve code through onDeepLinkActivated.
 4. Execute GetConnectToken_Coroutine to obtain access_token.
-
-### OpenLogoutURL
-- Log out from the host.
-```java  
-    _connectTool.OpenLogoutURL();
-```
 
 ### GetConnectToken_Coroutine 
 - `connectTool.code` is required. 
@@ -177,11 +171,7 @@ Step
 - `connectTool.access_token` is required.  
 - Return MeInfo.
 
-## Payment Flow
 ## Payment function
-
-### CreatePurchaseOrder
- 
 
 ### Call ConsumeSP Api  
 - To use the SP Coin held by user, please use the createPayment function.
