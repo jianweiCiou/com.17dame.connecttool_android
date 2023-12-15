@@ -482,7 +482,7 @@ PaymentResponse example :
 - Retrieve the consumption information through `OrderNo` or `TransactionId`
 ```java
 try {
-	String transactionId = "T2023121400000025";
+	String transactionId = "T2023121500000030";
 
 	_connectTool.Get_SPCoin_tx(transactionId,new GetSPCoinTxCallback() {
 		@Override
@@ -499,9 +499,10 @@ Response body:
 ``` JSON
 {
   "data": {
-    "transactionId": "T2023121400000025",
+    "transactionId": "T2023121500000030",
+    "orderNo": "b427a826-4101-4172-8694-9e0ee868b9ab",
     "spCoin": 50,
-    "rebate": 20,
+    "rebate": 3,
     "orderStatus": "Completed",
     "state": "Custom state",
     "notifyUrl": null,
@@ -513,6 +514,8 @@ Response body:
   "requestNumber": "ebe4ae28-dda1-499d-bdbc-1066ce080a6f"
 }
 ```
+ 
+
 #### OrderStatuses
 | Failed  | WaitingForPayment |Processing |Completed |Refund |Cancel |PaymentExpired | 
 | --- | --- |--- |--- |--- |  --- | --- | 
