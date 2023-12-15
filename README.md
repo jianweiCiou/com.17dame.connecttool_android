@@ -322,16 +322,22 @@ sequenceDiagram
 - `orderNo` must be unique.
 -  Game developers can customize the rules of `orderNo`
 - `connectTool.access_token` is required.  
-```java  
-     int spCoin = 5; 
-     int rebate = 3;
-     String orderNo = UUID.randomUUID().toString();
-    _connectTool.createPayment(new CreatePaymentCallback() {
-        @Override
-        public void callback(PaymentResponse value) {
-            Log.v(TAG, "PaymentResponse callback : " + value);
-        }
-    }, spCoin, rebate);
+```java
+String notifyUrl = "";// NotifyUrl is a URL customized by the game developer
+String state = "Custom state";// Custom state ,
+
+// Step1. Set notifyUrl and state,
+_connectTool.set_purchase_notifyData(notifyUrl, state);
+
+int spCoin = 50;
+int rebate = 3;
+String orderNo = UUID.randomUUID().toString();
+_connectTool.CreateSPCoinOrder(new CreatePaymentCallback() {
+	@Override
+	public void callback(CreateSPCoinResponse value) {
+		Log.v(TAG, "CreateSPCoinResponse orderStatus : " + value.data.orderStatus);
+	}
+}, spCoin, rebate, orderNo);
 ```
 
 PaymentResponse example :
