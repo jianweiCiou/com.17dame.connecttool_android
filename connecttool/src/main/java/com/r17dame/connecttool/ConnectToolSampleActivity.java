@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.r17dame.connecttool.callback.ACPAYPayWithPrimeCallback;
@@ -17,19 +18,19 @@ import com.r17dame.connecttool.callback.ConnectCallback;
 import com.r17dame.connecttool.callback.CreatePaymentCallback;
 import com.r17dame.connecttool.callback.CreatePurchaseOrderCallback;
 import com.r17dame.connecttool.callback.GetPurchaseOrderListCallback;
+import com.r17dame.connecttool.callback.GetSPCoinTxCallback;
 import com.r17dame.connecttool.callback.GetUserCardsCallback;
 import com.r17dame.connecttool.datamodel.ConnectToken;
 import com.r17dame.connecttool.callback.ConnectTokenCall;
 import com.r17dame.connecttool.callback.MeCallback;
+import com.r17dame.connecttool.datamodel.CreateSPCoinResponse;
 import com.r17dame.connecttool.datamodel.MeInfo;
 import com.r17dame.connecttool.datamodel.PayWithPrimeRespone;
-import com.r17dame.connecttool.datamodel.PaymentResponse;
 import com.r17dame.connecttool.datamodel.PurchaseOrder;
 import com.r17dame.connecttool.callback.PurchaseOrderCallback;
 import com.r17dame.connecttool.datamodel.PurchaseOrderListResponse;
 import com.r17dame.connecttool.datamodel.PurchaseOrderOneResponse;
-import com.r17dame.connecttool.datamodel.PurchaseOrderRequest;
-import com.r17dame.connecttool.datamodel.UserCard;
+import com.r17dame.connecttool.datamodel.SPCoinTxResponse;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
@@ -44,6 +45,11 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
     Button getMeButton;
     Button LoginButton;
 
+    // page access
+    Button Register_pageButton;
+    Button Login_pageButton;
+    Button LogoutButton;
+
     Button rechargeButton;
     Button transferSPButton;
     Button createPurchaseOrderButton;
@@ -53,7 +59,7 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
 
     Button ConsumeSPButton;
     Button OpenConsumeSPButton;
-
+    Button QueryConsumeSPButton;
     Button GetUserCardsButton;
 
     TextView _connectCallbackText;
@@ -93,10 +99,28 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
                     "",
                     "");
 
+
+
             // deepLink
             Intent appLinkIntent = getIntent();
             Uri appLinkData = appLinkIntent.getData();
             if (appLinkData != null && appLinkData.isHierarchical()) {
+
+                // Complete purchase of SP Coin
+                if (appLinkData.getQueryParameterNames().contains("purchase_state")) {
+                    String purchase_state = appLinkData.getQueryParameter("purchase_state");
+                    Log.v(TAG, "purchase_state :" + purchase_state);
+
+                    Toast.makeText(getApplicationContext(),"purchase_state : " + purchase_state, Toast.LENGTH_SHORT).show();
+                }
+
+                // Complete consumption of SP Coin
+                if (appLinkData.getQueryParameterNames().contains("consume_state")) {
+                    String consume_state = appLinkData.getQueryParameter("consume_state");
+                    Log.v(TAG, "consume_state :" + consume_state);
+                    Toast.makeText(getApplicationContext(),"consume_state : " + consume_state, Toast.LENGTH_SHORT).show();
+                }
+
 
                 // get Access token
                 if (appLinkData.getQueryParameterNames().contains("code")) {
@@ -154,12 +178,13 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
                     int rebate = Integer.valueOf(consume_rebate);
                     String orderNo = appLinkData.getQueryParameter("orderNo");
 
-                    _connectTool.createPayment(new CreatePaymentCallback() {
+                    _connectTool.CreateSPCoinOrder(new CreatePaymentCallback() {
                         @Override
-                        public void callback(PaymentResponse value) {
-                            Log.v(TAG, "PaymentResponse callback : " + value);
+                        public void callback(CreateSPCoinResponse value) {
+                            Log.v(TAG, "PaymentResponse transactionId : " + value.data.transactionId);
+                            Log.v(TAG, "PaymentResponse orderStatus : " + value.data.orderStatus);
                             // status : PaymentSuccess or failure
-                            String status = "PaymentSuccess";
+                            String status = (value.data.orderStatus.equals("Completed")) ? "PaymentSuccess" : "Failure";
                             _connectTool.OpenConsumeSPResultURL(status);
                         }
                     }, spCoin, rebate, orderNo);
@@ -184,6 +209,27 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
                         Log.v(TAG, "LoginData callback : " + value);
                     }
                 });
+            });
+
+            /**
+             * Page access
+             * */
+            //頁面登入
+            Register_pageButton = findViewById(R.id.Register_pageButton);
+            Register_pageButton.setOnClickListener(view -> {
+                _connectTool.OpenRegisterURL();
+            });
+
+            //頁面登入
+            Login_pageButton = findViewById(R.id.Login_pageButton);
+            Login_pageButton.setOnClickListener(view -> {
+                _connectTool.OpenLoginURL();
+            });
+
+            //頁面登出
+            LogoutButton = findViewById(R.id.LogoutButton);
+            LogoutButton.setOnClickListener(view -> {
+                _connectTool.OpenLogoutURL();
             });
 
             getConnectAuthorizeButton = findViewById(R.id.getConnectAuthorizeButton);
@@ -218,6 +264,7 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
                         @Override
                         public void callbackMeInfo(MeInfo value) {
                             Log.v(TAG, "MeInfo callback : " + value.status);
+                            Toast.makeText(getApplicationContext(), value.data.email, Toast.LENGTH_SHORT).show();
                         }
                     });
                 } catch (NoSuchAlgorithmException e) {
@@ -226,37 +273,22 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
             });
 
             /*
-             * Payment
+             * Purchase
              * */
-            ConsumeSPButton = findViewById(R.id.ConsumeSPButton);
-            ConsumeSPButton.setOnClickListener(view -> {
-                try {
-                    int spCoin = 5; //
-                    int rebate = 3;
-                    String orderNo = UUID.randomUUID().toString();
-                    _connectTool.createPayment(new CreatePaymentCallback() {
-                        @Override
-                        public void callback(PaymentResponse value) {
-                            Log.v(TAG, "PaymentResponse callback : " + value);
-                        }
-                    }, spCoin, rebate, orderNo);
-                } catch (NoSuchAlgorithmException e) {
-                    throw new RuntimeException(e);
-                }
+            // 購買 SPCoin
+            rechargeButton = findViewById(R.id.rechargeButton);
+            rechargeButton.setOnClickListener(view -> {
+                String notifyUrl = "";// NotifyUrl is a URL customized by the game developer
+                String state = "Custom state";// Custom state ,
+                // Step1. Set notifyUrl and state,
+                _connectTool.set_purchase_notifyData(notifyUrl, state);
+
+                // Step2. Set currencyCode
+                String currencyCode = "2";
+
+                // Step3. Open Recharge Page
+                _connectTool.OpenRechargeURL(currencyCode, notifyUrl, state);
             });
-
-
-            // Open Consume URL
-            OpenConsumeSPButton = findViewById(R.id.OpenConsumeSPButton);
-            OpenConsumeSPButton.setOnClickListener(view -> {
-                int consume_spCoin = 0;
-                int consume_rebate = 0;
-                String orderNo = UUID.randomUUID().toString();
-                String GameName = "";
-                String productName = "";
-                _connectTool.OpenConsumeSPURL(consume_spCoin, consume_rebate, orderNo, GameName, productName);
-            });
-
 
             // Get Purchase Order List
             GetPurchaseOrderListButton = findViewById(R.id.GetPurchaseOrderListButton);
@@ -266,6 +298,7 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
                         @Override
                         public void callback(PurchaseOrderListResponse value) {
                             Log.v(TAG, "PurchaseOrderListResponse callback : " + value);
+                            Toast.makeText(getApplicationContext(),"All Purchase : " + value.data.length, Toast.LENGTH_SHORT).show();
                         }
                     });
                 } catch (NoSuchAlgorithmException e) {
@@ -276,11 +309,12 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
             GetPurchaseOrderButton = findViewById(R.id.GetPurchaseOrderButton);
             GetPurchaseOrderButton.setOnClickListener(view -> {
                 try {
-                    String tradeNo = "";
+                    String tradeNo = "PAC2023121400000261";
                     _connectTool.GetPurchaseOrderOne(new PurchaseOrderCallback() {
                         @Override
                         public void callback(PurchaseOrderOneResponse value) {
                             Log.v(TAG, "PurchaseOrderOneResponse callback : " + value);
+                            Toast.makeText(getApplicationContext(),"Purchase tradeNo : " + value.data.tradeNo, Toast.LENGTH_SHORT).show();
                         }
                     }, tradeNo);
                 } catch (NoSuchAlgorithmException e) {
@@ -288,20 +322,81 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
                 }
             });
 
-            rechargeButton = findViewById(R.id.rechargeButton);
-            rechargeButton.setOnClickListener(view -> {
+
+            /*
+             * ConsumeSP
+             * */
+            // App 內購買，不跳轉頁面
+            ConsumeSPButton = findViewById(R.id.ConsumeSPButton);
+            ConsumeSPButton.setOnClickListener(view -> {
                 try {
-                    _connectTool.GetMe_Coroutine(new MeCallback() {
+                    String notifyUrl = "";// NotifyUrl is a URL customized by the game developer
+                    String state = "Custom state";// Custom state ,
+
+                    // Step1. Set notifyUrl and state,
+                    _connectTool.set_purchase_notifyData(notifyUrl, state);
+
+                    int spCoin = 50;
+                    int rebate = 3;
+                    String orderNo = UUID.randomUUID().toString();
+                    _connectTool.CreateSPCoinOrder(new CreatePaymentCallback() {
                         @Override
-                        public void callbackMeInfo(MeInfo value) {
-                            Log.v(TAG, "MeInfo callback : " + value.status);
-                            _connectTool.OpenRechargeURL();
+                        public void callback(CreateSPCoinResponse value) {
+                            Log.v(TAG, "CreateSPCoinResponse orderStatus : " + value.data.orderStatus);
+
+                            Toast.makeText(getApplicationContext(),"SPCoin order : " + value.data.orderStatus, Toast.LENGTH_SHORT).show();
+                        }
+                    }, spCoin, rebate, orderNo);
+                } catch (NoSuchAlgorithmException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+
+            // 跳轉頁面確認
+            // Open Consume URL
+            OpenConsumeSPButton = findViewById(R.id.OpenConsumeSPButton);
+            OpenConsumeSPButton.setOnClickListener(view -> {
+
+                String notifyUrl = "";// NotifyUrl is a URL customized by the game developer
+                String state = "Custom state";// Custom state ,
+
+                // Step1. Set notifyUrl and state,
+                _connectTool.set_purchase_notifyData(notifyUrl, state);
+
+                int consume_spCoin = 50;
+                int consume_rebate = 20;
+                String orderNo = UUID.randomUUID().toString();
+                String GameName = "Good 18 Game";
+                String productName = "10 of the best diamonds";
+                _connectTool.OpenConsumeSPURL(consume_spCoin, consume_rebate, orderNo, GameName, productName,notifyUrl,state);
+            });
+
+            // 查詢使用點數訂單 交易編號
+            // 測試參考 : "transactionId":"T2023121500000030","orderNo":"b427a826-4101-4172-8694-9e0ee868b9ab"
+            QueryConsumeSPButton = findViewById(R.id.QueryConsumeSPButton);
+            QueryConsumeSPButton.setOnClickListener(view -> {
+                try {
+                    String transactionId = "b427a826-4101-4172-8694-9e0ee868b9ab";
+
+                    _connectTool.Get_SPCoin_tx(transactionId,new GetSPCoinTxCallback() {
+                        @Override
+                        public void callback(CreateSPCoinResponse value) {
+                            Log.v(TAG, "SPCoinTxResponse callback : " + value.data.orderStatus);
+
+                            Toast.makeText(getApplicationContext(),"SPCoin "+value.data.orderNo+" : " + value.data.orderStatus, Toast.LENGTH_SHORT).show();
                         }
                     });
                 } catch (NoSuchAlgorithmException e) {
                     throw new RuntimeException(e);
                 }
             });
+
+
+
+
+
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
