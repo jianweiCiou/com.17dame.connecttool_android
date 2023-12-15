@@ -1,16 +1,17 @@
 package com.r17dame.connecttool;
 import com.r17dame.connecttool.datamodel.ACPAYPayWithPrimeRequest;
 import com.r17dame.connecttool.datamodel.ConnectToken;
+import com.r17dame.connecttool.datamodel.CreateOrderRequest;
+import com.r17dame.connecttool.datamodel.CreatePurchaseOrderRequest;
+import com.r17dame.connecttool.datamodel.CreateSPCoinResponse;
 import com.r17dame.connecttool.datamodel.MeInfo;
 import com.r17dame.connecttool.datamodel.PayWithPrimeRespone;
-import com.r17dame.connecttool.datamodel.PaymentRequest;
-import com.r17dame.connecttool.datamodel.PaymentResponse;
 import com.r17dame.connecttool.datamodel.PurchaseOrder;
 import com.r17dame.connecttool.datamodel.PurchaseOrderListRequest;
 import com.r17dame.connecttool.datamodel.PurchaseOrderListResponse;
 import com.r17dame.connecttool.datamodel.PurchaseOrderOneRequest;
 import com.r17dame.connecttool.datamodel.PurchaseOrderOneResponse;
-import com.r17dame.connecttool.datamodel.PurchaseOrderRequest;
+import com.r17dame.connecttool.datamodel.SPCoinTxResponse;
 import com.r17dame.connecttool.datamodel.UserCard;
 import com.r17dame.connecttool.datamodel.UserCardRequest;
 
@@ -23,6 +24,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 interface APIInterface {
 
@@ -91,19 +93,19 @@ interface APIInterface {
 //    @Headers("Content-Type: application/json" )
 //    @Headers("Content-Type: application/
 
-    @POST("/api/Payment")
-    Call<PaymentResponse> createPayment(
+    @POST("/api/Payment/SPCoin/CreateOrder")
+    Call<CreateSPCoinResponse> createOrder(
             @Header("Authorization") String authorization,
             @Header("X-Developer-Id") String X_Developer_Id,
             @Header("X-Signature") String X_Signature,
-            @Body PaymentRequest request );
+            @Body CreateOrderRequest request );
 
     @POST("/api/Payment/CreatePurchaseOrder")
     Call<PurchaseOrder> createPurchaseOrder(
             @Header("Authorization") String authorization,
             @Header("X-Developer-Id") String X_Developer_Id,
             @Header("X-Signature") String X_Signature,
-            @Body PurchaseOrderRequest request );
+            @Body CreatePurchaseOrderRequest request );
 
 
     @POST("/api/Payment/ACPAY/PayWithPrime")
@@ -135,4 +137,12 @@ interface APIInterface {
             @Body UserCardRequest request );
 
 
+    @Headers("Content-Type: application/json; charset=utf-8" )
+    @GET
+    Call<CreateSPCoinResponse> getSPCoinTx(@Url String url,
+                                       @Header("Authorization") String authorization,
+                                       @Header("X-Developer-Id") String X_Developer_Id,
+                                       @Header("X-Signature") String X_Signature,
+                                       @Query("RequestNumber") String RequestNumber,
+                                       @Query("Timestamp") String Timestamp);
 }
