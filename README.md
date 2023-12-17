@@ -561,6 +561,7 @@ Encrypted Recharge content (No "Sign" string):
 ```
 
 #### Create "Sign" to verify: 
+privateKey : Use RSAstr as privateKey.
 ```JavaScript
  var rsa = RSA.Create();
   rsa.ImportFromPem(privateKey);
