@@ -461,15 +461,19 @@ PaymentResponse example :
 ```json
 {
   "data": {
-    "transactionId": "T2023121300000007",
+    "transactionId": "T2023121700000042",
+    "orderNo": "d8381a5b-2bb9-4f83-944a-d48cdde1fbdb",
     "spCoin": 50,
     "rebate": 3,
-    "orderStatus": "Completed"
+    "orderStatus": "Completed",
+    "state": "Custom state",
+    "notifyUrl": "",
+    "sign": "hsGHMFiG5JXyKS5cx+zwZSJ3y8Zd0oYe3Z6hhD7HDAXRXLhsO/DXjPyzd4XnMUcv8h7kpmFLfFtIZ8PyMlw7lSXjK9vwVp1gArOUH9uF7z3m0cfgYl+4V9/BjdgQOKIvthoINPLf716EXykC6WPdjvROon+/LtA7FhCwTgttSzRjLGOl3n1KYHVXaj9MSqMRrNBc6NFivWJksA30zkFbAMAhhKS3vdMf35A94wYnFKqNbolgv5w6VczAL8hC8zqHAzsw3kzUHqB/fPo/dtIS+NNu5XZ8hUXIkDDJh4DJpvG9gJPxyncZo+NAyiWjMcpOMPOB0qhHfXzz2vfY08f/Fw=="
   },
   "status": 0,
   "message": null,
   "detailMessage": null,
-  "requestNumber": "f278af68-da56-4d50-b019-5c3985a45344"
+  "requestNumber": "898c153e-69a1-43dd-af19-c02b075e68ab"
 }
 ```
 - transactionId : Consumption SP Coin record ID.
