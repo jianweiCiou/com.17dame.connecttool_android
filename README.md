@@ -19,7 +19,7 @@
 - [ConsumeSP function](#consumesp-function)
     - [ConsumeSP flow](#consumesp-flow)  
     - [Open ConsumeSP page](#open-consumesp-page) 
-    - [Create Consume SP Order Api](#call-consumesp-api) 
+    - [Create SPCoin Order Api](#create-spcoin-order-api) 
     - [Query ConsumeSP By transactionId](#query-consumesp-by-transactionid)
 - [NotifyUrl & State](#notifyurl--state)
     - [Recharge NotifyUrl](#recharge-notifyurl)
