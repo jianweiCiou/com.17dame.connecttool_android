@@ -548,7 +548,7 @@ Response body:
 }
 ```
 
-Encrypted Recharge content (No "Sign" string): 
+#### Encrypted Recharge content (No "Sign" string): 
 ``` JSON
 {
   "PayMethod": 3,
@@ -588,7 +588,7 @@ privateKey : Use RSAstr as privateKey.
 }
 ```
 
-Encrypted ConsumeSP content (No "Sign" string): 
+#### Encrypted ConsumeSP content (No "Sign" string): 
 ``` JSON
 {
   "TransactionId": "T2023121400000021",
