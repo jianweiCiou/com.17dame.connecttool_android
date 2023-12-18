@@ -24,6 +24,9 @@
 - [NotifyUrl & State](#notifyurl--state)
     - [Recharge NotifyUrl](#recharge-notifyurl)
     - [ConsumeSP NotifyUrl](#consumesp-notifyurl)
+- [Recommended testing process](#recommended-testing-process) 
+    - [Generate new account](#generate-new-account)
+    - [Switch account](#switch-account)
 - [Model](#model) 
 
 ## Prerequisites
