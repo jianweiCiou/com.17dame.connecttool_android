@@ -600,8 +600,21 @@ privateKey : Use RSAstr as privateKey.
 }
 ```
 - Create "Sign" to verify : Please refer to [Create sign to verify](#create-sign-to-verify)
+## Recommended testing process
+### Generate new account:
+1. Press the <kbd> <br> Logout Link <br> </kbd> button  
+2. Press the <kbd> <br> Register Link <br> </kbd> button
+3. Enter new account information
+4. Press the <kbd> <br> Authorize <br> </kbd> button
+5. Press <kbd> <br> Recharge Link<br> </kbd>, Open the Recharge page and confirm that SP Coin is 0
 
- 
+### Switch account:
+1. Press the <kbd> <br> Logout Link <br> </kbd> button
+2. Press the <kbd> <br> Authorize <br> </kbd> button
+3. Enter the account you want to use
+4. Press the <kbd> <br> Authorize <br> </kbd> button
+5. Press <kbd> <br> Recharge Link<br> </kbd>, and complete the recharge
+6. Press <kbd> <br> Consume SP Link<br> </kbd>,Open the consumption page and complete the consumption
 
 ## Model 
 ```mermaid 
