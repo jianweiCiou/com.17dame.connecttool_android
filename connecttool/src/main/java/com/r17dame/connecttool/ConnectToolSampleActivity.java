@@ -19,7 +19,6 @@ import com.r17dame.connecttool.callback.CreatePaymentCallback;
 import com.r17dame.connecttool.callback.CreatePurchaseOrderCallback;
 import com.r17dame.connecttool.callback.GetPurchaseOrderListCallback;
 import com.r17dame.connecttool.callback.GetSPCoinTxCallback;
-import com.r17dame.connecttool.callback.GetUserCardsCallback;
 import com.r17dame.connecttool.datamodel.ConnectToken;
 import com.r17dame.connecttool.callback.ConnectTokenCall;
 import com.r17dame.connecttool.callback.MeCallback;
@@ -99,26 +98,50 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
                     "",
                     "");
 
-
-
             // deepLink
             Intent appLinkIntent = getIntent();
             Uri appLinkData = appLinkIntent.getData();
             if (appLinkData != null && appLinkData.isHierarchical()) {
+
+
+                // Open by Account Page :
+                if (appLinkData.getQueryParameterNames().contains("accountBackType")) {
+                    String accountBackType = appLinkData.getQueryParameter("accountBackType");
+                    Log.v(TAG, "accountBackType  " + accountBackType);
+                    if (accountBackType.equals("Register")) {
+                        /*
+                         * App-side add functions.
+                         */
+                        Toast.makeText(getApplicationContext(), "註冊回應", Toast.LENGTH_SHORT).show();
+                    }
+                    if (accountBackType.equals("Login")) {
+                        /*
+                         * App-side add functions.
+                         */
+                        Toast.makeText(getApplicationContext(), "登入回應", Toast.LENGTH_SHORT).show();
+                    }
+                    if (accountBackType.equals("Logout")) {
+                        /*
+                         * App-side add functions.
+                         */
+                        Toast.makeText(getApplicationContext(), "登出回應", Toast.LENGTH_SHORT).show();
+                    }
+                    _connectTool.AccountPageEvent(accountBackType);
+                }
 
                 // Complete purchase of SP Coin
                 if (appLinkData.getQueryParameterNames().contains("purchase_state")) {
                     String purchase_state = appLinkData.getQueryParameter("purchase_state");
                     Log.v(TAG, "purchase_state :" + purchase_state);
 
-                    Toast.makeText(getApplicationContext(),"purchase_state : " + purchase_state, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "purchase_state : " + purchase_state, Toast.LENGTH_SHORT).show();
                 }
 
                 // Complete consumption of SP Coin
                 if (appLinkData.getQueryParameterNames().contains("consume_state")) {
                     String consume_state = appLinkData.getQueryParameter("consume_state");
                     Log.v(TAG, "consume_state :" + consume_state);
-                    Toast.makeText(getApplicationContext(),"consume_state : " + consume_state, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "consume_state : " + consume_state, Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -298,7 +321,7 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
                         @Override
                         public void callback(PurchaseOrderListResponse value) {
                             Log.v(TAG, "PurchaseOrderListResponse callback : " + value);
-                            Toast.makeText(getApplicationContext(),"All Purchase : " + value.data.length, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "All Purchase : " + value.data.length, Toast.LENGTH_SHORT).show();
                         }
                     });
                 } catch (NoSuchAlgorithmException e) {
@@ -309,12 +332,12 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
             GetPurchaseOrderButton = findViewById(R.id.GetPurchaseOrderButton);
             GetPurchaseOrderButton.setOnClickListener(view -> {
                 try {
-                    String tradeNo = "PAC2023121400000261";
+                    String tradeNo = "T2023121800000058";
                     _connectTool.GetPurchaseOrderOne(new PurchaseOrderCallback() {
                         @Override
                         public void callback(PurchaseOrderOneResponse value) {
                             Log.v(TAG, "PurchaseOrderOneResponse callback : " + value);
-                            Toast.makeText(getApplicationContext(),"Purchase tradeNo : " + value.data.tradeNo, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Purchase tradeNo : " + value.data.tradeNo, Toast.LENGTH_SHORT).show();
                         }
                     }, tradeNo);
                 } catch (NoSuchAlgorithmException e) {
@@ -336,15 +359,15 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
                     // Step1. Set notifyUrl and state,
                     _connectTool.set_purchase_notifyData(notifyUrl, state);
 
-                    int spCoin = 50;
-                    int rebate = 3;
+                    int spCoin = 20;
+                    int rebate = 0;
                     String orderNo = UUID.randomUUID().toString();
                     _connectTool.CreateSPCoinOrder(new CreatePaymentCallback() {
                         @Override
                         public void callback(CreateSPCoinResponse value) {
                             Log.v(TAG, "CreateSPCoinResponse orderStatus : " + value.data.orderStatus);
 
-                            Toast.makeText(getApplicationContext(),"SPCoin order : " + value.data.orderStatus, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "SPCoin " + value.data.orderNo + " : " + value.data.orderStatus, Toast.LENGTH_SHORT).show();
                         }
                     }, spCoin, rebate, orderNo);
                 } catch (NoSuchAlgorithmException e) {
@@ -369,7 +392,7 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
                 String orderNo = UUID.randomUUID().toString();
                 String GameName = "Good 18 Game";
                 String productName = "10 of the best diamonds";
-                _connectTool.OpenConsumeSPURL(consume_spCoin, consume_rebate, orderNo, GameName, productName,notifyUrl,state);
+                _connectTool.OpenConsumeSPURL(consume_spCoin, consume_rebate, orderNo, GameName, productName, notifyUrl, state);
             });
 
             // 查詢使用點數訂單 交易編號
@@ -379,12 +402,12 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
                 try {
                     String transactionId = "b427a826-4101-4172-8694-9e0ee868b9ab";
 
-                    _connectTool.Get_SPCoin_tx(transactionId,new GetSPCoinTxCallback() {
+                    _connectTool.Get_SPCoin_tx(transactionId, new GetSPCoinTxCallback() {
                         @Override
                         public void callback(CreateSPCoinResponse value) {
                             Log.v(TAG, "SPCoinTxResponse callback : " + value.data.orderStatus);
 
-                            Toast.makeText(getApplicationContext(),"SPCoin "+value.data.orderNo+" : " + value.data.orderStatus, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "SPCoin " + value.data.orderNo + " : " + value.data.orderStatus, Toast.LENGTH_SHORT).show();
                         }
                     });
                 } catch (NoSuchAlgorithmException e) {
@@ -392,13 +415,10 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
                 }
             });
 
-
-
-
-
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
+
 }

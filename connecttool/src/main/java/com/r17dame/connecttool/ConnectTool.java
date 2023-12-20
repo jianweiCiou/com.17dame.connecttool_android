@@ -13,8 +13,6 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
-import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
 import com.r17dame.connecttool.callback.ACPAYPayWithPrimeCallback;
 import com.r17dame.connecttool.callback.CreatePaymentCallback;
 import com.r17dame.connecttool.callback.CreatePurchaseOrderCallback;
@@ -39,18 +37,13 @@ import com.r17dame.connecttool.datamodel.PurchaseOrderListResponse;
 import com.r17dame.connecttool.datamodel.PurchaseOrderOneRequest;
 import com.r17dame.connecttool.datamodel.PurchaseOrderOneResponse;
 import com.r17dame.connecttool.datamodel.PurchaseOrderRequest;
-import com.r17dame.connecttool.datamodel.SPCoinTxResponse;
 import com.r17dame.connecttool.datamodel.Tool;
 import com.r17dame.connecttool.datamodel.UserCard;
 import com.r17dame.connecttool.datamodel.UserCardRequest;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
-import kotlin.ParameterName;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -273,7 +266,7 @@ public class ConnectTool {
      */
     public void OpenRechargeURL(String currencyCode, String _notifyUrl, String state) {
         String notifyUrl = (_notifyUrl.equals("")) ? "none_notifyUrl" : _notifyUrl;
-        String url = payMentBaseurl + "/member/recharge/" + Uri.encode(connectBasic.X_Developer_Id) + "/" + Uri.encode(redirect_uri) + "/2/" + currencyCode + "/" + Uri.encode(notifyUrl) + "/" + Uri.encode(state);
+        String url = payMentBaseurl + "/member/recharge/" + Uri.encode(connectBasic.X_Developer_Id) + "/" + Uri.encode(redirect_uri) + "/2/" + currencyCode + "/" + Uri.encode(notifyUrl) + "/" + Uri.encode(state) + "/" + Uri.encode(referralCode);
         Log.v(TAG, "OpenRechargeURL " + url);
         Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("" + url));
         startActivity(urlIntent);
@@ -283,7 +276,7 @@ public class ConnectTool {
     public void OpenConsumeSPURL(int consume_spCoin, int consume_rebate, String orderNo, String GameName, String productName, String _notifyUrl, String state) {
 
         String notifyUrl = (_notifyUrl.equals("")) ? "none_notifyUrl" : _notifyUrl;
-        String url = payMentBaseurl + "/member/consumesp/" + Uri.encode(connectBasic.X_Developer_Id) + "/" + Uri.encode(redirect_uri) + "/2/" + Uri.encode(connectBasic.Game_id) + "/" + Uri.encode(GameName) + "/" + Uri.encode(orderNo) + "/" + Uri.encode(productName) + "/" + consume_spCoin + "/" + consume_rebate+ "/" + Uri.encode(notifyUrl) + "/" + Uri.encode(state);
+        String url = payMentBaseurl + "/member/consumesp/" + Uri.encode(connectBasic.X_Developer_Id) + "/" + Uri.encode(redirect_uri) + "/2/" + Uri.encode(connectBasic.Game_id) + "/" + Uri.encode(GameName) + "/" + Uri.encode(orderNo) + "/" + Uri.encode(productName) + "/" + consume_spCoin + "/" + consume_rebate + "/" + Uri.encode(notifyUrl) + "/" + Uri.encode(state) + "/" + Uri.encode(referralCode);
 
         Log.v(TAG, "OpenConsumeSPURL " + url);
         Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("" + url));
@@ -291,21 +284,24 @@ public class ConnectTool {
     }
 
     public void OpenRegisterURL() {
-        String url = payMentBaseurl + "/account/AppRegister/"+ connectBasic.Game_id+ "/" + referralCode+"?returnUrl=" + Uri.encode(redirect_uri);
+        String _redirect_uri = redirect_uri + "?accountBackType=Register";
+        String url = payMentBaseurl + "/account/AppRegister/" + connectBasic.Game_id + "/" + referralCode + "?returnUrl=" + Uri.encode(_redirect_uri);
         Log.v(TAG, "OpenRegisterURL " + url);
         Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("" + url));
         startActivity(urlIntent);
     }
 
     public void OpenLoginURL() {
-        String url = payMentBaseurl + "/account/AppLogin/"+ connectBasic.Game_id+ "/" + referralCode+"?returnUrl=" + Uri.encode(redirect_uri);
+        String _redirect_uri = redirect_uri + "?accountBackType=Login";
+        String url = payMentBaseurl + "/account/AppLogin/" + connectBasic.Game_id + "/" + referralCode + "?returnUrl=" + Uri.encode(_redirect_uri);
         Log.v(TAG, "OpenLoginURL " + url);
         Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("" + url));
         startActivity(urlIntent);
     }
 
     public void OpenLogoutURL() {
-        String url = payMentBaseurl + "/account/logout?returnUrl=" + Uri.encode(redirect_uri);
+        String _redirect_uri = redirect_uri + "?accountBackType=Logout";
+        String url = payMentBaseurl + "/account/logout?returnUrl=" + Uri.encode(_redirect_uri);
         Log.v(TAG, "OpenLogoutURL " + url);
         Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("" + url));
         startActivity(urlIntent);
@@ -438,7 +434,7 @@ public class ConnectTool {
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void Get_SPCoin_tx(String transactionId,GetSPCoinTxCallback callback) throws NoSuchAlgorithmException {
+    public void Get_SPCoin_tx(String transactionId, GetSPCoinTxCallback callback) throws NoSuchAlgorithmException {
         apiInterface = APIClient.getGame_api_hostClient().create(APIInterface.class);
 
         String timestamp = Tool.getTimestamp();
@@ -457,7 +453,7 @@ public class ConnectTool {
         access_token = pref.getString(String.valueOf(R.string.access_token), "");
         String authorization = "Bearer " + access_token;
 
-        String getUrl =  APIClient.game_api_host + "/api/Payment/SPCoin/" + transactionId;
+        String getUrl = APIClient.game_api_host + "/api/Payment/SPCoin/" + transactionId;
 
         Call<CreateSPCoinResponse> call1 = apiInterface.getSPCoinTx(getUrl, authorization, connectBasic.X_Developer_Id, X_Signature, requestNumber, timestamp);
         call1.enqueue(new Callback<CreateSPCoinResponse>() {
@@ -715,6 +711,20 @@ public class ConnectTool {
             });
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    // AccountPage Callback
+    public void AccountPageEvent(String accountBackType) {
+        if (accountBackType.equals("Register")) {
+            OpenAuthorizeURL();
+        }
+        if (accountBackType.equals("Login")) {
+            OpenAuthorizeURL();
+        }
+        if (accountBackType.equals("Logout")) {
+            access_token = "";
+            refresh_token = "";
         }
     }
 
