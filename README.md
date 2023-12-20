@@ -158,6 +158,86 @@ LogoutButton.setOnClickListener(view -> {
 	_connectTool.OpenLogoutURL();
 });
 ``` 
+### App-side event response (Register, Login, Logout)　
+```java
+if (appLinkData.getQueryParameterNames().contains("accountBackType")) {
+	String accountBackType = appLinkData.getQueryParameter("accountBackType");
+	if(accountBackType.equals("Register")){
+		/*
+		* App-side add functions.
+		*/ 
+	}
+	if(accountBackType.equals("Login")){
+		/*
+		* App-side add functions.
+		*/ 
+	}
+	if(accountBackType.equals("Logout")){
+		/*
+		* App-side add functions.
+		*/
+	}
+        _connectTool.AccountPageEvent(accountBackType);
+}
+```
+#### Register event response
+```mermaid
+sequenceDiagram
+    autonumber
+    participant C as Game App
+    participant S as host 
+ 
+    C->>S: OpenRegisterURL()
+    activate C
+        note over S: Complete registration
+        S-->>C: DeepLink accountBackType( Register )
+        note over C: App-side add functions 
+        C-->>S: OpenAuthorizeURL()
+
+        activate S
+            S-->>C: DeepLink ( code ) 
+        deactivate S  
+        note over C: Get Access_token 
+    deactivate C 
+  
+```
+#### Login event response
+```mermaid
+sequenceDiagram
+    autonumber
+    participant C as Game App
+    participant S as host 
+ 
+    C->>S: OpenLoginURL()
+    activate C
+        note over S: Complete login
+        S-->>C: DeepLink accountBackType( Login )
+        note over C: App-side add functions 
+        C-->>S: OpenAuthorizeURL() 
+        activate S
+            S-->>C: DeepLink ( code ) 
+        deactivate S  
+        note over C: Get Access_token 
+    deactivate C  
+```
+
+#### Logout event response
+```mermaid 
+sequenceDiagram
+    autonumber
+    participant C as Game App
+    participant S as host 
+ 
+    C->>S: OpenLogoutURL()
+    activate C
+        note over S: Complete the logout process
+        S-->>C: DeepLink accountBackType( Logout )
+        note over C: App-side add functions   
+        note over C: remove access_token
+        
+    deactivate C 
+```
+  
  
 ### OpenAuthorizeURL　 
 - `connectBasic.client_id` is required. 
