@@ -198,8 +198,9 @@ sequenceDiagram
         activate S
             S-->>C: DeepLink ( code ) 
         deactivate S  
-        note over C: Get Access_token 
+        note over C: Get Access_token & me data
     deactivate C 
+  
   
 ```
 #### Login event response
@@ -218,7 +219,7 @@ sequenceDiagram
         activate S
             S-->>C: DeepLink ( code ) 
         deactivate S  
-        note over C: Get Access_token 
+        note over C: Get Access_token & me data
     deactivate C  
 ```
 
