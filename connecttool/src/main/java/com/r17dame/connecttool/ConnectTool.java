@@ -355,13 +355,21 @@ public class ConnectTool {
                 editor.putString(String.valueOf(R.string.refresh_token), tokenData.refresh_token);
                 editor.apply();
 
-                connectTokenCall.callbackConnectToken(tokenData);
+                try {
+                    connectTokenCall.callbackConnectToken(tokenData);
+                } catch (NoSuchAlgorithmException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
             public void onFailure(Call<ConnectToken> call, Throwable t) {
                 call.cancel();
-                connectTokenCall.callbackConnectToken(null);
+                try {
+                    connectTokenCall.callbackConnectToken(null);
+                } catch (NoSuchAlgorithmException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }
@@ -386,13 +394,21 @@ public class ConnectTool {
                 editor.putString(String.valueOf(R.string.refresh_token), tokenData.refresh_token);
                 editor.apply();
 
-                connectTokenCall.callbackConnectToken(tokenData);
+                try {
+                    connectTokenCall.callbackConnectToken(tokenData);
+                } catch (NoSuchAlgorithmException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
             public void onFailure(Call<ConnectToken> call, Throwable t) {
                 call.cancel();
-                connectTokenCall.callbackConnectToken(null);
+                try {
+                    connectTokenCall.callbackConnectToken(null);
+                } catch (NoSuchAlgorithmException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }
