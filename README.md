@@ -8,6 +8,7 @@
     - [SendRegisterData](#sendregisterdata)
     - [SendLoginData](#sendlogindata)
     - [OpenRegisterURL, OpenLoginURL ,OpenLogoutURL](#openregisterurl-openloginurl-openlogouturl)
+    - [App-side event response (Register, Login, Logout)　](#app-side-event-response-register-login-logout)
     - [OpenAuthorizeURL](#openauthorizeurl)
     - [GetConnectToken_Coroutine](#getconnecttoken_coroutine)
     - [GetRefreshToken_Coroutine](#getrefreshtoken_coroutine)
