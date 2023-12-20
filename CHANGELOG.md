@@ -1,7 +1,10 @@
 # CHANGELOG.md
+## 1.3.3 (unreleased)
+Features: 
+  - Add  the App-side's  response.
 ## 1.3.2 (unreleased)
 Fix:
-  -  PaymentResponse null problem.
+  - PaymentResponse null problem.
 Features:
   - Add SendLogout
   - Add OpenRechargeURL
