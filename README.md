@@ -9,7 +9,7 @@
 - [ConnectTool function](#connecttool-function) 
     - [SendRegisterData](#sendregisterdata)
     - [SendLoginData](#sendlogindata)
-    - [OpenRegisterURL, OpenLoginURL ](#openregisterurl-openloginurl-openlogouturl)
+    - [OpenRegisterURL, OpenLoginURL ](#openregisterurl-openloginurl)
     - [App-side event response (Register, Login, Logout)　](#app-side-event-response-register-login-logout)
     - [OpenAuthorizeURL](#openauthorizeurl)
     - [GetConnectToken_Coroutine](#getconnecttoken_coroutine)
