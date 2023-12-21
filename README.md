@@ -181,9 +181,12 @@ if (appLinkData.getQueryParameterNames().contains("accountBackType")) {
 		* App-side add functions.
 		*/
 	}
+	String state = "Add-side-State";
         _connectTool.AccountPageEvent(accountBackType);
 }
 ```
+`state` : Please fill in what you want to verify,`state` can be query through redirect_uri.
+
 #### Register event response
 ```mermaid
 sequenceDiagram
@@ -244,14 +247,16 @@ sequenceDiagram
 ```
   
  
-### OpenAuthorizeURL　 
-- `connectBasic.client_id` is required. 
+### OpenAuthorizeURL　  
+- `state` : Please fill in what you want to verify,`state` can be query through redirect_uri. 
 - Open host page to log in.
-- You will get `code` from redirect_uri's parameter after logs in.
-
-- state : Please fill in what you want to verify,`state` can be query through redirect_uri.
-- requestNumber :Please use UUID.randomUUID().toString().
-- 
+- You will get `code` and `state` from redirect_uri's parameter after log in. 
+Send OpenAuthorizeURL:
+```java  
+String state = "Add-side-State";
+_connectTool.OpenAuthorizeURL(state);
+```
+DeepLink will get "getQueryParameter("code")" back :
 ```java  
 // deepLink
 Intent appLinkIntent = getIntent();
@@ -278,10 +283,24 @@ Step
 - Return ConnectTokenModel.
 
 ### GetMe_Coroutine 
-- `connectTool.access_token` is required.  
+- `connectTool.access_token` is required.
+- `GetMe_RequestNumber` is required, and used for app-side verification, cannot be empty string. 
 - Return MeInfo.
 
- 
+```java  
+String GetMe_RequestNumber = "App-side-RequestNumber";
+_connectTool.GetMe_Coroutine(GetMe_RequestNumber,new MeCallback() {
+	@Override
+	public void callbackMeInfo(MeInfo value) {
+		Log.v(TAG, "MeInfo callback : " + value.status);
+		Log.v(TAG, "MeInfo requestNumber : " + value.requestNumber);
+		Toast.makeText(getApplicationContext(), value.data.email, Toast.LENGTH_SHORT).show();
+	}
+}); 
+```
+
+
+
 ## Recharge function 
 
 ### Recharge flow
@@ -581,9 +600,10 @@ PaymentResponse example :
 - Retrieve the consumption information through `OrderNo` or `TransactionId`
 ```java
 try {
+	String queryConsumeSP_requestNumber = "App-side-RequestNumber";
 	String transactionId = "T2023121500000030";
 
-	_connectTool.Get_SPCoin_tx(transactionId,new GetSPCoinTxCallback() {
+	_connectTool.Get_SPCoin_tx(queryConsumeSP_requestNumber,transactionId,new GetSPCoinTxCallback() {
 		@Override
 		public void callback(SPCoinTxResponse value) {
 			Log.v(TAG, "SPCoinTxResponse callback : " + value.status);
