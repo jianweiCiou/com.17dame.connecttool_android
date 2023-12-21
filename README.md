@@ -1,6 +1,8 @@
 # 17dame Connect Tool for Android 
 17dame connect tool: ConnectTool provides registration, login, Authorize,get access token, refresh token and user information. 
-## Table of Contents 
+## Table of Contents  
+- [Prerequisites](#prerequisites)
+    - [Minimum requirements](#minimum-requirements)
 - [Installation](#installation) 
 - [Setting](#setting)
 - [Authorize Flow](#authorize-flow)
