@@ -31,8 +31,12 @@
 - [Model](#model) 
 
 ## Prerequisites
-### Minimum SDK
-Your application needs to support minimum SDK version 26. 
+### Minimum requirements  
+Your application needs to support :
+- Minimum SDK version 26
+- Android Gradle Plugin Version: 8.1.3
+- Gradle Version : 8.0
+
 
 ## Installation
 - Downliad libary:[connecttool-v1.3.1.aar](https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/Tutorial/connecttool-v1.3.1.aar)
@@ -98,14 +102,13 @@ if (appLinkData != null && appLinkData.isHierarchical()) {
 
 ## ConnectTool function
 - Create `ConnectTool` and `ConnectTool.ConnectBasic`, parameters must be filled in:
-- the new ConnectTool() constructor, change the parameters to 6, and remove the _connectTool.connectBasic construct. Please keep the relevant parameters properly.
+- the new ConnectTool() constructor, change the parameters to 6, Please keep the parameters properly and safely.
     - Context context,
     - _redirect_uri,
     - _RSAstr,
     - _X_Developer_Id,
     - _client_secret,
     - _Game_id
-
 ```csharp
 _connectTool = new ConnectTool(
        this,
@@ -146,11 +149,11 @@ Open the host page, perform registration, login and logout
 ```java
 // Register
 Register_pageButton.setOnClickListener(view -> {
-_connectTool.OpenRegisterURL();
+	_connectTool.OpenRegisterURL();
 });
 // Login
 Login_pageButton.setOnClickListener(view -> {
-_connectTool.OpenLoginURL();
+	_connectTool.OpenLoginURL();
 });
 // Logout
 LogoutButton.setOnClickListener(view -> {
