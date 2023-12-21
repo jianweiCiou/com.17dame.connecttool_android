@@ -14,6 +14,7 @@
     - [OpenAuthorizeURL](#openauthorizeurl)
     - [GetConnectToken_Coroutine](#getconnecttoken_coroutine)
     - [GetRefreshToken_Coroutine](#getrefreshtoken_coroutine)
+    - [GetMe_Coroutine](#getme_coroutine) 
 - [Recharge function](#recharge-function)
     - [Recharge flow](#recharge-flow)  
     - [Open Recharge page](#open-recharge-page)
@@ -284,11 +285,11 @@ Step
 
 ### GetMe_Coroutine 
 - `connectTool.access_token` is required.
-- `GetMe_RequestNumber` is required, and used for app-side verification, cannot be empty string. 
+- `GetMe_RequestNumber` is required UUID, and used for app-side verification, cannot be empty string. 
 - Return MeInfo.
 
 ```java  
-String GetMe_RequestNumber = "App-side-RequestNumber";
+String GetMe_RequestNumber = "73da5d8e-9fd6-11ee-8c90-0242ac120002"; // App-side-RequestNumber(UUID)
 _connectTool.GetMe_Coroutine(GetMe_RequestNumber,new MeCallback() {
 	@Override
 	public void callbackMeInfo(MeInfo value) {
@@ -298,7 +299,23 @@ _connectTool.GetMe_Coroutine(GetMe_RequestNumber,new MeCallback() {
 	}
 }); 
 ```
-
+#### MeInfo response.body : 
+- Will get requestNumber back.
+``` JSON
+{
+  "data": {
+    "email": "...user mail",
+    "nickName": null,
+    "avatarUrl": null,
+    "spCoin": 0,
+    "rebate": 0
+  },
+  "status": 1000,
+  "message": null,
+  "detailMessage": null,
+  "requestNumber": "73da5d8e-9fd6-11ee-8c90-0242ac120002"
+}
+```
 
 
 ## Recharge function 
@@ -598,9 +615,10 @@ PaymentResponse example :
 ### Query ConsumeSP By transactionId 
 - Obtain transaction data after consuming SPCoin.
 - Retrieve the consumption information through `OrderNo` or `TransactionId`
+- `queryConsumeSP_requestNumber` is required UUID, and used for app-side verification, cannot be empty string. 
 ```java
 try {
-	String queryConsumeSP_requestNumber = "App-side-RequestNumber";
+	String queryConsumeSP_requestNumber = "73da5d8e-9fd6-11ee-8c90-0242ac120002"; // App-side-RequestNumber(UUID)
 	String transactionId = "T2023121500000030";
 
 	_connectTool.Get_SPCoin_tx(queryConsumeSP_requestNumber,transactionId,new GetSPCoinTxCallback() {
