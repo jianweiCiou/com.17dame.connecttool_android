@@ -485,15 +485,15 @@ sequenceDiagram
 
     note over C: Use OrderNo or TransactionId to check ConsumeSP  
 ```
-1.Prepare the SPcoin value from  App and bring the consumption info to the ConsumeSP page. There is no need to check whether the user's SPCoin is affordable. 
-2.If the developer has filled in state, consume_state will be brought back from the ConsumeSP page after the consumption is completed. 
-3.If the developer has prepared NotifyUrl, the user's transaction info will be sent from the host server to the Game Server after the consumption is completed.
-4.If NotifyUrl and state are not filled in, only the results page will be displayed.
-5.If the user can afford the SPCoin value, then press the confirm button and return to App
-6.Call the CreateSPCoinOrder() to complete the consumption, and the SPCoin will be deducted after the host server verification.
-7.The App obtains CreateSPCoinResponse to confirm the consumption.
-8.If the user cannot afford the SPCoin value, the user can open the Recharge page.
-9.When consumption is completed, App can query tx by bringing OrderNo or TransactionId into [_connectTool.Get_SPCoin_tx](#query-consumesp-by-transactionid) function.
+1. Prepare the SPcoin value from  App and bring the consumption info to the ConsumeSP page. There is no need to check whether the user's SPCoin is affordable. 
+2. If the developer has filled in state, consume_state will be brought back from the ConsumeSP page after the consumption is completed. 
+3. If the developer has prepared NotifyUrl, the user's transaction info will be sent from the host server to the Game Server after the consumption is completed.
+4. If NotifyUrl and state are not filled in, only the results page will be displayed.
+5. If the user can afford the SPCoin value, then press the confirm button and return to App
+6. Call the CreateSPCoinOrder() to complete the consumption, and the SPCoin will be deducted after the host server verification.
+7. The App obtains CreateSPCoinResponse to confirm the consumption.
+8. If the user cannot afford the SPCoin value, the user can open the Recharge page.
+9. When consumption is completed, App can query tx by bringing OrderNo or TransactionId into [_connectTool.Get_SPCoin_tx](#query-consumesp-by-transactionid) function.
  
 
 ### Open ConsumeSP page  
