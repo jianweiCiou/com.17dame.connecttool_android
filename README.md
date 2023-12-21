@@ -98,25 +98,23 @@ if (appLinkData != null && appLinkData.isHierarchical()) {
 
 ## ConnectTool function
 - Create `ConnectTool` and `ConnectTool.ConnectBasic`, parameters must be filled in:
+- the new ConnectTool() constructor, change the parameters to 6, and remove the _connectTool.connectBasic construct. Please keep the relevant parameters properly.
+    - Context context,
+    - _redirect_uri,
+    - _RSAstr,
+    - _X_Developer_Id,
+    - _client_secret,
+    - _Game_id
+
 ```csharp
 _connectTool = new ConnectTool(
-  this,
-  state,
-  requestNumber:UUID.randomUUID().toString(),
-  redirect_uri,
-  RSAstr
-); 
-_connectTool.connectBasic = new ConnectBasic()
-{
-    client_id,
-    X_Developer_Id,
-    client_secret,
-    Game_id,
-    referralCode,
-};
+       this,
+       ".......://connectlink",
+       "-----BEGIN RSA PRIVATE KEY-----\n" + "MIIEowIBAAKCAQEAudt2mFGvE.......",
+       "ebe4ae.......", 
+       "AQAAAA.......",
+       "07d5c2......."); 
 ```
-- state : Please fill in what you want to verify,`state` can be query through redirect_uri.
-- requestNumber :Please use UUID.randomUUID().toString().
 
      
 ### SendRegisterData　
@@ -246,6 +244,9 @@ sequenceDiagram
 - Open host page to log in.
 - You will get `code` from redirect_uri's parameter after logs in.
 
+- state : Please fill in what you want to verify,`state` can be query through redirect_uri.
+- requestNumber :Please use UUID.randomUUID().toString().
+- 
 ```java  
 // deepLink
 Intent appLinkIntent = getIntent();
