@@ -149,15 +149,15 @@ _connectTool.CreateAccountInitData(_email,_password);
 
 ### OpenRegisterURL, OpenLoginURL　
 - Open the host page, perform registration and login.
-- Will log out from the host page first.
+- Will sign out first.
 ```java
 // Register
 Register_pageButton.setOnClickListener(view -> {
-	_connectTool.OpenLogoutURL("Register");
+	_connectTool.OpenRegisterURL();
 });
 // Login
 Login_pageButton.setOnClickListener(view -> {
-	_connectTool.OpenLogoutURL("Login");
+	_connectTool.OpenLoginURL();
 }); 
 ``` 
 ### App-side event response (Register, Login, Logout)　
