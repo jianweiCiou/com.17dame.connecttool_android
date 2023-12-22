@@ -179,7 +179,7 @@ if (appLinkData.getQueryParameterNames().contains("accountBackType")) {
 		* App-side add functions.
 		*/
 	}
-	String state = "Add-side-State";
+	String state = "App-side-State";
         _connectTool.AccountPageEvent(accountBackType);
 }
 ```
@@ -251,7 +251,7 @@ sequenceDiagram
 - You will get `code` and `state` from redirect_uri's parameter after log in. 
 Send OpenAuthorizeURL:
 ```java  
-String state = "Add-side-State";
+String state = "App-side-State";
 _connectTool.OpenAuthorizeURL(state);
 ```
 DeepLink will get "getQueryParameter("code")" back :
