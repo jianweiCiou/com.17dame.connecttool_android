@@ -6,9 +6,7 @@
 - [Installation](#installation) 
 - [Setting](#setting)
 - [Authorize Flow](#authorize-flow)
-- [ConnectTool function](#connecttool-function) 
-    - [SendRegisterData](#sendregisterdata)
-    - [SendLoginData](#sendlogindata)
+- [ConnectTool function](#connecttool-function)  
     - [OpenRegisterURL, OpenLoginURL ](#openregisterurl-openloginurl)
     - [App-side event response (Register, Login, Logout)　](#app-side-event-response-register-login-logout)
     - [OpenAuthorizeURL](#openauthorizeurl)
@@ -122,32 +120,7 @@ _connectTool = new ConnectTool(
        "ebe4ae.......", 
        "AQAAAA.......",
        "07d5c2......."); 
-```
-
-     
-### SendRegisterData　
-- Create ConnectTool.CreateAccountInitData object first.
-```csharp  
-_connectTool.CreateAccountInitData(_email,_password);
-```
-- `email`,`Password` are required.
-> [!IMPORTANT]  
-> - Password must have at least one `uppercase letter`/`lowercase letter`/`symbol`. (i.e., Zy-11111) 
-> - Password length must be 6 or more.
-- Send ConnectTool.SendRegisterData().
-- Return StatusCode check.
-  
-### SendLoginData　
-- Create ConnectTool.CreateAccountInitData object first; 
-```csharp  
-_connectTool.CreateAccountInitData(_email,_password);
-```
-- `email`,`Password` are required.
-
-  Must have at least one  `uppercase letter`/`lowercase letter`/`symbol`
-  
-- Send ConnectTool.SendLoginData().
-- Return StatusCode check.
+``` 
 
 ### OpenRegisterURL, OpenLoginURL　
 - Open the host page, perform registration and login.
