@@ -498,7 +498,7 @@ sequenceDiagram
     
     activate S
             alt Set NotifyUrl & state 
-                S->>C: App deeplink get consume_state
+                S->>C: App deeplink get consumespresult
                 hs-->>GS: After Consume complete, call NotifyUrl
 
              note over GS:   Game-side distribution product (optional)
@@ -529,7 +529,7 @@ sequenceDiagram
     note over C:   Game-side distribution product (optional)
 ```
 1. Prepare the SPcoin value from  App and bring the consumption info to the ConsumeSP page. There is no need to check whether the user's SPCoin is affordable. 
-2. If the developer has filled in state, consume_state will be brought back from the ConsumeSP page after the consumption is completed. 
+2. If the developer has filled in state, consumespresult will be brought back from the ConsumeSP page after the consumption is completed. 
 3. If the developer has prepared NotifyUrl, the user's transaction info will be sent from the host server to the Game Server after the consumption is completed.
 4. If NotifyUrl and state are not filled in, only the results page will be displayed.
 5. If the user can afford the SPCoin value, then press the confirm button and return to App
