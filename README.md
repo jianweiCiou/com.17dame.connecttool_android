@@ -12,6 +12,7 @@
     - [OpenRegisterURL, OpenLoginURL ](#openregisterurl-openloginurl)
     - [App-side event response (Register, Login, Logout)　](#app-side-event-response-register-login-logout)
     - [OpenAuthorizeURL](#openauthorizeurl)
+    - [Authorize subsequent events ](#)
     - [GetConnectToken_Coroutine](#getconnecttoken_coroutine)
     - [GetRefreshToken_Coroutine](#getrefreshtoken_coroutine)
     - [GetMe_Coroutine](#getme_coroutine) 
@@ -266,6 +267,30 @@ Step
 2. Open Login page.
 3. Retrieve code through onDeepLinkActivated.
 4. Execute GetConnectToken_Coroutine to obtain access_token.
+
+#### Authorize subsequent events 
+The App will automatically obtain Me information.
+```java
+// get Access token
+                if (appLinkData.getQueryParameterNames().contains("code") ) {
+                    _connectTool.code = appLinkData.getQueryParameter("code");
+
+                    _connectTool.GetConnectToken_Coroutine(new ConnectTokenCall() {
+                        @Override
+                        public void callbackConnectToken(ConnectToken value) throws NoSuchAlgorithmException {
+                            _connectCallbackText.setText("ConnectToken callback : " + value.access_token);
+
+                            UUID GetMe_RequestNumber = UUID.fromString("73da5d8e-9fd6-11ee-8c90-0242ac120002"); // App-side-RequestNumber(UUID)
+                            _connectTool.GetMe_Coroutine(GetMe_RequestNumber,new MeCallback() {
+                                @Override
+                                public void callbackMeInfo(MeInfo value) {
+                                    Log.v(TAG, "MeInfo callback : " + value.status);
+                                }
+                            });
+                        }
+                    });
+                }
+```
 
 ### GetConnectToken_Coroutine 
 - `connectTool.code` is required. 
