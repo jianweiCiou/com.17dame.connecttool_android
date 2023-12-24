@@ -13,33 +13,6 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="SDK Create" />
-
-        <LinearLayout
-            android:id="@+id/layout3"
-            android:layout_width="wrap_content"
-            android:layout_height="110px"
-            android:gravity="center_horizontal">
-
-            <Button
-                android:id="@+id/RegisterButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Register" />
-
-            <Button
-                android:id="@+id/LoginButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Login" />
-        </LinearLayout>
-
-
-        <TextView
             android:id="@+id/textView_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -57,17 +30,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Register Link" />
-
             <Button
                 android:id="@+id/Login_pageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Login Link" />
-            <Button
-                android:id="@+id/LogoutButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Logout Link" />
         </LinearLayout>
 
         <TextView
@@ -88,12 +55,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Authorize" />
-
-            <Button
-                android:id="@+id/postConnectTokenButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="ConnectToken" />
 
             <Button
                 android:id="@+id/postConnectRefreshTokenButton"
@@ -190,11 +151,6 @@
             android:layout_width="wrap_content"
             android:layout_height="110px"
             android:gravity="center_horizontal">
-            <Button
-                android:id="@+id/ConsumeSPButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Consume SP test" />
 
             <Button
                 android:id="@+id/OpenConsumeSPButton"
@@ -224,7 +180,7 @@
         <TextView
             android:id="@+id/ConnectCallbackText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="111dp"
 
             android:textColor="#FFFFFF"
             android:textColorHint="#FFFFFF"

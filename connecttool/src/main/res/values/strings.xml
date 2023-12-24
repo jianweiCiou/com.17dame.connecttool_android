@@ -1,6 +1,8 @@
 <resources>
+
     <string name="access_token">access_token</string>
     <string name="refresh_token">refresh_token</string>
+    <string name="me">me</string>
 
     <string name="purchase_purchaseOrderId">purchase_purchaseOrderId</string>
     <string name="purchase_spCoinItemPriceId">purchase_spCoinItemPriceId</string>
