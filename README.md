@@ -18,6 +18,7 @@
 - [Recharge function](#recharge-function)
     - [Recharge flow](#recharge-flow)  
     - [Open Recharge page](#open-recharge-page)
+    - [Recharge subsequent events]()
     - [GetPurchaseOrderList](#getpurchaseorderlist)
     - [GetPurchaseOrderOne](#getpurchaseorderone)
 - [ConsumeSP function](#consumesp-function)
@@ -380,6 +381,24 @@ _connectTool.OpenRechargeURL(currencyCode, notifyUrl, state);
 ```
 - `notifyUrl` & `state` : Please refer to [NotifyUrl & State](#notifyurl--state)
 - `currencyCode` : Please refer to [Currency Code](#currency-code)
+
+#### Recharge subsequent events 
+The App will automatically obtain Recharge information.
+```java
+// Complete purchase of SP Coin
+                if (appLinkData.getQueryParameterNames().contains("purchase_state")) {
+                    _connectTool.appLinkDataCallBack_CompletePurchase(appLinkData,new PurchaseOrderCallback() {
+                        @Override
+                        public PurchaseOrderOneResponse callback(PurchaseOrderOneResponse value) {
+                            Log.v(TAG, "appLinkData PurchaseOrderOneResponse callback : " + value);
+                            /*
+                             * App-side add functions.
+                             */
+                            return value;
+                        }
+                    });
+}
+```
 
 #### Currency Code
 | Code  | USD |TWD |CNY |JPY |KRW |VND |THB |MYR |SGD |  
