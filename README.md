@@ -505,13 +505,12 @@ sequenceDiagram
 
 
     alt Clinet’s SPCoin is affordable 
-        S->>C: Client’s purchase intention back to the App
-    
-        activate C
-            C-->>hs: Send CreateSPCoinOrder() request 
+        S->>S: Client’s check consume SP intention
+        activate S
+            S-->>hs: Send CreateSPCoinOrder() request 
             note over hs: Verify client consumption request 
-            hs-->>C: App get CreateSPCoinResponse
-        deactivate C
+            hs-->>S: HostPage get CreateSPCoinResponse
+        deactivate S
     else Insufficient SPCoin 
         S-->>S: Open Recharge page
     end
