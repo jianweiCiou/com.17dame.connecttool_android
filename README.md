@@ -1,26 +1,31 @@
 # 17dame Connect Tool for Android 
 17dame connect tool: ConnectTool provides registration, login, Authorize,get access token, refresh token and user information. 
-## Table of Contents 
+## Table of Contents  
+- [Prerequisites](#prerequisites)
+    - [Minimum requirements](#minimum-requirements)
 - [Installation](#installation) 
 - [Setting](#setting)
 - [Authorize Flow](#authorize-flow)
 - [ConnectTool function](#connecttool-function) 
     - [SendRegisterData](#sendregisterdata)
     - [SendLoginData](#sendlogindata)
-    - [OpenRegisterURL, OpenLoginURL ,OpenLogoutURL](#openregisterurl-openloginurl-openlogouturl)
+    - [OpenRegisterURL, OpenLoginURL ](#openregisterurl-openloginurl)
     - [App-side event response (Register, Login, Logout)　](#app-side-event-response-register-login-logout)
     - [OpenAuthorizeURL](#openauthorizeurl)
+    - [Authorize subsequent events ](#)
     - [GetConnectToken_Coroutine](#getconnecttoken_coroutine)
     - [GetRefreshToken_Coroutine](#getrefreshtoken_coroutine)
+    - [GetMe_Coroutine](#getme_coroutine) 
 - [Recharge function](#recharge-function)
     - [Recharge flow](#recharge-flow)  
     - [Open Recharge page](#open-recharge-page)
+    - [Recharge subsequent events](#recharge-subsequent-events)
     - [GetPurchaseOrderList](#getpurchaseorderlist)
     - [GetPurchaseOrderOne](#getpurchaseorderone)
 - [ConsumeSP function](#consumesp-function)
     - [ConsumeSP flow](#consumesp-flow)  
-    - [Open ConsumeSP page](#open-consumesp-page) 
-    - [Create SPCoin Order Api](#create-spcoin-order-api) 
+    - [Open ConsumeSP page](#open-consumesp-page)
+    - [ConsumeSP subsequent events ](#consumesp-subsequent-events)
     - [Query ConsumeSP By transactionId](#query-consumesp-by-transactionid)
 - [NotifyUrl & State](#notifyurl--state)
     - [Recharge NotifyUrl](#recharge-notifyurl)
@@ -31,8 +36,12 @@
 - [Model](#model) 
 
 ## Prerequisites
-### Minimum SDK
-Your application needs to support minimum SDK version 26. 
+### Minimum requirements  
+Your application needs to support :
+- Minimum SDK version 26
+- Android Gradle Plugin Version: 8.1.3
+- Gradle Version : 8.0
+
 
 ## Installation
 - Downliad libary:[connecttool-v1.3.1.aar](https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/Tutorial/connecttool-v1.3.1.aar)
@@ -98,25 +107,22 @@ if (appLinkData != null && appLinkData.isHierarchical()) {
 
 ## ConnectTool function
 - Create `ConnectTool` and `ConnectTool.ConnectBasic`, parameters must be filled in:
+- the new ConnectTool() constructor, change the parameters to 6, Please keep the parameters properly and safely.
+    - Context context,
+    - _redirect_uri,
+    - _RSAstr,
+    - _X_Developer_Id,
+    - _client_secret,
+    - _Game_id
 ```csharp
 _connectTool = new ConnectTool(
-  this,
-  state,
-  requestNumber:UUID.randomUUID().toString(),
-  redirect_uri,
-  RSAstr
-); 
-_connectTool.connectBasic = new ConnectBasic()
-{
-    client_id,
-    X_Developer_Id,
-    client_secret,
-    Game_id,
-    referralCode,
-};
+       this,
+       ".......://connectlink",
+       "-----BEGIN RSA PRIVATE KEY-----\n" + "MIIEowIBAAKCAQEAudt2mFGvE.......",
+       "ebe4ae.......", 
+       "AQAAAA.......",
+       "07d5c2......."); 
 ```
-- state : Please fill in what you want to verify,`state` can be query through redirect_uri.
-- requestNumber :Please use UUID.randomUUID().toString().
 
      
 ### SendRegisterData　
@@ -143,21 +149,18 @@ _connectTool.CreateAccountInitData(_email,_password);
 - Send ConnectTool.SendLoginData().
 - Return StatusCode check.
 
-### OpenRegisterURL, OpenLoginURL ,OpenLogoutURL　
-Open the host page, perform registration, login and logout
+### OpenRegisterURL, OpenLoginURL　
+- Open the host page, perform registration and login.
+- Will sign out first.
 ```java
 // Register
 Register_pageButton.setOnClickListener(view -> {
-_connectTool.OpenRegisterURL();
+	_connectTool.OpenRegisterURL();
 });
 // Login
 Login_pageButton.setOnClickListener(view -> {
-_connectTool.OpenLoginURL();
-});
-// Logout
-LogoutButton.setOnClickListener(view -> {
-	_connectTool.OpenLogoutURL();
-});
+	_connectTool.OpenLoginURL();
+}); 
 ``` 
 ### App-side event response (Register, Login, Logout)　
 ```java
@@ -173,14 +176,12 @@ if (appLinkData.getQueryParameterNames().contains("accountBackType")) {
 		* App-side add functions.
 		*/ 
 	}
-	if(accountBackType.equals("Logout")){
-		/*
-		* App-side add functions.
-		*/
-	}
+	String state = "App-side-State";
         _connectTool.AccountPageEvent(accountBackType);
 }
 ```
+`state` : Please fill in what you want to verify,`state` can be query through redirect_uri.
+
 #### Register event response
 ```mermaid
 sequenceDiagram
@@ -241,11 +242,16 @@ sequenceDiagram
 ```
   
  
-### OpenAuthorizeURL　 
-- `connectBasic.client_id` is required. 
+### OpenAuthorizeURL　  
+- `state` : Please fill in what you want to verify,`state` can be query through redirect_uri. 
 - Open host page to log in.
-- You will get `code` from redirect_uri's parameter after logs in.
-
+- You will get `code` and `state` from redirect_uri's parameter after log in. 
+Send OpenAuthorizeURL:
+```java  
+String state = "App-side-State";
+_connectTool.OpenAuthorizeURL(state);
+```
+DeepLink will get "getQueryParameter("code")" back :
 ```java  
 // deepLink
 Intent appLinkIntent = getIntent();
@@ -262,6 +268,30 @@ Step
 3. Retrieve code through onDeepLinkActivated.
 4. Execute GetConnectToken_Coroutine to obtain access_token.
 
+#### Authorize subsequent events 
+The App will automatically obtain Me information.
+```java
+// get Access token
+                if (appLinkData.getQueryParameterNames().contains("code") ) {
+                    _connectTool.code = appLinkData.getQueryParameter("code");
+
+                    _connectTool.GetConnectToken_Coroutine(new ConnectTokenCall() {
+                        @Override
+                        public void callbackConnectToken(ConnectToken value) throws NoSuchAlgorithmException {
+                            _connectCallbackText.setText("ConnectToken callback : " + value.access_token);
+
+                            UUID GetMe_RequestNumber = UUID.fromString("73da5d8e-9fd6-11ee-8c90-0242ac120002"); // App-side-RequestNumber(UUID)
+                            _connectTool.GetMe_Coroutine(GetMe_RequestNumber,new MeCallback() {
+                                @Override
+                                public void callbackMeInfo(MeInfo value) {
+                                    Log.v(TAG, "MeInfo callback : " + value.status);
+                                }
+                            });
+                        }
+                    });
+                }
+```
+
 ### GetConnectToken_Coroutine 
 - `connectTool.code` is required. 
 - `connectTool.code` can be obtained through ConnectTool set or onDeepLinkActivated function.
@@ -272,10 +302,40 @@ Step
 - Return ConnectTokenModel.
 
 ### GetMe_Coroutine 
-- `connectTool.access_token` is required.  
+- `connectTool.access_token` is required.
+- `GetMe_RequestNumber` is required UUID, and used for app-side verification, cannot be empty string. 
 - Return MeInfo.
 
- 
+```java
+UUID GetMe_RequestNumber = UUID.fromString("73da5d8e-9fd6-11ee-8c90-0242ac120002"); // App-side-RequestNumber(UUID)                           
+_connectTool.GetMe_Coroutine(GetMe_RequestNumber,new MeCallback() {
+	@Override
+	public void callbackMeInfo(MeInfo value) {
+		Log.v(TAG, "MeInfo callback : " + value.status);
+		Log.v(TAG, "MeInfo requestNumber : " + value.requestNumber);
+		Toast.makeText(getApplicationContext(), value.data.email, Toast.LENGTH_SHORT).show();
+	}
+}); 
+```
+#### MeInfo response.body : 
+- Will get requestNumber back.
+``` JSON
+{
+  "data": {
+    "email": "...user mail",
+    "nickName": null,
+    "avatarUrl": null,
+    "spCoin": 0,
+    "rebate": 0
+  },
+  "status": 1000,
+  "message": null,
+  "detailMessage": null,
+  "requestNumber": "73da5d8e-9fd6-11ee-8c90-0242ac120002"
+}
+```
+
+
 ## Recharge function 
 
 ### Recharge flow
@@ -347,6 +407,24 @@ _connectTool.OpenRechargeURL(currencyCode, notifyUrl, state);
 ```
 - `notifyUrl` & `state` : Please refer to [NotifyUrl & State](#notifyurl--state)
 - `currencyCode` : Please refer to [Currency Code](#currency-code)
+
+#### Recharge subsequent events 
+The App will automatically obtain Recharge information.
+```java
+// Complete purchase of SP Coin
+                if (appLinkData.getQueryParameterNames().contains("purchase_state")) {
+                    _connectTool.appLinkDataCallBack_CompletePurchase(appLinkData,new PurchaseOrderCallback() {
+                        @Override
+                        public PurchaseOrderOneResponse callback(PurchaseOrderOneResponse value) {
+                            Log.v(TAG, "appLinkData PurchaseOrderOneResponse callback : " + value);
+                            /*
+                             * App-side add functions.
+                             */
+                            return value;
+                        }
+                    });
+}
+```
 
 #### Currency Code
 | Code  | USD |TWD |CNY |JPY |KRW |VND |THB |MYR |SGD |  
@@ -459,8 +537,11 @@ sequenceDiagram
     
     activate S
             alt Set NotifyUrl & state 
-                S->>C: App deeplink get consume_state
+                S->>C: App deeplink get consumespresult
                 hs-->>GS: After Consume complete, call NotifyUrl
+
+             note over GS:   Game-side distribution product (optional)
+
             else No NotifyUrl and state
                 C->>S: Open results page
             end
@@ -469,31 +550,31 @@ sequenceDiagram
 
 
     alt Clinet’s SPCoin is affordable 
-        S->>C: Client’s purchase intention back to the App
-    
-        activate C
-            C-->>hs: Send CreateSPCoinOrder() request 
+        S->>S: Client’s check consume SP intention
+        activate S
+            S-->>hs: Send CreateSPCoinOrder() request 
             note over hs: Verify client consumption request 
-            hs-->>C: App get CreateSPCoinResponse
-        deactivate C
+            hs-->>S: HostPage get CreateSPCoinResponse
+        deactivate S
     else Insufficient SPCoin 
         S-->>S: Open Recharge page
     end
  
  
-    S->>C: Return to App 
+    S->>C: Consume_transactionId return to App 
 
     note over C: Use OrderNo or TransactionId to check ConsumeSP  
+    note over C:   Game-side distribution product (optional)
 ```
-1.Prepare the SPcoin value from  App and bring the consumption info to the ConsumeSP page. There is no need to check whether the user's SPCoin is affordable. 
-2.If the developer has filled in state, consume_state will be brought back from the ConsumeSP page after the consumption is completed. 
-3.If the developer has prepared NotifyUrl, the user's transaction info will be sent from the host server to the Game Server after the consumption is completed.
-4.If NotifyUrl and state are not filled in, only the results page will be displayed.
-5.If the user can afford the SPCoin value, then press the confirm button and return to App
-6.Call the CreateSPCoinOrder() to complete the consumption, and the SPCoin will be deducted after the host server verification.
-7.The App obtains CreateSPCoinResponse to confirm the consumption.
-8.If the user cannot afford the SPCoin value, the user can open the Recharge page.
-9.When consumption is completed, App can query tx by bringing OrderNo or TransactionId into [_connectTool.Get_SPCoin_tx](#query-consumesp-by-transactionid) function.
+1. Prepare the SPcoin value from  App and bring the consumption info to the ConsumeSP page. There is no need to check whether the user's SPCoin is affordable. 
+2. If the developer has filled in state, consumespresult will be brought back from the ConsumeSP page after the consumption is completed. 
+3. If the developer has prepared NotifyUrl, the user's transaction info will be sent from the host server to the Game Server after the consumption is completed.
+4. If NotifyUrl and state are not filled in, only the results page will be displayed.
+5. Client’s check consume SP intention.
+6. Call the CreateSPCoinOrder() to complete the consumption, and the SPCoin will be deducted after the host server verification.
+7. The Host page obtains CreateSPCoinResponse to confirm the consumption.
+8. If the user cannot afford the SPCoin value, the user can open the Recharge page.
+9. When consumption is completed, App can query tx by bringing OrderNo or TransactionId into [_connectTool.Get_SPCoin_tx](#query-consumesp-by-transactionid) function.
  
 
 ### Open ConsumeSP page  
@@ -517,63 +598,32 @@ sequenceDiagram
     _connectTool.OpenConsumeSPURL(consume_spCoin, consume_rebate, orderNo, GameName, productName);
 ```
 
+ConsumeSP Response : [body](#consumesp-response-body)
 
-### Create SPCoin Order Api
-- Generate an SPCoin consumption through SDK.
-- `spCoin`,`rebate`,`orderNo` are required.
-- `orderNo` must be unique.
--  Game developers can customize the rules of `orderNo`
-- `connectTool.access_token` is required.  
+#### ConsumeSP subsequent events 
+The App will automatically obtain ConsumeSP information.
 ```java
-String notifyUrl = "";// NotifyUrl is a URL customized by the game developer
-String state = "Custom state";// Custom state ,
-
-// Step1. Set notifyUrl and state,
-_connectTool.set_purchase_notifyData(notifyUrl, state);
-
-int spCoin = 50;
-int rebate = 3;
-String orderNo = UUID.randomUUID().toString();
-_connectTool.CreateSPCoinOrder(new CreatePaymentCallback() {
-	@Override
-	public void callback(CreateSPCoinResponse value) {
-		Log.v(TAG, "CreateSPCoinResponse orderStatus : " + value.data.orderStatus);
-	}
-}, spCoin, rebate, orderNo);
-```
-
-PaymentResponse example :
-```json
-{
-  "data": {
-    "transactionId": "T2023121700000042",
-    "orderNo": "d8381a5b-2bb9-4f83-944a-d48cdde1fbdb",
-    "spCoin": 50,
-    "rebate": 3,
-    "orderStatus": "Completed",
-    "state": "Custom state",
-    "notifyUrl": "",
-    "sign": "hsGHMFiG5JXyKS5cx+zwZSJ3y8Zd0oYe3Z6hhD7HDAXRXLhsO/DXjPyzd4XnMUcv8h7kpmFLfFtIZ8PyMlw7lSXjK9vwVp1gArOUH9uF7z3m0cfgYl+4V9/BjdgQOKIvthoINPLf716EXykC6WPdjvROon+/LtA7FhCwTgttSzRjLGOl3n1KYHVXaj9MSqMRrNBc6NFivWJksA30zkFbAMAhhKS3vdMf35A94wYnFKqNbolgv5w6VczAL8hC8zqHAzsw3kzUHqB/fPo/dtIS+NNu5XZ8hUXIkDDJh4DJpvG9gJPxyncZo+NAyiWjMcpOMPOB0qhHfXzz2vfY08f/Fw=="
-  },
-  "status": 0,
-  "message": null,
-  "detailMessage": null,
-  "requestNumber": "898c153e-69a1-43dd-af19-c02b075e68ab"
+// Complete consumption of SP Coin
+if (appLinkData.getQueryParameterNames().contains("consume_transactionId")) {
+	_connectTool.appLinkDataCallBack_CompleteConsumeSP(appLinkData,new GetSPCoinTxCallback(){
+		@Override
+		public void callback(CreateSPCoinResponse value) {
+			Log.v(TAG, "appLinkData SPCoinTxResponse callback : " + value.data.orderStatus);
+		}
+	});
 }
 ```
-- transactionId : Consumption SP Coin record ID.
-- orderStatus(Completed) : Complete SP coin deduction.
-- status(0) : Complete SP coin deduction.
-
 
 ### Query ConsumeSP By transactionId 
 - Obtain transaction data after consuming SPCoin.
 - Retrieve the consumption information through `OrderNo` or `TransactionId`
+- `queryConsumeSP_requestNumber` is required UUID, and used for app-side verification, cannot be empty string. 
 ```java
 try {
+	UUID queryConsumeSP_requestNumber = UUID.fromString( "73da5d8e-9fd6-11ee-8c90-0242ac120002"); // App-side-RequestNumber(UUID)
 	String transactionId = "T2023121500000030";
 
-	_connectTool.Get_SPCoin_tx(transactionId,new GetSPCoinTxCallback() {
+	_connectTool.Get_SPCoin_tx(queryConsumeSP_requestNumber,transactionId,new GetSPCoinTxCallback() {
 		@Override
 		public void callback(SPCoinTxResponse value) {
 			Log.v(TAG, "SPCoinTxResponse callback : " + value.status);
@@ -584,7 +634,7 @@ try {
 }
 ```
 	
-Response body:
+#### ConsumeSP Response body:
 ``` JSON
 {
   "data": {
@@ -603,6 +653,10 @@ Response body:
   "requestNumber": "ebe4ae28-dda1-499d-bdbc-1066ce080a6f"
 }
 ```
+- transactionId : Consumption SP Coin record ID.
+- orderStatus(Completed) : Complete SP coin deduction.
+- status(0) : Complete SP coin deduction.
+
  
 
 #### OrderStatuses
