@@ -22,7 +22,7 @@
     - [GetPurchaseOrderOne](#getpurchaseorderone)
 - [ConsumeSP function](#consumesp-function)
     - [ConsumeSP flow](#consumesp-flow)  
-    - [Open ConsumeSP page](#open-consumesp-page) 
+    - [Open ConsumeSP page](#open-consumesp-page)  
     - [Create SPCoin Order Api](#create-spcoin-order-api) 
     - [Query ConsumeSP By transactionId](#query-consumesp-by-transactionid)
 - [NotifyUrl & State](#notifyurl--state)
@@ -560,53 +560,9 @@ sequenceDiagram
     _connectTool.OpenConsumeSPURL(consume_spCoin, consume_rebate, orderNo, GameName, productName);
 ```
 
-
-### Create SPCoin Order Api
-- Generate an SPCoin consumption through SDK.
-- `spCoin`,`rebate`,`orderNo` are required.
-- `orderNo` must be unique.
--  Game developers can customize the rules of `orderNo`
-- `connectTool.access_token` is required.  
-```java
-String notifyUrl = "";// NotifyUrl is a URL customized by the game developer
-String state = "Custom state";// Custom state ,
-
-// Step1. Set notifyUrl and state,
-_connectTool.set_purchase_notifyData(notifyUrl, state);
-
-int spCoin = 50;
-int rebate = 3;
-String orderNo = UUID.randomUUID().toString();
-_connectTool.CreateSPCoinOrder(new CreatePaymentCallback() {
-	@Override
-	public void callback(CreateSPCoinResponse value) {
-		Log.v(TAG, "CreateSPCoinResponse orderStatus : " + value.data.orderStatus);
-	}
-}, spCoin, rebate, orderNo);
-```
-
-PaymentResponse example :
-```json
-{
-  "data": {
-    "transactionId": "T2023121700000042",
-    "orderNo": "d8381a5b-2bb9-4f83-944a-d48cdde1fbdb",
-    "spCoin": 50,
-    "rebate": 3,
-    "orderStatus": "Completed",
-    "state": "Custom state",
-    "notifyUrl": "",
-    "sign": "hsGHMFiG5JXyKS5cx+zwZSJ3y8Zd0oYe3Z6hhD7HDAXRXLhsO/DXjPyzd4XnMUcv8h7kpmFLfFtIZ8PyMlw7lSXjK9vwVp1gArOUH9uF7z3m0cfgYl+4V9/BjdgQOKIvthoINPLf716EXykC6WPdjvROon+/LtA7FhCwTgttSzRjLGOl3n1KYHVXaj9MSqMRrNBc6NFivWJksA30zkFbAMAhhKS3vdMf35A94wYnFKqNbolgv5w6VczAL8hC8zqHAzsw3kzUHqB/fPo/dtIS+NNu5XZ8hUXIkDDJh4DJpvG9gJPxyncZo+NAyiWjMcpOMPOB0qhHfXzz2vfY08f/Fw=="
-  },
-  "status": 0,
-  "message": null,
-  "detailMessage": null,
-  "requestNumber": "898c153e-69a1-43dd-af19-c02b075e68ab"
-}
-```
-- transactionId : Consumption SP Coin record ID.
-- orderStatus(Completed) : Complete SP coin deduction.
-- status(0) : Complete SP coin deduction.
+ConsumeSP Response   : #### ConsumeSP Response body: 
+ 
+  
 
 
 ### Query ConsumeSP By transactionId 
@@ -629,7 +585,7 @@ try {
 }
 ```
 	
-Response body:
+#### ConsumeSP Response body:
 ``` JSON
 {
   "data": {
@@ -648,6 +604,10 @@ Response body:
   "requestNumber": "ebe4ae28-dda1-499d-bdbc-1066ce080a6f"
 }
 ```
+- transactionId : Consumption SP Coin record ID.
+- orderStatus(Completed) : Complete SP coin deduction.
+- status(0) : Complete SP coin deduction.
+
  
 
 #### OrderStatuses
