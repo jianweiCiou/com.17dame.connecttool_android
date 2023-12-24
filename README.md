@@ -173,11 +173,6 @@ if (appLinkData.getQueryParameterNames().contains("accountBackType")) {
 		* App-side add functions.
 		*/ 
 	}
-	if(accountBackType.equals("Logout")){
-		/*
-		* App-side add functions.
-		*/
-	}
 	String state = "App-side-State";
         _connectTool.AccountPageEvent(accountBackType);
 }
@@ -284,8 +279,8 @@ Step
 - `GetMe_RequestNumber` is required UUID, and used for app-side verification, cannot be empty string. 
 - Return MeInfo.
 
-```java  
-String GetMe_RequestNumber = "73da5d8e-9fd6-11ee-8c90-0242ac120002"; // App-side-RequestNumber(UUID)
+```java
+UUID GetMe_RequestNumber = UUID.fromString("73da5d8e-9fd6-11ee-8c90-0242ac120002"); // App-side-RequestNumber(UUID)                           
 _connectTool.GetMe_Coroutine(GetMe_RequestNumber,new MeCallback() {
 	@Override
 	public void callbackMeInfo(MeInfo value) {
@@ -567,7 +562,7 @@ ConsumeSP Response : [body](#consumesp-response-body)
 - `queryConsumeSP_requestNumber` is required UUID, and used for app-side verification, cannot be empty string. 
 ```java
 try {
-	String queryConsumeSP_requestNumber = "73da5d8e-9fd6-11ee-8c90-0242ac120002"; // App-side-RequestNumber(UUID)
+	UUID queryConsumeSP_requestNumber = UUID.fromString( "73da5d8e-9fd6-11ee-8c90-0242ac120002"); // App-side-RequestNumber(UUID)
 	String transactionId = "T2023121500000030";
 
 	_connectTool.Get_SPCoin_tx(queryConsumeSP_requestNumber,transactionId,new GetSPCoinTxCallback() {
