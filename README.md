@@ -24,7 +24,7 @@
 - [ConsumeSP function](#consumesp-function)
     - [ConsumeSP flow](#consumesp-flow)  
     - [Open ConsumeSP page](#open-consumesp-page)
-    - [ConsumeSP subsequent events ]()
+    - [ConsumeSP subsequent events ](#consumesp-subsequent-events)
     - [Query ConsumeSP By transactionId](#query-consumesp-by-transactionid)
 - [NotifyUrl & State](#notifyurl--state)
     - [Recharge NotifyUrl](#recharge-notifyurl)
