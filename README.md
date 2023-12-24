@@ -22,8 +22,7 @@
     - [GetPurchaseOrderOne](#getpurchaseorderone)
 - [ConsumeSP function](#consumesp-function)
     - [ConsumeSP flow](#consumesp-flow)  
-    - [Open ConsumeSP page](#open-consumesp-page)  
-    - [Create SPCoin Order Api](#create-spcoin-order-api) 
+    - [Open ConsumeSP page](#open-consumesp-page)   
     - [Query ConsumeSP By transactionId](#query-consumesp-by-transactionid)
 - [NotifyUrl & State](#notifyurl--state)
     - [Recharge NotifyUrl](#recharge-notifyurl)
@@ -560,10 +559,7 @@ sequenceDiagram
     _connectTool.OpenConsumeSPURL(consume_spCoin, consume_rebate, orderNo, GameName, productName);
 ```
 
-ConsumeSP Response   : #### ConsumeSP Response body: 
- 
-  
-
+ConsumeSP Response : [body](#consumesp-response-body)
 
 ### Query ConsumeSP By transactionId 
 - Obtain transaction data after consuming SPCoin.
