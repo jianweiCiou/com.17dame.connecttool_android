@@ -516,7 +516,7 @@ sequenceDiagram
     end
  
  
-    S->>C: Return to App 
+    S->>C: Consume_transactionId return to App 
 
     note over C: Use OrderNo or TransactionId to check ConsumeSP  
     note over C:   Game-side distribution product (optional)
