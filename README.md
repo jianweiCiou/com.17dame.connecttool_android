@@ -18,12 +18,13 @@
 - [Recharge function](#recharge-function)
     - [Recharge flow](#recharge-flow)  
     - [Open Recharge page](#open-recharge-page)
-    - [Recharge subsequent events]()
+    - [Recharge subsequent events](#recharge-subsequent-events)
     - [GetPurchaseOrderList](#getpurchaseorderlist)
     - [GetPurchaseOrderOne](#getpurchaseorderone)
 - [ConsumeSP function](#consumesp-function)
     - [ConsumeSP flow](#consumesp-flow)  
-    - [Open ConsumeSP page](#open-consumesp-page)   
+    - [Open ConsumeSP page](#open-consumesp-page)
+    - [ConsumeSP subsequent events ]()
     - [Query ConsumeSP By transactionId](#query-consumesp-by-transactionid)
 - [NotifyUrl & State](#notifyurl--state)
     - [Recharge NotifyUrl](#recharge-notifyurl)
@@ -573,6 +574,20 @@ sequenceDiagram
 ```
 
 ConsumeSP Response : [body](#consumesp-response-body)
+
+#### ConsumeSP subsequent events 
+The App will automatically obtain ConsumeSP information.
+```java
+// Complete consumption of SP Coin
+if (appLinkData.getQueryParameterNames().contains("consume_transactionId")) {
+	_connectTool.appLinkDataCallBack_CompleteConsumeSP(appLinkData,new GetSPCoinTxCallback(){
+		@Override
+		public void callback(CreateSPCoinResponse value) {
+			Log.v(TAG, "appLinkData SPCoinTxResponse callback : " + value.data.orderStatus);
+		}
+	});
+}
+```
 
 ### Query ConsumeSP By transactionId 
 - Obtain transaction data after consuming SPCoin.
