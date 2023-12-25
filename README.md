@@ -24,6 +24,7 @@
     - [ConsumeSP flow](#consumesp-flow)  
     - [Open ConsumeSP page](#open-consumesp-page)
     - [ConsumeSP subsequent events ](#consumesp-subsequent-events)
+    	-[AppLinkData ConsumeSP Response]() 
     - [Query ConsumeSP By transactionId](#query-consumesp-by-transactionid)
 - [NotifyUrl & State](#notifyurl--state)
     - [Recharge NotifyUrl](#recharge-notifyurl)
@@ -398,6 +399,7 @@ The App will automatically obtain Recharge information.
                     });
 }
 ```
+#### AppLinkData Recharge Response:
 
 #### Currency Code
 | Code  | USD |TWD |CNY |JPY |KRW |VND |THB |MYR |SGD |  
@@ -584,6 +586,29 @@ if (appLinkData.getQueryParameterNames().contains("consume_transactionId")) {
 			Log.v(TAG, "appLinkData SPCoinTxResponse callback : " + value.data.orderStatus);
 		}
 	});
+}
+```
+
+#### AppLinkData ConsumeSP Response:
+- After the user's ConsumeSP is completed, return to the App to obtain the response of the user's ConsumeSP Response. 
+- If the orderNo(customized on the game side) is correct and the orderStatus is Completed, the product can be sent.
+- Response body:
+``` JSON
+{
+  "data": {
+    "transactionId": "T2023122500000188",
+    "orderNo": "13f2ed19-3d18-419f-9148-b171a03665a9",
+    "spCoin": 50,
+    "rebate": 0,
+    "orderStatus": "Completed",
+    "state": "Custom state",
+    "notifyUrl": null,
+    "sign": null
+  },
+  "status": 1000,
+  "message": null,
+  "detailMessage": null,
+  "requestNumber": "73da5d8e-9fd6-11ee-8c90-0242ac120002"
 }
 ```
 
