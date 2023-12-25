@@ -583,6 +583,9 @@ if (appLinkData.getQueryParameterNames().contains("consume_transactionId")) {
 	_connectTool.appLinkDataCallBack_CompleteConsumeSP(appLinkData,new GetSPCoinTxCallback(){
 		@Override
 		public void callback(CreateSPCoinResponse value) {
+			/*
+			* App-side add functions.
+			*/
 			Log.v(TAG, "appLinkData SPCoinTxResponse callback : " + value.data.orderStatus);
 		}
 	});
