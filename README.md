@@ -706,6 +706,7 @@ try {
 
 #### Create "Sign" to verify: 
 privateKey : Use RSAstr as privateKey.
+data: JSON string.
 ```JavaScript
  var rsa = RSA.Create();
   rsa.ImportFromPem(privateKey);
