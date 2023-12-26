@@ -721,7 +721,7 @@ privateKey : Use RSAstr as privateKey.
   "TransactionId": "T2023121400000021",
   "SPCoin": 10,
   "Rebate": 10,
-  "orderStatus": "Completed",
+  "OrderStatus": "Completed",
   "State": "M13 Order",
   "NotifyUrl": "https://localhost:7109/ACPayNotify/TradeNotify",
   "Sign": "gMq6sjIVFNZfv+NU/V477x8apy1flFiReyuEfR6gUT0FCWjEDRnmTG1hYwJW+vyYOhtxTNC8T+P2IMz/WNCzH5rIN6wlJ+uvh0/15V9ZujFSUeCzVQbKaJ+MTK5KUXErX2sv7JQvnu0C+k0b43rzgjgRr3XyiHcZnzv3/r683vO0HdBkIX18LHO9uPEJTk3Bbwd5+twc1G6TXToEEf/Vkb6hOd7FpGXp61ljHkIi4HeLPS1FAHdOaJHcFkpTGIF4Ilrbb/IiQSlAGP4R6VclT50hpEXIWtN89ztR8+VnHfTmK27oPyKwDoO1dXZ8EmwB8zxG/ilNIERN+bmP2lcDnw=="
@@ -734,7 +734,7 @@ privateKey : Use RSAstr as privateKey.
   "TransactionId": "T2023121400000021",
   "SPCoin": 10,
   "Rebate": 10,
-  "orderStatus": "Completed",
+  "OrderStatus": "Completed",
   "State": "M13 Order",
   "NotifyUrl": "https://localhost:7109/ACPayNotify/TradeNotify"
 }
