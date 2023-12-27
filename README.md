@@ -709,7 +709,7 @@ try {
 } 
 ```
 
-#### Create "Sign" to verify: 
+#### Create "Sign" to verify (C#): 
 privateKey : Use RSAstr as privateKey.
 data: JSON string.
 C# sample:
@@ -721,6 +721,38 @@ C# sample:
   var signature = rsa.SignData(bytes, 0, bytes.Length, HashAlgorithmName.SHA256,RSASignaturePadding.Pkcs1);
   var xSignature = Convert.ToBase64String(signature);
 ```
+
+#### Create "Sign" to verify (PHP): 
+key.pem : Use RSAstr as privateKey.
+jsonData: response.body.
+PHP sample:
+```php
+<?php
+// Get Notify response.body
+$jsonData = file_get_contents('php://input');
+
+// Parse ConsumeSP JSON
+$data = json_decode($jsonData, true);
+if ($data != null) {
+
+  // Create sign data
+  $dataString = "{\"transactionId\":\"" . $data['transactionId'] . "\",\"orderNo\":\"" . $data['orderNo'] . "\",\"spCoin\":" . $data['spCoin'] . ",\"rebate\":" . $data['rebate'] . ",\"orderStatus\":\"" . $data['orderStatus'] . "\",\"state\":\"" . $data['state'] . "\",\"notifyUrl\":\"" . $data['notifyUrl'] . "\"}";
+  $signatureFinal =  $data['sign'];
+
+  // Get RSAstr 
+  $privateKeyId = openssl_pkey_get_private(file_get_contents('./key.pem'));
+  openssl_sign($dataString, $signature, $privateKeyId, 'RSA-SHA256');
+  // echo "signature: \n" . base64_encode($signature) . "\n";
+
+  if ($signatureFinal == base64_encode($signature)) {
+    echo 'Verification successful';
+  } else {
+    echo 'Verification failed';
+  }
+}
+
+```
+
 ### ConsumeSP NotifyUrl
 #### ConsumeSP NotifyUrl response.body : 
 ``` JSON
