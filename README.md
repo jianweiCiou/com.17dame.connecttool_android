@@ -712,8 +712,9 @@ try {
 #### Create "Sign" to verify: 
 privateKey : Use RSAstr as privateKey.
 data: JSON string.
-```JavaScript
- var rsa = RSA.Create();
+C# sample:
+```csharp
+  var rsa = RSA.Create();
   rsa.ImportFromPem(privateKey);
   var bytes = Encoding.UTF8.GetBytes(data);
   // sign
