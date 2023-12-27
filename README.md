@@ -720,6 +720,7 @@ data: JSON string.
 ``` JSON
 {
   "TransactionId": "T2023121400000021",
+  "OrderNo": "20ac94aa-0eba-485c-8a5c-2c2eed1fac86",
   "SPCoin": 10,
   "Rebate": 10,
   "OrderStatus": "Completed",
@@ -733,6 +734,7 @@ data: JSON string.
 ``` JSON
 {
   "TransactionId": "T2023121400000021",
+  "OrderNo": "20ac94aa-0eba-485c-8a5c-2c2eed1fac86",
   "SPCoin": 10,
   "Rebate": 10,
   "OrderStatus": "Completed",
