@@ -29,6 +29,9 @@
 - [NotifyUrl & State](#notifyurl--state)
     - [Recharge NotifyUrl](#recharge-notifyurl)
     - [ConsumeSP NotifyUrl](#consumesp-notifyurl)
+- [Notify Verify](#notifyurl--state)
+    - [C# verify "Sign" sample](#recharge-notifyurl)
+    - [PHP verify "Sign" sample](#recharge-notifyurl)  
 - [Recommended testing process](#recommended-testing-process) 
     - [Generate new account](#generate-new-account)
     - [Switch account](#switch-account)
@@ -736,13 +739,11 @@ try {
 }
 ```
 - Create "Sign" to verify : Please refer to [Create sign to verify](#create-sign-to-verify)
-
-- 
-### Notify verify: 
-#### C# verify "Sign": 
-privateKey : Use RSAstr as privateKey.
-data: JSON string.
-C# sample:
+### Notify Verify 
+#### C# verify "Sign" sample: 
+- privateKey : Use RSAstr as privateKey.
+- data: JSON string.
+- C# sample:
 ```csharp
   var rsa = RSA.Create();
   rsa.ImportFromPem(privateKey);
@@ -751,11 +752,10 @@ C# sample:
   var signature = rsa.SignData(bytes, 0, bytes.Length, HashAlgorithmName.SHA256,RSASignaturePadding.Pkcs1);
   var xSignature = Convert.ToBase64String(signature);
 ```
-
-#### PHP verify "Sign": 
-key.pem : Use RSAstr as privateKey.
-jsonData: response.body.
-PHP sample:
+#### PHP verify "Sign" sample: 
+- key.pem : Use RSAstr as privateKey.
+- jsonData: response.body.
+- PHP sample:
 ```php
 <?php
 // Get Notify response.body
@@ -780,7 +780,6 @@ if ($data != null) {
     echo 'Verification failed';
   }
 }
-
 ```
 
 
