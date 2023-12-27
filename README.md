@@ -677,35 +677,35 @@ try {
 
 ### Recharge NotifyUrl
 #### Recharge NotifyUrl response.body : 
-``` JSON
+``` JSON 
 {
-  "PayMethod": 3, 
-  "TradeNo": "PAC2023121400000245",
-  "SPCoin": 1160,
-  "Rebate": 40,
-  "State": "M1 State_GooglePay",
-  "NotifyUrl": "https://localhost:7109/ACPayNotify/TradeNotify",
-  "Sign": "KxWFrnWPGquIAC/Pt1WPvX5operr5uHaPWG2YP8X28e6nLalfLCTZlq+liXijWrcJo1Ha9JzMC+9VbcZeG3pcin63xoBkKfEtdV9QbnT6pnxXH+pS8pEWNmQIQKKkDrxjkMZ3OjcY/CC9TW+mDURCYj8vu8EHB9zDJ1sGOP7y4o2aNRa+ZK/SxC9eZKV5l6P7Y/iv88DH7wiTbQ5qVw5FhwJLuqfi3gCOn4aVsmjc270jU9mP6TgdTUo5y2FHtYXAbsQP/07h2gJeTwQf/nO6gHVs3Ur8/t3hHtIwqCGBNQl6/TYwf6rSXRdMoBUjdLGm5GpBA5Pq7mzBqYI3UDheg==",
-  "Status": 2,
-  "CurrencyCode": "TWD",
-  "TotalAmt": 545.0000,
-  "CreatedOn": "2023-12-14T07:13:19.0375746+00:00"
-}
+  "payMethod": 3,
+  "tradeNo": "PAC2023121400000245",
+  "spCoin": 1160,
+  "rebate": 40,
+  "state": "M1 State_GooglePay",
+  "notifyUrl": "https://localhost:7109/ACPayNotify/TradeNotify",
+  "sign": "KxWFrnWPGquIAC/Pt1WPvX5operr5uHaPWG2YP8X28e6nLalfLCTZlq+liXijWrcJo1Ha9JzMC+9VbcZeG3pcin63xoBkKfEtdV9QbnT6pnxXH+pS8pEWNmQIQKKkDrxjkMZ3OjcY/CC9TW+mDURCYj8vu8EHB9zDJ1sGOP7y4o2aNRa+ZK/SxC9eZKV5l6P7Y/iv88DH7wiTbQ5qVw5FhwJLuqfi3gCOn4aVsmjc270jU9mP6TgdTUo5y2FHtYXAbsQP/07h2gJeTwQf/nO6gHVs3Ur8/t3hHtIwqCGBNQl6/TYwf6rSXRdMoBUjdLGm5GpBA5Pq7mzBqYI3UDheg==",
+  "status": 2,
+  "currencyCode": "TWD",
+  "totalAmt": 545.0000,
+  "createdOn": "2023-12-14T07:13:19.0375746+00:00"
+} 
 ```
 
-#### Encrypted Recharge content (No "Sign" string): 
+#### Encrypted Recharge content (Without "sign" string): 
 ``` JSON
 {
-  "PayMethod": 3,
-  "TradeNo": "PAC2023121400000245",
-  "SPCoin": 1160,
-  "Rebate": 40,
-  "State": "M1 State_GooglePay",
-  "NotifyUrl": "https://localhost:7109/ACPayNotify/TradeNotify",
-  "Status": 2,
-  "CurrencyCode": "TWD",
-  "TotalAmt": 545.0000,
-  "CreatedOn": "2023-12-14T07:13:19.0375746+00:00"
+  "payMethod": 3,
+  "tradeNo": "PAC2023121400000245",
+  "spCoin": 1160,
+  "rebate": 40,
+  "state": "M1 State_GooglePay",
+  "notifyUrl": "https://localhost:7109/ACPayNotify/TradeNotify",
+  "status": 2,
+  "currencyCode": "TWD",
+  "totalAmt": 545.0000,
+  "createdOn": "2023-12-14T07:13:19.0375746+00:00"
 } 
 ```
 
@@ -724,27 +724,27 @@ data: JSON string.
 #### ConsumeSP NotifyUrl response.body : 
 ``` JSON
 {
-  "TransactionId": "T2023121400000021",
-  "OrderNo": "20ac94aa-0eba-485c-8a5c-2c2eed1fac86",
-  "SPCoin": 10,
-  "Rebate": 10,
-  "OrderStatus": "Completed",
-  "State": "M13 Order",
-  "NotifyUrl": "https://localhost:7109/ACPayNotify/TradeNotify",
-  "Sign": "gMq6sjIVFNZfv+NU/V477x8apy1flFiReyuEfR6gUT0FCWjEDRnmTG1hYwJW+vyYOhtxTNC8T+P2IMz/WNCzH5rIN6wlJ+uvh0/15V9ZujFSUeCzVQbKaJ+MTK5KUXErX2sv7JQvnu0C+k0b43rzgjgRr3XyiHcZnzv3/r683vO0HdBkIX18LHO9uPEJTk3Bbwd5+twc1G6TXToEEf/Vkb6hOd7FpGXp61ljHkIi4HeLPS1FAHdOaJHcFkpTGIF4Ilrbb/IiQSlAGP4R6VclT50hpEXIWtN89ztR8+VnHfTmK27oPyKwDoO1dXZ8EmwB8zxG/ilNIERN+bmP2lcDnw=="
+  "transactionId": "T2023122700000222",
+  "orderNo": "stringsss1111",
+  "spCoin": 20,
+  "rebate": 0,
+  "orderStatus": "Completed",
+  "state": "string",
+  "notifyUrl": "http://localhost:8080/ConsumeSP/gameserver/TradeNotify/",
+  "sign": "F+opHk3IzetbJBpZGPuzxR2UoA18Md6ZV6Yas047RMPsrGjAevlYwQ/Suse5b/Io1dohccf+T5U/B7lAFta9P73/VdD1x+poffsH238Xgyo2JDQQ1VnpFvvrRqi8hJXJWqFjvPjBFS6h/LT2BePXulXT0071RFJZsDb83jTiWlaKkUyl+lYn/g1o8KcEON8TIQtOL3HcCnDXfLZnkvbx8gjcK54kk7dTld3dMynRkErpev9tzcSsaYrjPCltJ4XIhkK5OL7acjPXVPh/JvbHOj7WdWcbd1yQIDoospkEbh2McNOAaEdgq985hTz1tuycyRAtfEJLG4n9+J7y6HkXpA=="
 }
 ```
 
-#### Encrypted ConsumeSP content (No "Sign" string): 
+#### Encrypted ConsumeSP content (Without "sign" string): 
 ``` JSON
 {
-  "TransactionId": "T2023121400000021",
-  "OrderNo": "20ac94aa-0eba-485c-8a5c-2c2eed1fac86",
-  "SPCoin": 10,
-  "Rebate": 10,
-  "OrderStatus": "Completed",
-  "State": "M13 Order",
-  "NotifyUrl": "https://localhost:7109/ACPayNotify/TradeNotify"
+  "transactionId": "T2023122700000222",
+  "orderNo": "stringsss1111",
+  "spCoin": 20,
+  "rebate": 0,
+  "orderStatus": "Completed",
+  "state": "string",
+  "notifyUrl": "http://localhost:8080/ConsumeSP/gameserver/TradeNotify/" 
 }
 ```
 - Create "Sign" to verify : Please refer to [Create sign to verify](#create-sign-to-verify)
