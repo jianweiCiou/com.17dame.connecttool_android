@@ -285,17 +285,22 @@ UUID GetMe_RequestNumber = UUID.fromString("73da5d8e-9fd6-11ee-8c90-0242ac120002
 _connectTool.GetMe_Coroutine(GetMe_RequestNumber,new MeCallback() {
 	@Override
 	public void callbackMeInfo(MeInfo value) {
-		Log.v(TAG, "MeInfo callback : " + value.status);
-		Log.v(TAG, "MeInfo requestNumber : " + value.requestNumber);
+		/*
+		* App-side add functions.
+		*/
+		Log.v(TAG, "MeInfo email : " + value.data.email);
+		Log.v(TAG, "MeInfo userId : " + value.data.userId);
 		Toast.makeText(getApplicationContext(), value.data.email, Toast.LENGTH_SHORT).show();
 	}
 }); 
 ```
 #### MeInfo response.body : 
 - Will get requestNumber back.
+- userId : UUID format.
 ``` JSON
 {
   "data": {
+    "userId": "db89ce....",
     "email": "...user mail",
     "nickName": null,
     "avatarUrl": null,
