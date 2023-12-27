@@ -708,8 +708,38 @@ try {
   "createdOn": "2023-12-14T07:13:19.0375746+00:00"
 } 
 ```
+ 
+### ConsumeSP NotifyUrl
+#### ConsumeSP NotifyUrl response.body : 
+``` JSON
+{
+  "transactionId": "T2023122700000222",
+  "orderNo": "stringsss1111",
+  "spCoin": 20,
+  "rebate": 0,
+  "orderStatus": "Completed",
+  "state": "string",
+  "notifyUrl": "http://localhost:8080/ConsumeSP/gameserver/TradeNotify/",
+  "sign": "F+opHk3IzetbJBpZGPuzxR2UoA18Md6ZV6Yas047RMPsrGjAevlYwQ/Suse5b/Io1dohccf+T5U/B7lAFta9P73/VdD1x+poffsH238Xgyo2JDQQ1VnpFvvrRqi8hJXJWqFjvPjBFS6h/LT2BePXulXT0071RFJZsDb83jTiWlaKkUyl+lYn/g1o8KcEON8TIQtOL3HcCnDXfLZnkvbx8gjcK54kk7dTld3dMynRkErpev9tzcSsaYrjPCltJ4XIhkK5OL7acjPXVPh/JvbHOj7WdWcbd1yQIDoospkEbh2McNOAaEdgq985hTz1tuycyRAtfEJLG4n9+J7y6HkXpA=="
+}
+```
+#### Encrypted ConsumeSP content (Without "sign" string): 
+``` JSON
+{
+  "transactionId": "T2023122700000222",
+  "orderNo": "stringsss1111",
+  "spCoin": 20,
+  "rebate": 0,
+  "orderStatus": "Completed",
+  "state": "string",
+  "notifyUrl": "http://localhost:8080/ConsumeSP/gameserver/TradeNotify/" 
+}
+```
+- Create "Sign" to verify : Please refer to [Create sign to verify](#create-sign-to-verify)
 
-#### Create "Sign" to verify (C#): 
+- 
+### Notify verify: 
+#### C# verify "Sign": 
 privateKey : Use RSAstr as privateKey.
 data: JSON string.
 C# sample:
@@ -722,7 +752,7 @@ C# sample:
   var xSignature = Convert.ToBase64String(signature);
 ```
 
-#### Create "Sign" to verify (PHP): 
+#### PHP verify "Sign": 
 key.pem : Use RSAstr as privateKey.
 jsonData: response.body.
 PHP sample:
@@ -753,34 +783,7 @@ if ($data != null) {
 
 ```
 
-### ConsumeSP NotifyUrl
-#### ConsumeSP NotifyUrl response.body : 
-``` JSON
-{
-  "transactionId": "T2023122700000222",
-  "orderNo": "stringsss1111",
-  "spCoin": 20,
-  "rebate": 0,
-  "orderStatus": "Completed",
-  "state": "string",
-  "notifyUrl": "http://localhost:8080/ConsumeSP/gameserver/TradeNotify/",
-  "sign": "F+opHk3IzetbJBpZGPuzxR2UoA18Md6ZV6Yas047RMPsrGjAevlYwQ/Suse5b/Io1dohccf+T5U/B7lAFta9P73/VdD1x+poffsH238Xgyo2JDQQ1VnpFvvrRqi8hJXJWqFjvPjBFS6h/LT2BePXulXT0071RFJZsDb83jTiWlaKkUyl+lYn/g1o8KcEON8TIQtOL3HcCnDXfLZnkvbx8gjcK54kk7dTld3dMynRkErpev9tzcSsaYrjPCltJ4XIhkK5OL7acjPXVPh/JvbHOj7WdWcbd1yQIDoospkEbh2McNOAaEdgq985hTz1tuycyRAtfEJLG4n9+J7y6HkXpA=="
-}
-```
 
-#### Encrypted ConsumeSP content (Without "sign" string): 
-``` JSON
-{
-  "transactionId": "T2023122700000222",
-  "orderNo": "stringsss1111",
-  "spCoin": 20,
-  "rebate": 0,
-  "orderStatus": "Completed",
-  "state": "string",
-  "notifyUrl": "http://localhost:8080/ConsumeSP/gameserver/TradeNotify/" 
-}
-```
-- Create "Sign" to verify : Please refer to [Create sign to verify](#create-sign-to-verify)
 ## Recommended testing process
 ### Generate new account:
 1. Press the <kbd> <br> Logout Link <br> </kbd> button  
