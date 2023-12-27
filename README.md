@@ -29,9 +29,9 @@
 - [NotifyUrl & State](#notifyurl--state)
     - [Recharge NotifyUrl](#recharge-notifyurl)
     - [ConsumeSP NotifyUrl](#consumesp-notifyurl)
-- [Notify Verify](#notifyurl--state)
-    - [C# verify "Sign" sample](#recharge-notifyurl)
-    - [PHP verify "Sign" sample](#recharge-notifyurl)  
+- [Notify Verify](#notify-verify)
+    - [C# verify "Sign" sample](#c-verify-sign)
+    - [PHP verify "Sign" sample](#php-verify-sign) 
 - [Recommended testing process](#recommended-testing-process) 
     - [Generate new account](#generate-new-account)
     - [Switch account](#switch-account)
@@ -697,6 +697,7 @@ try {
 ```
 
 #### Encrypted Recharge content (Without "sign" string): 
+- Create "Sign" to verify : Please refer to [Notify Verify](#notify-verify)
 ``` JSON
 {
   "payMethod": 3,
@@ -727,6 +728,7 @@ try {
 }
 ```
 #### Encrypted ConsumeSP content (Without "sign" string): 
+- Create "Sign" to verify : Please refer to [Notify Verify](#notify-verify)
 ``` JSON
 {
   "transactionId": "T2023122700000222",
@@ -738,7 +740,6 @@ try {
   "notifyUrl": "http://localhost:8080/ConsumeSP/gameserver/TradeNotify/" 
 }
 ```
-- Create "Sign" to verify : Please refer to [Create sign to verify](#create-sign-to-verify)
 ### Notify Verify 
 #### C# verify "Sign" sample: 
 - privateKey : Use RSAstr as privateKey.
