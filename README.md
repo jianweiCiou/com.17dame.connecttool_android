@@ -744,7 +744,7 @@ try {
 #### C# verify "Sign" sample: 
 - privateKey : Use RSAstr as privateKey.
 - data: JSON string.
-- data should be in this format : "\"transactionId\":\"T2023122800000228\",\"orderNo\":\"S112542\",\"spCoin\":20,\"rebate\":0,\"orderStatus\":\"Completed\",\"state\":\"string\",\"notifyUrl\":\"http://localhost:8080/ConsumeSP/gameserver/TradeNotify/\"}"
+- data should be in this format : "{\"transactionId\":\"T2023122800000228\",\"orderNo\":\"S112542\",\"spCoin\":20,\"rebate\":0,\"orderStatus\":\"Completed\",\"state\":\"string\",\"notifyUrl\":\"http://localhost:8080/ConsumeSP/gameserver/TradeNotify/\"}"
 - C# sample:
 ```csharp
   var rsa = RSA.Create();
@@ -757,7 +757,7 @@ try {
 #### PHP verify "Sign" sample: 
 - key.pem : Use RSAstr as privateKey.
 - jsonData: response.body.
-- $dataString should be in this format : "\"transactionId\":\"T2023122800000228\",\"orderNo\":\"S112542\",\"spCoin\":20,\"rebate\":0,\"orderStatus\":\"Completed\",\"state\":\"string\",\"notifyUrl\":\"http://localhost:8080/ConsumeSP/gameserver/TradeNotify/\"}"
+- $dataString should be in this format : "{\"transactionId\":\"T2023122800000228\",\"orderNo\":\"S112542\",\"spCoin\":20,\"rebate\":0,\"orderStatus\":\"Completed\",\"state\":\"string\",\"notifyUrl\":\"http://localhost:8080/ConsumeSP/gameserver/TradeNotify/\"}"
 - PHP sample:
 ```php
 <?php
