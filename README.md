@@ -220,6 +220,7 @@ sequenceDiagram
   
  
 ### OpenAuthorizeURL　  
+- Obtain user information and update access_token.
 - `state` : Please fill in what you want to verify,`state` can be query through redirect_uri. 
 - Open host page to log in.
 - You will get `code` and `state` from redirect_uri's parameter after log in. 
