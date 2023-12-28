@@ -253,17 +253,14 @@ The App will automatically obtain Me information.
 // get Access token
 if (appLinkData.getQueryParameterNames().contains("code") ) {
 	UUID GetMe_RequestNumber = UUID.fromString("73da5d8e-9fd6-11ee-8c90-0242ac120002"); // App-side-RequestNumber(UUID)
-	_connectTool.appLinkDataCallBack_OpenAuthorize(appLinkData,GetMe_RequestNumber ,new AuthorizeCallback(){
-		@Override
-		public void authCallback(AuthorizeInfo value  ) {
-			/*
-			* App-side add functions.
-			*/
-			Gson gson = new Gson();
-			String authJson = gson.toJson(value);
-			Log.v(TAG,"AuthorizeInfo" +  authJson);
-			Toast.makeText(getApplicationContext(), authJson, Toast.LENGTH_SHORT).show();
-		}
+		_connectTool.appLinkDataCallBack_OpenAuthorize(appLinkData,GetMe_RequestNumber , value -> {
+		/*
+		* App-side add functions.
+		*/
+		Gson gson = new Gson();
+		String authJson = gson.toJson(value);
+		Log.v(TAG,"AuthorizeInfo" +  authJson);
+		Toast.makeText(getApplicationContext(), value.meInfo.data.email, Toast.LENGTH_SHORT).show();
 	});
 }
 ```
@@ -313,17 +310,15 @@ if (appLinkData.getQueryParameterNames().contains("code") ) {
 
 ```java
 UUID GetMe_RequestNumber = UUID.fromString("73da5d8e-9fd6-11ee-8c90-0242ac120002"); // App-side-RequestNumber(UUID)                           
-_connectTool.GetMe_Coroutine(GetMe_RequestNumber,new MeCallback() {
-	@Override
-	public void callbackMeInfo(MeInfo value) {
-		/*
-		* App-side add functions.
-		*/
-		Log.v(TAG, "MeInfo email : " + value.data.email);
-		Log.v(TAG, "MeInfo userId : " + value.data.userId);
-		Toast.makeText(getApplicationContext(), value.data.email, Toast.LENGTH_SHORT).show();
-	}
-}); 
+_connectTool.GetMe_Coroutine(GetMe_RequestNumber, value -> {
+	/*
+	* App-side add functions.
+	*/
+	Log.v(TAG, "GetMe_RequestNumber : " + value.requestNumber);
+	Log.v(TAG, "MeInfo email : " + value.data.email);
+	Log.v(TAG, "MeInfo userId : " + value.data.userId);
+	Toast.makeText(getApplicationContext(), value.data.email, Toast.LENGTH_SHORT).show();
+});
 ```
 #### MeInfo response.body : 
 - Will get requestNumber back.
@@ -422,17 +417,15 @@ _connectTool.OpenRechargeURL(currencyCode, notifyUrl, state);
 The App will automatically obtain Recharge information.
 ```java
 // Complete purchase of SP Coin
-                if (appLinkData.getQueryParameterNames().contains("purchase_state")) {
-                    _connectTool.appLinkDataCallBack_CompletePurchase(appLinkData,new PurchaseOrderCallback() {
-                        @Override
-                        public PurchaseOrderOneResponse callback(PurchaseOrderOneResponse value) {
-                            Log.v(TAG, "appLinkData PurchaseOrderOneResponse callback : " + value);
-                            /*
-                             * App-side add functions.
-                             */
-                            return value;
-                        }
-                    });
+ if (appLinkData.getQueryParameterNames().contains("purchase_state")) {
+	_connectTool.appLinkDataCallBack_CompletePurchase(appLinkData, value -> {
+		Log.v(TAG, "appLinkData PurchaseOrderOneResponse callback : " + value);
+		Toast.makeText(getApplicationContext(), "Purchase tradeNo : " + value.data.tradeNo + "/ spCoin : " + value.data.spCoin, Toast.LENGTH_SHORT).show();
+		/*
+		* App-side add functions.
+		*/
+		return value;
+	});
 }
 ```
 #### AppLinkData Recharge Response:
@@ -452,12 +445,10 @@ Get the order list for purchasing SP Coin.
 ```java
 GetPurchaseOrderListButton.setOnClickListener(view -> {
 	try {
-		_connectTool.GetPurchaseOrderList(new GetPurchaseOrderListCallback() {
-			@Override
-			public void callback(PurchaseOrderListResponse value) {
-				Log.v(TAG, "PurchaseOrderListResponse callback : " + value);
-			}
-		});
+		_connectTool.GetPurchaseOrderList(value -> {
+                        Log.v(TAG, "PurchaseOrderListResponse callback : " + value);
+                        Toast.makeText(getApplicationContext(), "All Purchase : " + value.data.length, Toast.LENGTH_SHORT).show();
+                    });
 	} catch (NoSuchAlgorithmException e) {
 		throw new RuntimeException(e);
 	}
@@ -496,13 +487,12 @@ Response :
 Get a single SP Coin order via tradeNo.
 ```java
 try {
-	String tradeNo = "PAC2023121400000261";
-	_connectTool.GetPurchaseOrderOne(new PurchaseOrderCallback() {
-		@Override
-		public void callback(PurchaseOrderOneResponse value) {
-			Log.v(TAG, "PurchaseOrderOneResponse callback : " + value);
-		}
-	}, tradeNo);
+	String tradeNo = "T2023121800000058";
+                    _connectTool.GetPurchaseOrderOne(value -> {
+                        Log.v(TAG, "PurchaseOrderOneResponse callback : " + value);
+                        Toast.makeText(getApplicationContext(), "Purchase tradeNo : " + value.data.tradeNo, Toast.LENGTH_SHORT).show();
+                        return value;
+                    }, tradeNo);
 } catch (NoSuchAlgorithmException e) {
 	throw new RuntimeException(e);
 }
@@ -616,14 +606,12 @@ The App will automatically obtain ConsumeSP information.
 ```java
 // Complete consumption of SP Coin
 if (appLinkData.getQueryParameterNames().contains("consume_transactionId")) {
-	_connectTool.appLinkDataCallBack_CompleteConsumeSP(appLinkData,new GetSPCoinTxCallback(){
-		@Override
-		public void callback(CreateSPCoinResponse value) {
-			/*
-			* App-side add functions.
-			*/
-			Log.v(TAG, "appLinkData SPCoinTxResponse callback : " + value.data.orderStatus);
-		}
+	_connectTool.appLinkDataCallBack_CompleteConsumeSP(appLinkData, value -> {
+		/*
+		* App-side add functions.
+		*/
+		Log.v(TAG, "appLinkData SPCoinTxResponse callback : " + value.data.orderStatus);
+		Toast.makeText(getApplicationContext(), "consumption orderNo : " + value.data.orderNo + "/ spCoin : " + value.data.spCoin + "/ rebate : " + value.data.rebate, Toast.LENGTH_SHORT).show();
 	});
 }
 ```
@@ -659,12 +647,9 @@ if (appLinkData.getQueryParameterNames().contains("consume_transactionId")) {
 try {
 	UUID queryConsumeSP_requestNumber = UUID.fromString( "73da5d8e-9fd6-11ee-8c90-0242ac120002"); // App-side-RequestNumber(UUID)
 	String transactionId = "T2023121500000030";
-
 	_connectTool.Get_SPCoin_tx(queryConsumeSP_requestNumber,transactionId,new GetSPCoinTxCallback() {
-		@Override
-		public void callback(SPCoinTxResponse value) {
-			Log.v(TAG, "SPCoinTxResponse callback : " + value.status);
-		}
+		Log.v(TAG, "SPCoinTxResponse callback : " + value.data.orderStatus); 
+		Toast.makeText(getApplicationContext(), "SPCoin " + value.data.orderNo + " : " + value.data.orderStatus, Toast.LENGTH_SHORT).show();
 	});
 } catch (NoSuchAlgorithmException e) {
 	throw new RuntimeException(e);
