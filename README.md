@@ -266,13 +266,21 @@ if (appLinkData.getQueryParameterNames().contains("code") ) {
 	});
 }
 ```
-- meInfo : User data
+- meInfo : User data.
+- connectToken: Connection information.
+- connectToken.expires_in : Unit is seconds.
 - requestNumber : GetMe_RequestNumber
 - state : Brought in from _connectTool.OpenAuthorizeURL(state).
 - AuthorizeInfo response.body :
 ```json
 {
   "access_token": "eyJhbGciOiJSUzI...",
+  "connectToken": {
+    "access_token": "eyJhbGciOiJSU....",
+    "expires_in": "3599",
+    "refresh_token": "CfDJ8IrwLQOm....",
+    "token_type": "Bearer"
+  },
   "meInfo": {
     "data": {
       "email": "...@...",
@@ -579,7 +587,7 @@ sequenceDiagram
  
 
 ### Open ConsumeSP page  
-- To use the SP Coin held by user, please use the createPayment function.
+- Open ConsumeSP page.
 - `consume_spCoin`,`consume_rebate`,`orderNo`,`GameName`,`productName` are required.
 - `orderNo` must be unique.
 -  Game developers can customize the rules of `orderNo` 
