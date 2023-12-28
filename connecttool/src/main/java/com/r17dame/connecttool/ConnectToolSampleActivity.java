@@ -12,23 +12,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.r17dame.connecttool.callback.GetPurchaseOrderListCallback;
-import com.r17dame.connecttool.callback.GetSPCoinTxCallback;
-import com.r17dame.connecttool.datamodel.ConnectToken;
-import com.r17dame.connecttool.callback.ConnectTokenCall;
-import com.r17dame.connecttool.callback.MeCallback;
-import com.r17dame.connecttool.datamodel.CreateSPCoinResponse;
-import com.r17dame.connecttool.datamodel.MeInfo;
-import com.r17dame.connecttool.callback.PurchaseOrderCallback;
-import com.r17dame.connecttool.datamodel.PurchaseOrderListResponse;
-import com.r17dame.connecttool.datamodel.PurchaseOrderOneResponse;
+import com.google.gson.Gson;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 public class ConnectToolSampleActivity extends AppCompatActivity {
     ConnectTool _connectTool;
-
     Button getConnectAuthorizeButton;
     Button postConnectRefreshTokenButton;
     Button getMeButton;
@@ -61,6 +51,7 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
         _ConsumeSPInfoTextView = findViewById(R.id.ConsumeSPInfo);
 
         try {
+            // Init tool
             _connectTool = new ConnectTool(
                     this,
                     "",
@@ -73,8 +64,6 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
             Intent appLinkIntent = getIntent();
             Uri appLinkData = appLinkIntent.getData();
             if (appLinkData != null && appLinkData.isHierarchical()) {
-                Log.v(TAG, "appLinkData : " + appLinkData);
-
                 // Open by Account Page (Register, Login) :
                 if (appLinkData.getQueryParameterNames().contains("accountBackType")) {
                     String accountBackType = appLinkData.getQueryParameter("accountBackType");
@@ -91,76 +80,59 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
                          */
                     }
                     String state = "App-side-State";
-                    _connectTool.AccountPageEvent(state,accountBackType);
+                    _connectTool.AccountPageEvent(state, accountBackType);
                 }
 
                 // Complete purchase of SP Coin
                 if (appLinkData.getQueryParameterNames().contains("purchase_state")) {
-                    _connectTool.appLinkDataCallBack_CompletePurchase(appLinkData,new PurchaseOrderCallback() {
-                        @Override
-                        public PurchaseOrderOneResponse callback(PurchaseOrderOneResponse value) {
-                            Log.v(TAG, "appLinkData PurchaseOrderOneResponse callback : " + value);
-                            /*
-                             * App-side add functions.
-                             */
-                            return value;
-                        }
+                    _connectTool.appLinkDataCallBack_CompletePurchase(appLinkData, value -> {
+                        Log.v(TAG, "appLinkData PurchaseOrderOneResponse callback : " + value);
+                        Toast.makeText(getApplicationContext(), "Purchase tradeNo : " + value.data.tradeNo + "/ spCoin : " + value.data.spCoin, Toast.LENGTH_SHORT).show();
+                        /*
+                         * App-side add functions.
+                         */
+                        return value;
                     });
                 }
 
                 // Complete consumption of SP Coin
                 if (appLinkData.getQueryParameterNames().contains("consume_transactionId")) {
-                    _connectTool.appLinkDataCallBack_CompleteConsumeSP(appLinkData,new GetSPCoinTxCallback(){
-                        @Override
-                        public void callback(CreateSPCoinResponse value) {
-                            /*
-                             * App-side add functions.
-                             */
-                            Log.v(TAG, "appLinkData SPCoinTxResponse callback : " + value.data.orderStatus);
-                        }
+                    _connectTool.appLinkDataCallBack_CompleteConsumeSP(appLinkData, value -> {
+                        /*
+                         * App-side add functions.
+                         */
+                        Log.v(TAG, "appLinkData SPCoinTxResponse callback : " + value.data.orderStatus);
+                        Toast.makeText(getApplicationContext(), "consumption orderNo : " + value.data.orderNo + "/ spCoin : " + value.data.spCoin + "/ rebate : " + value.data.rebate, Toast.LENGTH_SHORT).show();
                     });
                 }
 
                 // get Access token
-                if (appLinkData.getQueryParameterNames().contains("code") ) {
-                    _connectTool.code = appLinkData.getQueryParameter("code");
-
-                    _connectTool.GetConnectToken_Coroutine(new ConnectTokenCall() {
-                        @Override
-                        public void callbackConnectToken(ConnectToken value) throws NoSuchAlgorithmException {
-                            _connectCallbackText.setText("ConnectToken callback : " + value.access_token);
-
-                            UUID GetMe_RequestNumber = UUID.fromString("73da5d8e-9fd6-11ee-8c90-0242ac120002"); // App-side-RequestNumber(UUID)
-                            _connectTool.GetMe_Coroutine(GetMe_RequestNumber,new MeCallback() {
-                                @Override
-                                public void callbackMeInfo(MeInfo value) {
-
-                                    /*
-                                     * App-side add functions.
-                                     */ 
-                                    Log.v(TAG, "MeInfo callback : " + value.status);
-                                }
-                            });
-                        }
+                if (appLinkData.getQueryParameterNames().contains("code")) {
+                    UUID GetMe_RequestNumber = UUID.fromString("73da5d8e-9fd6-11ee-8c90-0242ac120002"); // App-side-RequestNumber(UUID)
+                    _connectTool.appLinkDataCallBack_OpenAuthorize(appLinkData, GetMe_RequestNumber, value -> {
+                        /*
+                         * App-side add functions.
+                         */
+                        Gson gson = new Gson();
+                        String authJson = gson.toJson(value);
+                        Log.v(TAG, "AuthorizeInfo" + authJson);
+                        Toast.makeText(getApplicationContext(), value.meInfo.data.email, Toast.LENGTH_SHORT).show();
                     });
                 }
             }
 
-            /**
+            /*
              * Page access
              * */
             //頁面註冊
             Register_pageButton = findViewById(R.id.Register_pageButton);
-            Register_pageButton.setOnClickListener(view -> {
-                _connectTool.OpenRegisterURL();
-            });
+            Register_pageButton.setOnClickListener(view -> _connectTool.OpenRegisterURL());
 
             //頁面登入
             Login_pageButton = findViewById(R.id.Login_pageButton);
-            Login_pageButton.setOnClickListener(view -> {
-                _connectTool.OpenLoginURL();
-            });
+            Login_pageButton.setOnClickListener(view -> _connectTool.OpenLoginURL());
 
+            //更新 Acctoken 與 MeInfo
             getConnectAuthorizeButton = findViewById(R.id.getConnectAuthorizeButton);
             getConnectAuthorizeButton.setOnClickListener(view -> {
                 String state = "App-side-State";
@@ -168,35 +140,27 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
             });
 
             postConnectRefreshTokenButton = findViewById(R.id.postConnectRefreshTokenButton);
-            postConnectRefreshTokenButton.setOnClickListener(view -> {
-                _connectTool.GetRefreshToken_Coroutine(new ConnectTokenCall() {
-                    @Override
-                    public void callbackConnectToken(ConnectToken value) {
-                        Log.v(TAG, "RefreshToken callback : " + value.access_token);
-                    }
-                });
-            });
+            postConnectRefreshTokenButton.setOnClickListener(view -> _connectTool.GetRefreshToken_Coroutine(value -> Log.v(TAG, "RefreshToken callback : " + value.access_token)));
 
+            //取得 MeInfo
             getMeButton = findViewById(R.id.getMeButton);
             getMeButton.setOnClickListener(view -> {
                 try {
                     UUID GetMe_RequestNumber = UUID.fromString("73da5d8e-9fd6-11ee-8c90-0242ac120002"); // App-side-RequestNumber(UUID)
-                    _connectTool.GetMe_Coroutine(GetMe_RequestNumber,new MeCallback() {
-                        @Override
-                        public void callbackMeInfo(MeInfo value) {
-                            Log.v(TAG, "MeInfo callback : " + value.status);
-                            Log.v(TAG, "MeInfo requestNumber : " + value.requestNumber);
-                            Toast.makeText(getApplicationContext(), value.data.email, Toast.LENGTH_SHORT).show();
-                        }
+                    _connectTool.GetMe_Coroutine(GetMe_RequestNumber, value -> {
+                        /*
+                         * App-side add functions.
+                         */
+                        Log.v(TAG, "GetMe_RequestNumber : " + value.requestNumber);
+                        Log.v(TAG, "MeInfo email : " + value.data.email);
+                        Log.v(TAG, "MeInfo userId : " + value.data.userId);
+                        Toast.makeText(getApplicationContext(), value.data.email, Toast.LENGTH_SHORT).show();
                     });
                 } catch (NoSuchAlgorithmException e) {
                     throw new RuntimeException(e);
                 }
             });
 
-            /*
-             * Purchase
-             * */
             // 購買 SPCoin
             rechargeButton = findViewById(R.id.rechargeButton);
             rechargeButton.setOnClickListener(view -> {
@@ -216,29 +180,24 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
             GetPurchaseOrderListButton = findViewById(R.id.GetPurchaseOrderListButton);
             GetPurchaseOrderListButton.setOnClickListener(view -> {
                 try {
-                    _connectTool.GetPurchaseOrderList(new GetPurchaseOrderListCallback() {
-                        @Override
-                        public void callback(PurchaseOrderListResponse value) {
-                            Log.v(TAG, "PurchaseOrderListResponse callback : " + value);
-                            Toast.makeText(getApplicationContext(), "All Purchase : " + value.data.length, Toast.LENGTH_SHORT).show();
-                        }
+                    _connectTool.GetPurchaseOrderList(value -> {
+                        Log.v(TAG, "PurchaseOrderListResponse callback : " + value);
+                        Toast.makeText(getApplicationContext(), "All Purchase : " + value.data.length, Toast.LENGTH_SHORT).show();
                     });
                 } catch (NoSuchAlgorithmException e) {
                     throw new RuntimeException(e);
                 }
             });
 
+            // 查詢儲值訂單資訊
             GetPurchaseOrderButton = findViewById(R.id.GetPurchaseOrderButton);
             GetPurchaseOrderButton.setOnClickListener(view -> {
                 try {
                     String tradeNo = "T2023121800000058";
-                    _connectTool.GetPurchaseOrderOne(new PurchaseOrderCallback() {
-                        @Override
-                        public PurchaseOrderOneResponse callback(PurchaseOrderOneResponse value) {
-                            Log.v(TAG, "PurchaseOrderOneResponse callback : " + value);
-                            Toast.makeText(getApplicationContext(), "Purchase tradeNo : " + value.data.tradeNo, Toast.LENGTH_SHORT).show();
-                            return value;
-                        }
+                    _connectTool.GetPurchaseOrderOne(value -> {
+                        Log.v(TAG, "PurchaseOrderOneResponse callback : " + value);
+                        Toast.makeText(getApplicationContext(), "Purchase tradeNo : " + value.data.tradeNo, Toast.LENGTH_SHORT).show();
+                        return value;
                     }, tradeNo);
                 } catch (NoSuchAlgorithmException e) {
                     throw new RuntimeException(e);
@@ -267,15 +226,12 @@ public class ConnectToolSampleActivity extends AppCompatActivity {
             QueryConsumeSPButton = findViewById(R.id.QueryConsumeSPButton);
             QueryConsumeSPButton.setOnClickListener(view -> {
                 try {
-                    UUID queryConsumeSP_requestNumber = UUID.fromString( "73da5d8e-9fd6-11ee-8c90-0242ac120002"); // App-side-RequestNumber(UUID)
-                    String transactionId = "b427a826-4101-4172-8694-9e0ee868b9ab";
-                    _connectTool.Get_SPCoin_tx(queryConsumeSP_requestNumber,transactionId, new GetSPCoinTxCallback() {
-                        @Override
-                        public void callback(CreateSPCoinResponse value) {
-                            Log.v(TAG, "SPCoinTxResponse callback : " + value.data.orderStatus);
+                    UUID queryConsumeSP_requestNumber = UUID.fromString("73da5d8e-9fd6-11ee-8c90-0242ac120002"); // App-side-RequestNumber(UUID)
+                    String transactionId = "T2023122800000230";
+                    _connectTool.Get_SPCoin_tx(queryConsumeSP_requestNumber, transactionId, value -> {
+                        Log.v(TAG, "SPCoinTxResponse callback : " + value.data.orderStatus);
 
-                            Toast.makeText(getApplicationContext(), "SPCoin " + value.data.orderNo + " : " + value.data.orderStatus, Toast.LENGTH_SHORT).show();
-                        }
+                        Toast.makeText(getApplicationContext(), "SPCoin " + value.data.orderNo + " : " + value.data.orderStatus, Toast.LENGTH_SHORT).show();
                     });
                 } catch (NoSuchAlgorithmException e) {
                     throw new RuntimeException(e);
