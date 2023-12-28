@@ -10,7 +10,8 @@
     - [OpenRegisterURL, OpenLoginURL ](#openregisterurl-openloginurl)
     - [App-side event response (Register, Login, Logout)　](#app-side-event-response-register-login-logout)
     - [OpenAuthorizeURL](#openauthorizeurl)
-    - [Authorize subsequent events ](#authorize-subsequent-events)
+    	- [Authorize subsequent events ](#authorize-subsequent-events)
+    	- [Authorize response.body](#authorize-subsequent-events)
     - [GetConnectToken_Coroutine](#getconnecttoken_coroutine)
     - [GetRefreshToken_Coroutine](#getrefreshtoken_coroutine)
     - [GetMe_Coroutine](#getme_coroutine) 
@@ -266,12 +267,8 @@ if (appLinkData.getQueryParameterNames().contains("code") ) {
 	});
 }
 ```
-- meInfo : User data.
-- connectToken: Connection information.
-- connectToken.expires_in : Unit is seconds.
-- requestNumber : GetMe_RequestNumber
-- state : Brought in from _connectTool.OpenAuthorizeURL(state).
-- AuthorizeInfo response.body :
+
+#### Authorize response.body
 ```json
 {
   "access_token": "eyJhbGciOiJSUzI...",
@@ -294,7 +291,12 @@ if (appLinkData.getQueryParameterNames().contains("code") ) {
   "state": "App-side-State"  
 }
 ```
-
+- meInfo : User data.
+- connectToken: Connection information.
+- connectToken.expires_in : The total length of time access_token can be used, unit is seconds.
+- requestNumber : GetMe_RequestNumber.
+- state : Brought in from _connectTool.OpenAuthorizeURL(state).
+- 
 ### GetConnectToken_Coroutine 
 - `connectTool.code` is required. 
 - `connectTool.code` can be obtained through ConnectTool set or onDeepLinkActivated function.
