@@ -13,6 +13,8 @@ public class MeInfo {
     public String requestNumber;
 
     public class MeData {
+        @SerializedName("userId")
+        public String userId;
         @SerializedName("email")
         public String email;
         @SerializedName("nickName")
