@@ -249,24 +249,41 @@ Step
 The App will automatically obtain Me information.
 ```java
 // get Access token
-                if (appLinkData.getQueryParameterNames().contains("code") ) {
-                    _connectTool.code = appLinkData.getQueryParameter("code");
-
-                    _connectTool.GetConnectToken_Coroutine(new ConnectTokenCall() {
-                        @Override
-                        public void callbackConnectToken(ConnectToken value) throws NoSuchAlgorithmException {
-                            _connectCallbackText.setText("ConnectToken callback : " + value.access_token);
-
-                            UUID GetMe_RequestNumber = UUID.fromString("73da5d8e-9fd6-11ee-8c90-0242ac120002"); // App-side-RequestNumber(UUID)
-                            _connectTool.GetMe_Coroutine(GetMe_RequestNumber,new MeCallback() {
-                                @Override
-                                public void callbackMeInfo(MeInfo value) {
-                                    Log.v(TAG, "MeInfo callback : " + value.status);
-                                }
-                            });
-                        }
-                    });
-                }
+if (appLinkData.getQueryParameterNames().contains("code") ) {
+	UUID GetMe_RequestNumber = UUID.fromString("73da5d8e-9fd6-11ee-8c90-0242ac120002"); // App-side-RequestNumber(UUID)
+	_connectTool.appLinkDataCallBack_OpenAuthorize(appLinkData,GetMe_RequestNumber ,new AuthorizeCallback(){
+		@Override
+		public void authCallback(AuthorizeInfo value  ) {
+			/*
+			* App-side add functions.
+			*/
+			Gson gson = new Gson();
+			String authJson = gson.toJson(value);
+			Log.v(TAG,"AuthorizeInfo" +  authJson);
+			Toast.makeText(getApplicationContext(), authJson, Toast.LENGTH_SHORT).show();
+		}
+	});
+}
+```
+- meInfo : User data
+- requestNumber : GetMe_RequestNumber
+- state : Brought in from _connectTool.OpenAuthorizeURL(state).
+- AuthorizeInfo response.body :
+```json
+{
+  "access_token": "eyJhbGciOiJSUzI...",
+  "meInfo": {
+    "data": {
+      "email": "...@...",
+      "rebate": "0",
+      "spCoin": "0",
+      "userId": "..."
+    },
+    "requestNumber": "...", 
+    "status": 1000
+  },
+  "state": "App-side-State"  
+}
 ```
 
 ### GetConnectToken_Coroutine 
