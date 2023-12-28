@@ -11,7 +11,7 @@
     - [App-side event response (Register, Login, Logout)　](#app-side-event-response-register-login-logout)
     - [OpenAuthorizeURL](#openauthorizeurl)
     	- [Authorize subsequent events ](#authorize-subsequent-events)
-    	- [Authorize response.body](#authorize-subsequent-events)
+    	- [Authorize response.body](#authorize-responsebody)
     - [GetConnectToken_Coroutine](#getconnecttoken_coroutine)
     - [GetRefreshToken_Coroutine](#getrefreshtoken_coroutine)
     - [GetMe_Coroutine](#getme_coroutine) 
