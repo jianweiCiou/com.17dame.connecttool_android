@@ -10,7 +10,7 @@
     - [OpenRegisterURL, OpenLoginURL ](#openregisterurl-openloginurl)
     - [App-side event response (Register, Login, Logout)　](#app-side-event-response-register-login-logout)
     - [OpenAuthorizeURL](#openauthorizeurl)
-    - [Authorize subsequent events ](#)
+    - [Authorize subsequent events ](#authorize-subsequent-events)
     - [GetConnectToken_Coroutine](#getconnecttoken_coroutine)
     - [GetRefreshToken_Coroutine](#getrefreshtoken_coroutine)
     - [GetMe_Coroutine](#getme_coroutine) 
