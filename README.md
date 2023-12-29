@@ -780,16 +780,37 @@ $jsonData = file_get_contents('php://input');
 // Parse ConsumeSP JSON
 $data = json_decode($jsonData, true);
 if ($data != null) {
-
-  // Create sign data
-  $dataString = "{\"transactionId\":\"" . $data['transactionId'] . "\",\"orderNo\":\"" . $data['orderNo'] . "\",\"spCoin\":" . $data['spCoin'] . ",\"rebate\":" . $data['rebate'] . ",\"orderStatus\":\"" . $data['orderStatus'] . "\",\"state\":\"" . $data['state'] . "\",\"notifyUrl\":\"" . $data['notifyUrl'] . "\"}";
+  // Create sign data 
   $signatureFinal =  $data['sign'];
 
-  // Get RSAstr 
+  unset($data["sign"]);
+
+  $dataString = '{';
+  $index = 0;
+  foreach ($data as $id => $val) {
+    echo "KEY IS:" . $id . "\n";
+    $dataString = $dataString . '"' . $id . '":';
+    if ($id == 'transactionId' || $id == 'orderNo'  || $id == 'tradeNo' || $id == 'orderStatus' || $id == 'state' || $id == 'notifyUrl' || $id == 'currencyCode' || $id == 'createdOn') {
+      $dataString = $dataString . '"' . $val . '"';
+    } else if ($id == 'spCoin' || $id == 'rebate' || $id == 'payMethod' || $id == 'status' || $id == 'totalAmt') {
+      $dataString = $dataString . $val;
+    } else {
+      if (is_numeric($val)) {
+        $dataString = $dataString . $val;
+      } else {
+        $dataString = $dataString . '"' . $val . '"';
+      }
+    }
+
+    if ($index != count($data) - 1) {
+      $dataString = $dataString . ',';
+    } else {
+      $dataString = $dataString . '}';
+    }
+    $index++;
+  }
   $privateKeyId = openssl_pkey_get_private(file_get_contents('./key.pem'));
   openssl_sign($dataString, $signature, $privateKeyId, 'RSA-SHA256');
-  // echo "signature: \n" . base64_encode($signature) . "\n";
-
   if ($signatureFinal == base64_encode($signature)) {
     echo 'Verification successful';
   } else {
