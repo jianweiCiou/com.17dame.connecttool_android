@@ -787,8 +787,7 @@ if ($data != null) {
 
   $dataString = '{';
   $index = 0;
-  foreach ($data as $id => $val) {
-    echo "KEY IS:" . $id . "\n";
+  foreach ($data as $id => $val) { 
     $dataString = $dataString . '"' . $id . '":';
     if ($id == 'transactionId' || $id == 'orderNo'  || $id == 'tradeNo' || $id == 'orderStatus' || $id == 'state' || $id == 'notifyUrl' || $id == 'currencyCode' || $id == 'createdOn') {
       $dataString = $dataString . '"' . $val . '"';
