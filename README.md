@@ -580,23 +580,26 @@ sequenceDiagram
 
 ### Open ConsumeSP page  
 - Open ConsumeSP page.
-- `consume_spCoin`,`consume_rebate`,`orderNo`,`GameName`,`productName` are required.
+- `consume_spCoin`,`orderNo`,`GameName`,`productName` are required.
 - `orderNo` must be unique.
 -  Game developers can customize the rules of `orderNo` 
-- `GameName` 
+- `consume_spCoin`: You only need to bring in the SPCoin of the product. The backend will first deduct the Rebate (free SPcoin) from the User.
 - Usage : 
-```java  
-    String notifyUrl = "";// NotifyUrl is a URL customized by the game developer
-    String state = "Custom state";// Custom state ,
-    // Step1. Set notifyUrl and state,
-    _connectTool.set_purchase_notifyData(notifyUrl, state);
+```java
+OpenConsumeSPButton.setOnClickListener(view -> { 
+                String notifyUrl = "http://localhost:8080/17dame/ConsumeSP/gameserver/TradeNotify/";// NotifyUrl is a URL customized by the game developer
+                String state = UUID.randomUUID().toString(); // Custom state ,
 
-    int consume_spCoin = 50;
-    int consume_rebate = 20;
-    String orderNo = UUID.randomUUID().toString();
-    String GameName = "Good 18 Game";
-    String productName = "10 of the best diamonds";
-    _connectTool.OpenConsumeSPURL(consume_spCoin, consume_rebate, orderNo, GameName, productName);
+                // Step1. Set notifyUrl and state,
+                _connectTool.set_purchase_notifyData(notifyUrl, state);
+
+                int consume_spCoin = 50; 
+                String orderNo = UUID.randomUUID().toString(); // orderNo is customized by the game developer
+                String requestNumber= UUID.randomUUID().toString(); // requestNumber is customized by the game developer, default random
+                String GameName = "Good 18 Game";
+                String productName = "10 of the best diamonds";
+                _connectTool.OpenConsumeSPURL(consume_spCoin, consume_rebate, orderNo, GameName, productName, notifyUrl, state,requestNumber);
+            }); 
 ```
 
 ConsumeSP Response : [body](#consumesp-response-body)
