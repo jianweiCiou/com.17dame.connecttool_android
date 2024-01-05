@@ -71,16 +71,24 @@ Your application needs to support :
 ```
 
 ## Setting
-- Open \app\src\main\AndroidManifest.xml to add:
+- Open \app\src\main\AndroidManifest.xml to add permission:
 ```xml
 <uses-permission android:name="android.permission.INTERNET" />
-``` 
+```
+- <application> add BroadcastReceiver:
+```xml
+<receiver android:name="com.r17dame.connecttool.ConnectToolBroadcastReceiver" android:exported="true">
+	<intent-filter>
+		<action android:name="com.r17dame.CONNECT_ACTION"/>
+	</intent-filter>
+</receiver>
+```
+- <activity> add activity base:
 ```xml
 <intent-filter>
   <action android:name="android.intent.action.VIEW" />
   <category android:name="android.intent.category.DEFAULT" />
-  <category android:name="android.intent.category.BROWSABLE" />
-  <data android:scheme="{{ Get from redirect_uri's scheme }}" android:host="connectlink" />
+  <category android:name="android.intent.category.LAUNCHER" />
 </intent-filter>
 ```  
 - redirect_uri : Set the name of the scene to be opened, for example `{{ Get from redirect_uri's scheme }}://connectlink?connectscene`
