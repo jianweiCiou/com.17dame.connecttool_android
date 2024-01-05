@@ -480,17 +480,25 @@ _connectTool.OpenRechargeURL(currencyCode, notifyUrl, state);
 #### Recharge subsequent events 
 The App will automatically obtain Recharge information.
 ```java
-// Complete purchase of SP Coin
- if (appLinkData.getQueryParameterNames().contains("purchase_state")) {
-	_connectTool.appLinkDataCallBack_CompletePurchase(appLinkData, value -> {
-		Log.v(TAG, "appLinkData PurchaseOrderOneResponse callback : " + value);
-		Toast.makeText(getApplicationContext(), "Purchase tradeNo : " + value.data.tradeNo + "/ spCoin : " + value.data.spCoin, Toast.LENGTH_SHORT).show();
-		/*
-		* App-side add functions.
-		*/
-		return value;
-	});
-}
+connectToolReceiver.registerCallback(new ConnectToolBroadcastReceiver.ConnectToolReceiverCallback() {
+            @Override
+            public void connectToolPageBack(Intent intent, String accountBackType) {
+                String backType = intent.getStringExtra("accountBackType");
+                String TAG = "connectToolPageBack test";
+                Log.v(TAG, "connectToolPageBack : " + backType); 
+                // Complete purchase of SP Coin
+                if (backType.equals("CompletePurchase")) {
+                    _connectTool.appLinkDataCallBack_CompletePurchase(intent, value -> {
+                        Log.v(TAG, "appLinkData CompletePurchase callback : " + value);
+                        Toast.makeText(getApplicationContext(), "Purchase tradeNo : " + value.data.tradeNo + "/ spCoin : " + value.data.spCoin, Toast.LENGTH_SHORT).show();
+                        /*
+                         * App-side add functions.
+                         */
+                        return value;
+                    });
+                } 
+            }
+        });
 ```
 #### AppLinkData Recharge Response:
 
@@ -671,16 +679,26 @@ ConsumeSP Response : [body](#consumesp-response-body)
 #### ConsumeSP subsequent events 
 The App will automatically obtain ConsumeSP information.
 ```java
-// Complete consumption of SP Coin
-if (appLinkData.getQueryParameterNames().contains("consume_transactionId")) {
-	_connectTool.appLinkDataCallBack_CompleteConsumeSP(appLinkData, value -> {
-		/*
-		* App-side add functions.
-		*/
-		Log.v(TAG, "appLinkData SPCoinTxResponse callback : " + value.data.orderStatus);
-		Toast.makeText(getApplicationContext(), "consumption orderNo : " + value.data.orderNo + "/ spCoin : " + value.data.spCoin + "/ rebate : " + value.data.rebate, Toast.LENGTH_SHORT).show();
-	});
-}
+connectToolReceiver.registerCallback(new ConnectToolBroadcastReceiver.ConnectToolReceiverCallback() {
+            @Override
+            public void connectToolPageBack(Intent intent, String accountBackType) {
+                String backType = intent.getStringExtra("accountBackType");
+                String TAG = "connectToolPageBack test";
+                Log.v(TAG, "connectToolPageBack : " + backType); 
+                // Complete consumption of SP Coin
+                if (backType.equals("CompleteConsumeSP")) {
+                    UUID queryConsumeSP_requestNumber = UUID.randomUUID(); // App-side-RequestNumber(UUID), default random
+                    // consume_transactionId
+                    _connectTool.appLinkDataCallBack_CompleteConsumeSP(intent, queryConsumeSP_requestNumber, value -> {
+                        /*
+                         * App-side add functions.
+                         */
+                        Log.v(TAG, "appLinkData CompleteConsumeSP callback : " + value.data.orderStatus);
+                        Toast.makeText(getApplicationContext(), "consumption orderNo : " + value.data.orderNo + "/ spCoin : " + value.data.spCoin + "/ rebate : " + value.data.rebate, Toast.LENGTH_SHORT).show();
+                    });
+                } 
+            }
+        });
 ```
 
 #### AppLinkData ConsumeSP Response:
