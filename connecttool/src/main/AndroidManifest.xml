@@ -2,24 +2,41 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application>
+
+        <receiver android:name="ConnectToolBroadcastReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.r17dame.CONNECT_ACTION"/>
+            </intent-filter>
+        </receiver>
+
+
         <activity
             android:name=".ConnectToolSampleActivity"
             android:exported="true"
             android:label="ConnectToolSampleActivity"
-            android:theme="@style/Theme.ConnectSample" >
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
-            <data android:scheme="{{   }}" android:host="connectlink" />
-        </intent-filter>
-        </activity>
-        <activity
-            android:name=".CallBackActivity"
-            android:exported="false"
-            android:label="CallBackActivity"
-            android:theme="@style/Theme.ConnectSample" />
+            android:theme="@style/Theme.ConnectSample">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
+                <data
+                    android:host="connectlink"
+                    android:scheme="r17dame" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ConnectToolWebViewActivity"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="connectlink"
+                    android:scheme="r17dame" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
