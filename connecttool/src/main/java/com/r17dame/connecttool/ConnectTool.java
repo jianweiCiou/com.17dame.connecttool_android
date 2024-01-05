@@ -1,12 +1,16 @@
 package com.r17dame.connecttool;
 
-import android.content.Context;
 import android.content.Intent;
+
+import static java.lang.Math.abs;
+
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 import android.app.Activity;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -57,126 +61,263 @@ public class ConnectTool {
     public String access_token = "";
     public String refresh_token = "";
     public String redirect_uri;
+    public String scheme;
     String payMentBaseurl = "https://gamar18portal.azurewebsites.net";
+    // String payMentBaseurl = "https://08ba-114-24-113-159.ngrok-free.app";
+    Boolean isRunAuthorize = false;
+    Boolean isRunCompleteConsumeSP = false;
+    Boolean isRunCompleteCompletePurchase = false;
 
     // constructors
-    public ConnectTool(Context context,
-                       String _redirect_uri,
-                       String _RSAstr,
-                       String _X_Developer_Id,
-                       String _client_secret,
-                       String _Game_id) {
+    public ConnectTool(Context context, String _redirect_uri, String _RSAstr, String _X_Developer_Id, String _client_secret, String _Game_id) {
 
         this.context = context;
         this.pref = ((Activity) context).getSharedPreferences("ConnectToolP", Context.MODE_PRIVATE);
+
+        // save basic
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(String.valueOf(R.string.redirect_uri), _redirect_uri);
+        editor.putString(String.valueOf(R.string.RSAstr), _RSAstr);
+        editor.putString(String.valueOf(R.string.X_Developer_Id), _X_Developer_Id);
+        editor.putString(String.valueOf(R.string.client_secret), _client_secret);
+        editor.putString(String.valueOf(R.string.Game_id), _Game_id);
+        editor.apply();
+
+        // get scheme
+        Uri appLinkData = Uri.parse(_redirect_uri);
+        scheme = appLinkData.getScheme();
 
         // init
         redirect_uri = _redirect_uri;
         RSAstr = _RSAstr;
 
-        connectBasic = new ConnectBasic(
-                _X_Developer_Id,
-                _X_Developer_Id,
-                _client_secret,
-                _Game_id);
+        // connectBasic setting
+        connectBasic = new ConnectBasic(_X_Developer_Id, _X_Developer_Id, _client_secret, _Game_id);
 
+        // get data
         String _me = pref.getString(String.valueOf(R.string.me), "");
-        if(!_me.equals(  "")){
+        if (!_me.equals("")) {
             Gson gson = new Gson();
             me = gson.fromJson(_me, MeInfo.class);
         }
-
         String _access_token = pref.getString(String.valueOf(R.string.access_token), "");
-        if(!_access_token.equals(  "")){
+        if (!_access_token.equals("")) {
             access_token = _access_token;
         }
-
         String _refresh_token = pref.getString(String.valueOf(R.string.refresh_token), "");
-        if(!_refresh_token.equals(  "")){
+        if (!_refresh_token.equals("")) {
             refresh_token = _refresh_token;
         }
     }
 
+
+    private boolean _checkConstructorParametersComplete() {
+        if (redirect_uri.equals("")) {
+            Log.w(TAG, "No redirect_uri");
+            return false;
+        }
+        if (RSAstr.equals("")) {
+            Log.w(TAG, "No RSAstr");
+            return false;
+        }
+        if (connectBasic.X_Developer_Id.equals("")) {
+            Log.w(TAG, "No X_Developer_Id");
+            return false;
+        }
+        if (connectBasic.client_secret.equals("")) {
+            Log.w(TAG, "No client_secret");
+            return false;
+        }
+        if (connectBasic.Game_id.equals("")) {
+            Log.w(TAG, "No Game_id");
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Obtain user information and update access_token
+     *
      * @param state - Please fill in what you want to verify,state can be query through redirect_uri.
      * @see <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#openauthorizeurl">Description </a>
      */
     public void OpenAuthorizeURL(String state) {
+        if (!_checkConstructorParametersComplete()) {
+            return;
+        }
+        if (state.equals("")) {
+            Log.w(TAG, "No state");
+            return;
+        }
         String url = payMentBaseurl + "/connect/Authorize?response_type=code&client_id=" + connectBasic.client_id + "&redirect_uri=" + redirect_uri + "&scope=game+offline_access&state=" + state;
         Log.v(TAG, "AuthorizeURL " + url);
-        Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("" + url));
-        startActivity(urlIntent);
+
+        // Open connectWebView
+        Intent intent = new Intent(context, ConnectToolWebViewActivity.class);
+        intent.putExtra("url", url);
+        startActivity(intent);
+//        intent.putExtra("targetIntent",intent);
+
+//        ConnectTool _tool = this;
+//        intent.putExtra("tool",   _tool   );
+
+//        Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("" + url));
+//        startActivity(urlIntent);
     }
+
 
     /**
      * Open SP Coin Recharge page.
+     *
      * @param currencyCode - <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/tree/main?tab=readme-ov-file#currency-code">Currency Code table</a>
-     * @param _notifyUrl - <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#notifyurl--state">NotifyUrl is a URL customized by the game developer. We will post NotifyUrl automatically when the purchase is completed</a>
-     * @param state - <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#notifyurl--state">State is customized by game developer, which will be returned to game app after purchase complete. (Deeplink QueryParameter => purchase_state)</a>
+     * @param _notifyUrl   - <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#notifyurl--state">NotifyUrl is a URL customized by the game developer. We will post NotifyUrl automatically when the purchase is completed</a>
+     * @param state        - <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#notifyurl--state">State is customized by game developer, which will be returned to game app after purchase complete. (Deeplink QueryParameter => purchase_state)</a>
      * @see <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#open-recharge-page">Description</a>
      */
     public void OpenRechargeURL(String currencyCode, String _notifyUrl, String state) {
+        if (!_checkConstructorParametersComplete()) {
+            return;
+        }
+        if (currencyCode.equals("")) {
+            Log.w(TAG, "No currencyCode");
+            return;
+        }
+        if (state.equals("")) {
+            Log.w(TAG, "No state");
+            return;
+        }
         String notifyUrl = (_notifyUrl.equals("")) ? "none_notifyUrl" : _notifyUrl;
         String url = payMentBaseurl + "/member/recharge/" + Uri.encode(connectBasic.X_Developer_Id) + "/" + Uri.encode(redirect_uri) + "/2/" + currencyCode + "/" + Uri.encode(notifyUrl) + "/" + Uri.encode(state) + "/" + Uri.encode(referralCode);
         Log.v(TAG, "OpenRechargeURL " + url);
-        Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("" + url));
-        startActivity(urlIntent);
+
+        if (isOverExpiresTs()) {
+            // token 到期
+            GetRefreshToken_Coroutine(value -> openhostPage(url));
+        } else {
+            openhostPage(url);
+        }
+    }
+
+    private void openhostPage(String url) {
+        if (url.equals("")) {
+            Log.w(TAG, "No url");
+            return;
+        }
+        Intent intent = new Intent(context, ConnectToolWebViewActivity.class);
+        intent.putExtra("url", url);
+        startActivity(intent);
     }
 
     /**
      * Open ConsumeSP page.
+     *
      * @param consume_spCoin - SP Coin
-     * @param consume_rebate - Rebate
-     * @param orderNo - Must be unique,Game developers customize
-     * @param GameName - GameName
-     * @param productName - Product Name
-     * @param _notifyUrl - <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#notifyurl--state">NotifyUrl is a URL customized by the game developer. We will post NotifyUrl automatically when the purchase is completed</a>
-     * @param state - <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#notifyurl--state">State is customized by game developer, which will be returned to game app after purchase complete. (Deeplink QueryParameter => purchase_state)</a>
+     * @param orderNo        - Must be unique,Game developers customize
+     * @param GameName       - GameName
+     * @param productName    - Product Name
+     * @param _notifyUrl     - <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#notifyurl--state">NotifyUrl is a URL customized by the game developer. We will post NotifyUrl automatically when the purchase is completed</a>
+     * @param state          - <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#notifyurl--state">State is customized by game developer, which will be returned to game app after purchase complete. (Deeplink QueryParameter => purchase_state)</a>
      * @see <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#open-consumesp-page">Description</a>
      */
-    public void OpenConsumeSPURL( int consume_spCoin, int consume_rebate, String orderNo, String GameName, String productName, String _notifyUrl, String state) {
+    public void OpenConsumeSPURL(int consume_spCoin, String orderNo, String GameName, String productName, String _notifyUrl, String state, String requestNumber) {
+        if (!_checkConstructorParametersComplete()) {
+            return;
+        }
+        if (orderNo.equals("")) {
+            Log.w(TAG, "No OrderNo");
+            return;
+        }
+        if (GameName.equals("")) {
+            Log.w(TAG, "No GameName");
+            return;
+        }
+        if (productName.equals("")) {
+            Log.w(TAG, "No productName");
+            return;
+        }
+        if (state.equals("")) {
+            Log.w(TAG, "No state");
+            return;
+        }
+        if (requestNumber.equals("")) {
+            Log.w(TAG, "No state");
+            return;
+        }
+
+
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(String.valueOf(R.string.requestNumber), requestNumber);
+        editor.apply();
 
         String notifyUrl = (_notifyUrl.equals("")) ? "none_notifyUrl" : _notifyUrl;
-        String url = payMentBaseurl + "/member/consumesp/" +
-                Uri.encode(connectBasic.X_Developer_Id) + "/" +
-                Uri.encode(redirect_uri) + "/2/" +
-                Uri.encode(connectBasic.Game_id) + "/" +
-                Uri.encode(GameName) + "/" + Uri.encode(orderNo) + "/" +
-                Uri.encode(productName) + "/" +
-                consume_spCoin + "/" +
-                consume_rebate + "/" +
-                Uri.encode(notifyUrl) + "/" +
-                Uri.encode(state) + "/" +
-                Uri.encode(referralCode) ;
+        String url = payMentBaseurl + "/member/consumesp/" + Uri.encode(connectBasic.X_Developer_Id) + "/" + Uri.encode(redirect_uri) + "/2/" + Uri.encode(connectBasic.Game_id) + "/" + Uri.encode(GameName) + "/" + Uri.encode(orderNo) + "/" + Uri.encode(productName) + "/" + abs(consume_spCoin) + "/" + abs(0) + "/" + Uri.encode(notifyUrl) + "/" + Uri.encode(state) + "/" + Uri.encode(referralCode);
 
         Log.v(TAG, "OpenConsumeSPURL " + url);
-        Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("" + url));
-        startActivity(urlIntent);
+
+        if (isOverExpiresTs()) {
+            // token 到期
+            GetRefreshToken_Coroutine(value -> openhostPage(url));
+        } else {
+            openhostPage(url);
+        }
     }
 
     /**
      * Open Register page.
-      * @see <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#openregisterurl-openloginurl">Description</a>
+     *
+     * @see <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#openregisterurl-openloginurl">Description</a>
      */
     public void OpenRegisterURL() {
+        if (!_checkConstructorParametersComplete()) {
+            return;
+        }
+
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(String.valueOf(R.string.access_token), "");
+        editor.putString(String.valueOf(R.string.refresh_token), "");
+        editor.apply();
+
         String _redirect_uri = redirect_uri + "?accountBackType=Register";
         String url = payMentBaseurl + "/account/AppRegister/" + connectBasic.Game_id + "/" + referralCode + "?returnUrl=" + Uri.encode(_redirect_uri);
         Log.v(TAG, "OpenRegisterURL " + url);
-        Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("" + url));
-        startActivity(urlIntent);
+
+
+        // Open WEbView
+        Intent intent = new Intent(context, ConnectToolWebViewActivity.class);
+        intent.putExtra("url", url);
+        startActivity(intent);
+
+//        Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("" + url));
+//        startActivity(urlIntent);
     }
 
     /**
      * Open Login page.
+     *
      * @see <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#openregisterurl-openloginurl">Description</a>
      */
     public void OpenLoginURL() {
+        if (!_checkConstructorParametersComplete()) {
+            return;
+        }
+
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(String.valueOf(R.string.access_token), "");
+        editor.putString(String.valueOf(R.string.refresh_token), "");
+        editor.apply();
+
         String _redirect_uri = redirect_uri + "?accountBackType=Login";
         String url = payMentBaseurl + "/account/AppLogin/" + connectBasic.Game_id + "/" + referralCode + "?returnUrl=" + Uri.encode(_redirect_uri);
         Log.v(TAG, "OpenLoginURL " + url);
-        Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("" + url));
-        startActivity(urlIntent);
+
+        // Open connectWebView
+        Intent intent = new Intent(context, ConnectToolWebViewActivity.class);
+        intent.putExtra("url", url);
+
+        startActivity(intent);
+
+//        Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("" + url));
+//        startActivity(urlIntent);
     }
 
     private void startActivity(Intent intent) {
@@ -188,23 +329,26 @@ public class ConnectTool {
 
     /**
      * Get access_tokn.
+     *
      * @param connectTokenCall -
      * @see <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#openregisterurl-openloginurl">Description</a>
      */
-    public void GetConnectToken_Coroutine(ConnectTokenCall connectTokenCall) {
+    public void GetConnectToken_Coroutine(String _code, ConnectTokenCall connectTokenCall) {
+        if (!_checkConstructorParametersComplete()) {
+            return;
+        }
         apiInterface = APIClient.getHostClient().create(APIInterface.class);
 
-        Call<ConnectToken> call1 = apiInterface.getConnectToken(code,
-                connectBasic.client_id,
-                connectBasic.client_secret,
-                redirect_uri,
-                "authorization_code");
+        Call<ConnectToken> call1 = apiInterface.getConnectToken(_code, connectBasic.client_id, connectBasic.client_secret, redirect_uri, "authorization_code");
         call1.enqueue(new Callback<ConnectToken>() {
             @Override
             public void onResponse(Call<ConnectToken> call, Response<ConnectToken> response) {
                 tokenData = response.body();
                 access_token = tokenData.access_token;
                 refresh_token = tokenData.refresh_token;
+
+                // 儲存時間
+                saveExpiresTs(tokenData.expires_in);
 
                 SharedPreferences.Editor editor = pref.edit();
                 editor.putString(String.valueOf(R.string.access_token), tokenData.access_token);
@@ -230,14 +374,50 @@ public class ConnectTool {
         });
     }
 
+
+    private Boolean isOverExpiresTs() {
+
+        String expiresTs = pref.getString(String.valueOf(R.string.expiresTs), "");
+        if (expiresTs.equals("")) {
+            return true;
+        } else {
+            Double expiresTsDouble = Double.parseDouble(expiresTs);
+
+            Long currentTs = System.currentTimeMillis() / 1000;
+            Double currentTsDouble = Double.parseDouble(currentTs.toString());
+
+            if (currentTsDouble > expiresTsDouble) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+    }
+
+
+    private void saveExpiresTs(String tokenData_expires_in) {
+        // 取得最後的時間到期日，儲存
+        Double expires_in = Double.parseDouble(tokenData_expires_in);
+        expires_in = (expires_in) * 0.9;
+        Long currentTs = System.currentTimeMillis() / 1000;
+        String currentTssString = currentTs.toString();
+        Double currentTsDouble = Double.parseDouble(currentTssString);
+        Double expiresTs = currentTsDouble + expires_in;
+        String expiresTsString = expiresTs.toString();
+
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(String.valueOf(R.string.expiresTs), expiresTsString);
+        editor.apply();
+    }
+
     public void GetRefreshToken_Coroutine(ConnectTokenCall connectTokenCall) {
+        if (!_checkConstructorParametersComplete()) {
+            return;
+        }
         apiInterface = APIClient.getHostClient().create(APIInterface.class);
 
-        Call<ConnectToken> call1 = apiInterface.getRefreshTokenData(refresh_token,
-                connectBasic.client_id,
-                connectBasic.client_secret,
-                redirect_uri,
-                "refresh_token");
+        Call<ConnectToken> call1 = apiInterface.getRefreshTokenData(refresh_token, connectBasic.client_id, connectBasic.client_secret, redirect_uri, "refresh_token");
         call1.enqueue(new Callback<ConnectToken>() {
             @Override
             public void onResponse(Call<ConnectToken> call, Response<ConnectToken> response) {
@@ -271,12 +451,27 @@ public class ConnectTool {
 
     /**
      * Get MeInfo
+     *
      * @param _GetMeRequestNumber - App-side-RequestNumber(UUID)
-     * @param callback -
+     * @param callback            -
      * @see <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#query-consumesp-by-transactionid">說明</a>
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void GetMe_Coroutine(UUID _GetMeRequestNumber,MeCallback callback) throws NoSuchAlgorithmException {
+    public void GetMe_Coroutine(UUID _GetMeRequestNumber, MeCallback callback) throws NoSuchAlgorithmException {
+        if (!_checkConstructorParametersComplete()) {
+            return;
+        }
+        if (isOverExpiresTs()) {
+            // token 到期
+            GetRefreshToken_Coroutine(value -> getMeData(_GetMeRequestNumber, callback));
+        } else {
+            getMeData(_GetMeRequestNumber, callback);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void getMeData(UUID _GetMeRequestNumber, MeCallback callback) throws NoSuchAlgorithmException {
+
         apiInterface = APIClient.getGame_api_hostClient().create(APIInterface.class);
 
         String timestamp = Tool.getTimestamp();
@@ -318,13 +513,21 @@ public class ConnectTool {
 
     /**
      * Get Consumption by transactionId.
+     *
      * @param queryConsumeSP_requestNumber - App-side-RequestNumber(UUID)
-     * @param transactionId - consumption id.
-     * @param callback - Consumption Response
+     * @param transactionId                - consumption id.
+     * @param callback                     - Consumption Response
      * @see <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#query-consumesp-by-transactionid">說明</a>
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void Get_SPCoin_tx(UUID queryConsumeSP_requestNumber,String transactionId, GetSPCoinTxCallback callback) throws NoSuchAlgorithmException {
+    public void Get_SPCoin_tx(UUID queryConsumeSP_requestNumber, String transactionId, GetSPCoinTxCallback callback) throws NoSuchAlgorithmException {
+        if (!_checkConstructorParametersComplete()) {
+            return;
+        }
+        if (transactionId.equals("")) {
+            Log.w(TAG, "No transactionId");
+            return;
+        }
         apiInterface = APIClient.getGame_api_hostClient().create(APIInterface.class);
 
         String timestamp = Tool.getTimestamp();
@@ -361,11 +564,19 @@ public class ConnectTool {
 
     /**
      * Set notifyUrl and state
+     *
      * @param notifyUrl - NotifyUrl is a URL customized by the game developer.
      * @param state     -
      * @see <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#open-recharge-page">說明</a>
      */
     public void set_purchase_notifyData(String notifyUrl, String state) {
+        if (!_checkConstructorParametersComplete()) {
+            return;
+        }
+        if (state.equals("")) {
+            Log.w(TAG, "No state");
+            return;
+        }
         SharedPreferences.Editor editor = pref.edit();
 
         // notifyUrl
@@ -379,11 +590,15 @@ public class ConnectTool {
 
     /**
      * Get user PurchaseOrder list
-     * @param callback     -
+     *
+     * @param callback -
      * @see <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#getpurchaseorderlist">說明</a>
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void GetPurchaseOrderList(GetPurchaseOrderListCallback callback) throws NoSuchAlgorithmException {
+        if (!_checkConstructorParametersComplete()) {
+            return;
+        }
         apiInterface = APIClient.getGame_api_hostClient().create(APIInterface.class);
 
         SharedPreferences.Editor editor = pref.edit();
@@ -395,11 +610,7 @@ public class ConnectTool {
         access_token = pref.getString(String.valueOf(R.string.access_token), "");
         String authorization = "Bearer " + access_token;
 
-        Call<PurchaseOrderListResponse> call1 = apiInterface.GetPurchaseOrderList(
-                authorization,
-                connectBasic.X_Developer_Id,
-                PurchaseOrderListRequest.get_X_Signature(pref, RSAstr),
-                PurchaseOrderListRequest.getRequestBody(pref));
+        Call<PurchaseOrderListResponse> call1 = apiInterface.GetPurchaseOrderList(authorization, connectBasic.X_Developer_Id, PurchaseOrderListRequest.get_X_Signature(pref, RSAstr), PurchaseOrderListRequest.getRequestBody(pref));
         call1.enqueue(new Callback<PurchaseOrderListResponse>() {
             @Override
             public void onResponse(Call<PurchaseOrderListResponse> call, retrofit2.Response<PurchaseOrderListResponse> response) {
@@ -416,12 +627,21 @@ public class ConnectTool {
 
     /**
      * Get a single SP Coin order via tradeNo.
+     *
      * @param callback -
-     * @param tradeNo -
+     * @param tradeNo  -
      * @see <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#getpurchaseorderone">說明</a>
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void GetPurchaseOrderOne(PurchaseOrderCallback callback, String tradeNo) throws NoSuchAlgorithmException {
+        if (!_checkConstructorParametersComplete()) {
+            return;
+        }
+        if (tradeNo.equals("")) {
+            Log.w(TAG, "No tradeNo");
+            return;
+        }
+
         apiInterface = APIClient.getGame_api_hostClient().create(APIInterface.class);
 
         SharedPreferences.Editor editor = pref.edit();
@@ -434,11 +654,7 @@ public class ConnectTool {
         access_token = pref.getString(String.valueOf(R.string.access_token), "");
         String authorization = "Bearer " + access_token;
 
-        Call<PurchaseOrderOneResponse> call1 = apiInterface.GetPurchaseOrderOne(
-                authorization,
-                connectBasic.X_Developer_Id,
-                PurchaseOrderOneRequest.get_X_Signature(pref, RSAstr),
-                PurchaseOrderOneRequest.getRequestBody(pref));
+        Call<PurchaseOrderOneResponse> call1 = apiInterface.GetPurchaseOrderOne(authorization, connectBasic.X_Developer_Id, PurchaseOrderOneRequest.get_X_Signature(pref, RSAstr), PurchaseOrderOneRequest.getRequestBody(pref));
         call1.enqueue(new Callback<PurchaseOrderOneResponse>() {
             @Override
             public void onResponse(Call<PurchaseOrderOneResponse> call, retrofit2.Response<PurchaseOrderOneResponse> response) {
@@ -455,6 +671,9 @@ public class ConnectTool {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void GetUserCards(GetUserCardsCallback callback) {
+        if (!_checkConstructorParametersComplete()) {
+            return;
+        }
         apiInterface = APIClient.getGame_api_hostClient().create(APIInterface.class);
 
         String getUserCards_requestNumber = UUID.randomUUID().toString();
@@ -467,11 +686,7 @@ public class ConnectTool {
         access_token = pref.getString(String.valueOf(R.string.access_token), "");
         String authorization = "Bearer " + access_token;
 
-        Call<UserCard[]> call1 = apiInterface.GetUserCards(
-                authorization,
-                connectBasic.X_Developer_Id,
-                UserCardRequest.get_X_Signature(pref, RSAstr),
-                UserCardRequest.getRequestBody(pref));
+        Call<UserCard[]> call1 = apiInterface.GetUserCards(authorization, connectBasic.X_Developer_Id, UserCardRequest.get_X_Signature(pref, RSAstr), UserCardRequest.getRequestBody(pref));
         call1.enqueue(new Callback<UserCard[]>() {
             @Override
             public void onResponse(Call<UserCard[]> call, retrofit2.Response<UserCard[]> response) {
@@ -487,35 +702,26 @@ public class ConnectTool {
     }
 
     // AccountPage Callback
-    public void AccountPageEvent(String authorizeState,String accountBackType) {
+    public void AccountPageEvent(String authorizeState, String accountBackType) {
         if (accountBackType.equals("Register")) {
             OpenAuthorizeURL(authorizeState);
         }
         if (accountBackType.equals("Login")) {
             OpenAuthorizeURL(authorizeState);
         }
-        if (accountBackType.equals("Logout")) {
-            access_token = "";
-            refresh_token = "";
-        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void appLinkDataCallBack_CompletePurchase(Uri appLinkData,PurchaseOrderCallback appLinkcallback ) {
-        // Complete purchase of SP Coin
-        if (appLinkData.getQueryParameterNames().contains("purchase_state")) {
-            String purchase_state = appLinkData.getQueryParameter("purchase_state");
-            String TradeNo = appLinkData.getQueryParameter("TradeNo");
-            String PurchaseOrderId = appLinkData.getQueryParameter("PurchaseOrderId");
-            Log.v(TAG, "purchase_state :" + purchase_state);
-            Log.v(TAG, "TradeNo :" + TradeNo);
-            Log.v(TAG, "PurchaseOrderId :" + PurchaseOrderId);
-
+    public void appLinkDataCallBack_CompletePurchase(Intent intent, PurchaseOrderCallback appLinkcallback) {
+        if (isRunCompleteCompletePurchase.equals(false)) {
+            isRunCompleteCompletePurchase = true;
+            String TradeNo = intent.getStringExtra("TradeNo");
+            // Complete purchase of SP Coin
             // 取得購買 SPCoin 資料
             try {
                 GetPurchaseOrderOne(value -> {
+                    isRunCompleteCompletePurchase = false;
                     Log.v(TAG, "PurchaseOrderOneResponse callback : " + value);
-
                     appLinkcallback.callback(value);
                     return value;
                 }, TradeNo);
@@ -526,31 +732,26 @@ public class ConnectTool {
     }
 
 
-
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void appLinkDataCallBack_CompleteConsumeSP(Uri appLinkData,GetSPCoinTxCallback appLinkcallback ) {
-        if (appLinkData.getQueryParameterNames().contains("consume_transactionId")) {
-            String consume_transactionId = appLinkData.getQueryParameter("consume_transactionId");
-            String consume_status = appLinkData.getQueryParameter("consume_status");
-
+    public void appLinkDataCallBack_CompleteConsumeSP(Intent intent, UUID queryConsumeSP_requestNumber, GetSPCoinTxCallback appLinkcallback) {
+        if (isRunCompleteConsumeSP.equals(false)) {
+            isRunCompleteConsumeSP = true;
+            String consume_transactionId = intent.getStringExtra("consume_transactionId");
+            String consume_status = intent.getStringExtra("consume_status");
             assert consume_status != null;
-            if(consume_status.equals("success")){
-                Log.v(TAG, "consume_transactionId :" + consume_transactionId);
-                // get Consume Response example
-
+            if (consume_status.equals("Completed")) {
                 // 取得消費 SPCoin 資料
                 try {
-                    UUID queryConsumeSP_requestNumber = UUID.fromString( "73da5d8e-9fd6-11ee-8c90-0242ac120002"); // App-side-RequestNumber(UUID)
                     Get_SPCoin_tx(queryConsumeSP_requestNumber, consume_transactionId, value -> {
+                        isRunCompleteConsumeSP = false;
                         Log.v(TAG, "SPCoinTxResponse callback : " + value.data.orderStatus);
 
                         Gson gson = new Gson();
-
                         String CreateSPCoinResponseString = gson.toJson(value);
                         Log.v(TAG, "CreateSPCoinResponseString   : " + CreateSPCoinResponseString);
 
                         appLinkcallback.callback(value);
-                     });
+                    });
                 } catch (NoSuchAlgorithmException e) {
                     throw new RuntimeException(e);
                 }
@@ -560,21 +761,22 @@ public class ConnectTool {
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void appLinkDataCallBack_OpenAuthorize(Uri appLinkData,UUID GetMe_RequestNumber ,AuthorizeCallback authCallback ) {
-        if (appLinkData.getQueryParameterNames().contains("code") ) {
-            code = appLinkData.getQueryParameter("code");
-            String _state = appLinkData.getQueryParameter("state");
+    public void appLinkDataCallBack_OpenAuthorize(Intent intent, String _state, UUID GetMe_RequestNumber, AuthorizeCallback authCallback) {
 
-             GetConnectToken_Coroutine(connectTokenvalue -> {
-                 String _access_token = connectTokenvalue.access_token;
+        if (isRunAuthorize.equals(false)) {
+            isRunAuthorize = true;
+            code = intent.getStringExtra("code");
+            String _code = intent.getStringExtra("code");
+            GetConnectToken_Coroutine(_code, connectTokenvalue -> {
+                String _access_token = connectTokenvalue.access_token;
+                GetMe_Coroutine(GetMe_RequestNumber, value -> {
+                    isRunAuthorize = false;
+                    AuthorizeInfo _auth = new AuthorizeInfo(value, connectTokenvalue, _state, _access_token);
+                    authCallback.authCallback(_auth);
+                });
+            });
 
-                 GetMe_Coroutine(GetMe_RequestNumber, value -> {
-                     AuthorizeInfo _auth = new AuthorizeInfo(value,connectTokenvalue,_state,_access_token);
-                     authCallback.authCallback(_auth);
-                 });
-             });
         }
-
     }
 
 
@@ -587,6 +789,32 @@ public class ConnectTool {
 
     public void Toast(String msg) {
         Toast.makeText(unityActivity, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void appLinkData(String url) {
+        Log.v(TAG, "appLinkData url " + url);
+        Uri appLinkData = Uri.parse(url);
+        if (appLinkData != null && appLinkData.isHierarchical()) {
+            // Open by Account Page (Register, Login) :
+            if (appLinkData.getQueryParameterNames().contains("accountBackType")) {
+                String accountBackType = appLinkData.getQueryParameter("accountBackType");
+                Log.v(TAG, "accountBackType  " + accountBackType);
+
+                if (accountBackType.equals("Register")) {
+                    /*
+                     * App-side add functions.
+                     */
+                }
+                if (accountBackType.equals("Login")) {
+                    /*
+                     * App-side add functions.
+                     */
+                }
+                String state = "App-side-State";
+                AccountPageEvent(state, accountBackType);
+            }
+        }
     }
 
 }
