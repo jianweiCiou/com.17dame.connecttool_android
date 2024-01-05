@@ -4,7 +4,7 @@
 - [Prerequisites](#prerequisites)
     - [Minimum requirements](#minimum-requirements)
 - [Installation](#installation)
-    - [Importing AAR](#installation)
+    - [Importing AAR](#importing-aar)
 - [Setting](#setting)
 - [Authorize Flow](#authorize-flow)
 - [ConnectTool function](#connecttool-function)  
