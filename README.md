@@ -10,7 +10,7 @@
 - [Authorize Flow](#authorize-flow)
 - [ConnectTool function](#connecttool-function)  
     - [OpenRegisterURL, OpenLoginURL ](#openregisterurl-openloginurl)
-    - [App-side event response (Register, Login, Logout)　](#app-side-event-response-register-login-logout)
+    - [App-side event response (Register, Login)　](#app-side-event-response-register-login-logout)
     - [OpenAuthorizeURL](#openauthorizeurl)
     	- [Authorize subsequent events ](#authorize-subsequent-events)
     	- [Authorize response.body](#authorize-responsebody)
@@ -188,23 +188,32 @@ Login_pageButton.setOnClickListener(view -> {
 	_connectTool.OpenLoginURL();
 }); 
 ``` 
-### App-side event response (Register, Login, Logout)　
+### App-side event response (Register, Login)　
 ```java
-if (appLinkData.getQueryParameterNames().contains("accountBackType")) {
-	String accountBackType = appLinkData.getQueryParameter("accountBackType");
-	if(accountBackType.equals("Register")){
-		/*
-		* App-side add functions.
-		*/ 
-	}
-	if(accountBackType.equals("Login")){
-		/*
-		* App-side add functions.
-		*/ 
-	}
-	String state = "App-side-State";
-        _connectTool.AccountPageEvent(accountBackType);
-}
+connectToolReceiver.registerCallback(new ConnectToolBroadcastReceiver.ConnectToolReceiverCallback() {
+            @Override
+            public void connectToolPageBack(Intent intent, String accountBackType) {
+                String backType = intent.getStringExtra("accountBackType");
+                String TAG = "connectToolPageBack test";
+                Log.v(TAG, "connectToolPageBack : " + backType);
+                // Open by Account Page (Register, Login) :
+                if (backType.equals("Register")) {
+                    /*
+                     * App-side add functions.
+                     */
+                    String state = "App-side-State";
+                    _connectTool.AccountPageEvent(state, backType);
+                }
+                // Login
+                if (backType.equals("Login")) {
+                    /*
+                     * App-side add functions.
+                     */
+                    String state = "App-side-State";
+                    _connectTool.AccountPageEvent(state, backType);
+                } 
+            }
+        });
 ```
 `state` : Please fill in what you want to verify,`state` can be query through redirect_uri.
 
