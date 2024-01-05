@@ -308,18 +308,25 @@ Step
 The App will automatically obtain Me information.
 ```java
 // get Access token
-if (appLinkData.getQueryParameterNames().contains("code") ) {
-	UUID GetMe_RequestNumber = UUID.fromString("73da5d8e-9fd6-11ee-8c90-0242ac120002"); // App-side-RequestNumber(UUID)
-		_connectTool.appLinkDataCallBack_OpenAuthorize(appLinkData,GetMe_RequestNumber , value -> {
-		/*
-		* App-side add functions.
-		*/
-		Gson gson = new Gson();
-		String authJson = gson.toJson(value);
-		Log.v(TAG,"AuthorizeInfo" +  authJson);
-		Toast.makeText(getApplicationContext(), value.meInfo.data.email, Toast.LENGTH_SHORT).show();
-	});
-}
+connectToolReceiver.registerCallback(new ConnectToolBroadcastReceiver.ConnectToolReceiverCallback() {
+            @Override
+            public void connectToolPageBack(Intent intent, String accountBackType) {
+                String backType = intent.getStringExtra("accountBackType");
+                String TAG = "connectToolPageBack test";
+                Log.v(TAG, "connectToolPageBack : " + backType); 
+                // get Access token
+                if (backType.equals("Authorize")) {
+                    UUID GetMe_RequestNumber = UUID.randomUUID(); // App-side-RequestNumber(UUID), default random
+                    String state = "App-side-State";
+                    _connectTool.appLinkDataCallBack_OpenAuthorize(intent, state, GetMe_RequestNumber, value -> {
+                        /*
+                         * App-side add functions.
+                         */
+                        Toast.makeText(getApplicationContext(), value.meInfo.data.email, Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }
+        });
 ```
 
 #### Authorize response.body
