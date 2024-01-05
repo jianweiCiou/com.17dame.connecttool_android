@@ -3,12 +3,14 @@
 ## Table of Contents  
 - [Prerequisites](#prerequisites)
     - [Minimum requirements](#minimum-requirements)
-- [Installation](#installation) 
+- [Installation](#installation)
+    - [Importing AAR](#importing-aar)
 - [Setting](#setting)
+    - [ConnectToolBroadcastReceiver](#connecttoolbroadcastreceiver)
 - [Authorize Flow](#authorize-flow)
 - [ConnectTool function](#connecttool-function)  
     - [OpenRegisterURL, OpenLoginURL ](#openregisterurl-openloginurl)
-    - [App-side event response (Register, Login, Logout)　](#app-side-event-response-register-login-logout)
+    - [App-side event response (Register, Login)　](#app-side-event-response-register-login)
     - [OpenAuthorizeURL](#openauthorizeurl)
     	- [Authorize subsequent events ](#authorize-subsequent-events)
     	- [Authorize response.body](#authorize-responsebody)
@@ -52,18 +54,42 @@ Your application needs to support :
 
 - Downliad libary:[connecttool-v1.0.0.aar](https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/Tutorial/connecttool-v1.0.0.aar)
 - Connect Tool AAR Tutorial-v1.0.0.pdf (for Authorize): [View](https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/Tutorial/Connect%20Tool%20AAR%20Tutorial-v1.0.0.pdf)
-  
+
+### Importing AAR 
+- Create 'libs' Directory : Start by creating a 'libs' directory at the root level of your Android project.
+- Copy AAR File to 'libs'
+- Update Gradle Configuration: implementation files('libs/connecttool.aar')
+- AndroidManifest.xml add:
+```txt
+    // ConnectTool http request
+    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+    implementation 'com.squareup.okhttp3:okhttp:3.4.1'
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation files('libs/connecttool.aar')
+```
+
 ## Setting
-- Open \app\src\main\AndroidManifest.xml to add:
+- Open \app\src\main\AndroidManifest.xml to add permission:
 ```xml
 <uses-permission android:name="android.permission.INTERNET" />
-``` 
+```
+- <application> add BroadcastReceiver:
+```xml
+<receiver android:name="com.r17dame.connecttool.ConnectToolBroadcastReceiver" android:exported="true">
+	<intent-filter>
+		<action android:name="com.r17dame.CONNECT_ACTION"/>
+	</intent-filter>
+</receiver>
+```
+- <activity> add activity base:
 ```xml
 <intent-filter>
   <action android:name="android.intent.action.VIEW" />
   <category android:name="android.intent.category.DEFAULT" />
-  <category android:name="android.intent.category.BROWSABLE" />
-  <data android:scheme="{{ Get from redirect_uri's scheme }}" android:host="connectlink" />
+  <category android:name="android.intent.category.LAUNCHER" />
 </intent-filter>
 ```  
 - redirect_uri : Set the name of the scene to be opened, for example `{{ Get from redirect_uri's scheme }}://connectlink?connectscene`
@@ -81,6 +107,28 @@ dependencies {
     implementation(project(":connecttool"))
 }
 ```
+### ConnectToolBroadcastReceiver
+- import:
+```java
+import com.r17dame.connecttool.ConnectTool;
+import com.r17dame.connecttool.ConnectToolBroadcastReceiver;
+```
+- Assign: 
+```java
+connectToolReceiver = new ConnectToolBroadcastReceiver();
+IntentFilter itFilter = new IntentFilter();
+itFilter.addAction("com.r17dame.CONNECT_ACTION");
+registerReceiver(connectToolReceiver, itFilter);
+```
+- UnregisterReceiver: 
+```java
+@Override
+protected void onDestroy() {
+	super.onDestroy();
+	unregisterReceiver(connectToolReceiver);
+}
+```
+
 
 ## Authorize Flow
 Here is a simple flow chart:
@@ -140,23 +188,32 @@ Login_pageButton.setOnClickListener(view -> {
 	_connectTool.OpenLoginURL();
 }); 
 ``` 
-### App-side event response (Register, Login, Logout)　
+### App-side event response (Register, Login)　
 ```java
-if (appLinkData.getQueryParameterNames().contains("accountBackType")) {
-	String accountBackType = appLinkData.getQueryParameter("accountBackType");
-	if(accountBackType.equals("Register")){
-		/*
-		* App-side add functions.
-		*/ 
-	}
-	if(accountBackType.equals("Login")){
-		/*
-		* App-side add functions.
-		*/ 
-	}
-	String state = "App-side-State";
-        _connectTool.AccountPageEvent(accountBackType);
-}
+connectToolReceiver.registerCallback(new ConnectToolBroadcastReceiver.ConnectToolReceiverCallback() {
+            @Override
+            public void connectToolPageBack(Intent intent, String accountBackType) {
+                String backType = intent.getStringExtra("accountBackType");
+                String TAG = "connectToolPageBack test";
+                Log.v(TAG, "connectToolPageBack : " + backType);
+                // Open by Account Page (Register, Login) :
+                if (backType.equals("Register")) {
+                    /*
+                     * App-side add functions.
+                     */
+                    String state = "App-side-State";
+                    _connectTool.AccountPageEvent(state, backType);
+                }
+                // Login
+                if (backType.equals("Login")) {
+                    /*
+                     * App-side add functions.
+                     */
+                    String state = "App-side-State";
+                    _connectTool.AccountPageEvent(state, backType);
+                } 
+            }
+        });
 ```
 `state` : Please fill in what you want to verify,`state` can be query through redirect_uri.
 
@@ -251,18 +308,25 @@ Step
 The App will automatically obtain Me information.
 ```java
 // get Access token
-if (appLinkData.getQueryParameterNames().contains("code") ) {
-	UUID GetMe_RequestNumber = UUID.fromString("73da5d8e-9fd6-11ee-8c90-0242ac120002"); // App-side-RequestNumber(UUID)
-		_connectTool.appLinkDataCallBack_OpenAuthorize(appLinkData,GetMe_RequestNumber , value -> {
-		/*
-		* App-side add functions.
-		*/
-		Gson gson = new Gson();
-		String authJson = gson.toJson(value);
-		Log.v(TAG,"AuthorizeInfo" +  authJson);
-		Toast.makeText(getApplicationContext(), value.meInfo.data.email, Toast.LENGTH_SHORT).show();
-	});
-}
+connectToolReceiver.registerCallback(new ConnectToolBroadcastReceiver.ConnectToolReceiverCallback() {
+            @Override
+            public void connectToolPageBack(Intent intent, String accountBackType) {
+                String backType = intent.getStringExtra("accountBackType");
+                String TAG = "connectToolPageBack test";
+                Log.v(TAG, "connectToolPageBack : " + backType); 
+                // get Access token
+                if (backType.equals("Authorize")) {
+                    UUID GetMe_RequestNumber = UUID.randomUUID(); // App-side-RequestNumber(UUID), default random
+                    String state = "App-side-State";
+                    _connectTool.appLinkDataCallBack_OpenAuthorize(intent, state, GetMe_RequestNumber, value -> {
+                        /*
+                         * App-side add functions.
+                         */
+                        Toast.makeText(getApplicationContext(), value.meInfo.data.email, Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }
+        });
 ```
 
 #### Authorize response.body
@@ -416,17 +480,25 @@ _connectTool.OpenRechargeURL(currencyCode, notifyUrl, state);
 #### Recharge subsequent events 
 The App will automatically obtain Recharge information.
 ```java
-// Complete purchase of SP Coin
- if (appLinkData.getQueryParameterNames().contains("purchase_state")) {
-	_connectTool.appLinkDataCallBack_CompletePurchase(appLinkData, value -> {
-		Log.v(TAG, "appLinkData PurchaseOrderOneResponse callback : " + value);
-		Toast.makeText(getApplicationContext(), "Purchase tradeNo : " + value.data.tradeNo + "/ spCoin : " + value.data.spCoin, Toast.LENGTH_SHORT).show();
-		/*
-		* App-side add functions.
-		*/
-		return value;
-	});
-}
+connectToolReceiver.registerCallback(new ConnectToolBroadcastReceiver.ConnectToolReceiverCallback() {
+            @Override
+            public void connectToolPageBack(Intent intent, String accountBackType) {
+                String backType = intent.getStringExtra("accountBackType");
+                String TAG = "connectToolPageBack test";
+                Log.v(TAG, "connectToolPageBack : " + backType); 
+                // Complete purchase of SP Coin
+                if (backType.equals("CompletePurchase")) {
+                    _connectTool.appLinkDataCallBack_CompletePurchase(intent, value -> {
+                        Log.v(TAG, "appLinkData CompletePurchase callback : " + value);
+                        Toast.makeText(getApplicationContext(), "Purchase tradeNo : " + value.data.tradeNo + "/ spCoin : " + value.data.spCoin, Toast.LENGTH_SHORT).show();
+                        /*
+                         * App-side add functions.
+                         */
+                        return value;
+                    });
+                } 
+            }
+        });
 ```
 #### AppLinkData Recharge Response:
 
@@ -580,23 +652,26 @@ sequenceDiagram
 
 ### Open ConsumeSP page  
 - Open ConsumeSP page.
-- `consume_spCoin`,`consume_rebate`,`orderNo`,`GameName`,`productName` are required.
+- `consume_spCoin`,`orderNo`,`GameName`,`productName` are required.
 - `orderNo` must be unique.
 -  Game developers can customize the rules of `orderNo` 
-- `GameName` 
+- `consume_spCoin`: You only need to bring in the SPCoin of the product. The backend will first deduct the Rebate (free SPcoin) from the User.
 - Usage : 
-```java  
-    String notifyUrl = "";// NotifyUrl is a URL customized by the game developer
-    String state = "Custom state";// Custom state ,
-    // Step1. Set notifyUrl and state,
-    _connectTool.set_purchase_notifyData(notifyUrl, state);
+```java
+OpenConsumeSPButton.setOnClickListener(view -> {
+                String notifyUrl = "http://localhost:8080/17dame/ConsumeSP/gameserver/TradeNotify/";// NotifyUrl is a URL customized by the game developer
+                String state = UUID.randomUUID().toString(); // Custom state ,
 
-    int consume_spCoin = 50;
-    int consume_rebate = 20;
-    String orderNo = UUID.randomUUID().toString();
-    String GameName = "Good 18 Game";
-    String productName = "10 of the best diamonds";
-    _connectTool.OpenConsumeSPURL(consume_spCoin, consume_rebate, orderNo, GameName, productName);
+                // Step1. Set notifyUrl and state,
+                _connectTool.set_purchase_notifyData(notifyUrl, state);
+
+                int consume_spCoin = 50;
+                String orderNo = UUID.randomUUID().toString(); // orderNo is customized by the game developer
+                String requestNumber= UUID.randomUUID().toString(); // requestNumber is customized by the game developer, default random
+                String GameName = "Good 18 Game";
+                String productName = "10 of the best diamonds";
+                _connectTool.OpenConsumeSPURL(consume_spCoin,   orderNo, GameName, productName, notifyUrl, state,requestNumber);
+            });
 ```
 
 ConsumeSP Response : [body](#consumesp-response-body)
@@ -604,16 +679,26 @@ ConsumeSP Response : [body](#consumesp-response-body)
 #### ConsumeSP subsequent events 
 The App will automatically obtain ConsumeSP information.
 ```java
-// Complete consumption of SP Coin
-if (appLinkData.getQueryParameterNames().contains("consume_transactionId")) {
-	_connectTool.appLinkDataCallBack_CompleteConsumeSP(appLinkData, value -> {
-		/*
-		* App-side add functions.
-		*/
-		Log.v(TAG, "appLinkData SPCoinTxResponse callback : " + value.data.orderStatus);
-		Toast.makeText(getApplicationContext(), "consumption orderNo : " + value.data.orderNo + "/ spCoin : " + value.data.spCoin + "/ rebate : " + value.data.rebate, Toast.LENGTH_SHORT).show();
-	});
-}
+connectToolReceiver.registerCallback(new ConnectToolBroadcastReceiver.ConnectToolReceiverCallback() {
+            @Override
+            public void connectToolPageBack(Intent intent, String accountBackType) {
+                String backType = intent.getStringExtra("accountBackType");
+                String TAG = "connectToolPageBack test";
+                Log.v(TAG, "connectToolPageBack : " + backType); 
+                // Complete consumption of SP Coin
+                if (backType.equals("CompleteConsumeSP")) {
+                    UUID queryConsumeSP_requestNumber = UUID.randomUUID(); // App-side-RequestNumber(UUID), default random
+                    // consume_transactionId
+                    _connectTool.appLinkDataCallBack_CompleteConsumeSP(intent, queryConsumeSP_requestNumber, value -> {
+                        /*
+                         * App-side add functions.
+                         */
+                        Log.v(TAG, "appLinkData CompleteConsumeSP callback : " + value.data.orderStatus);
+                        Toast.makeText(getApplicationContext(), "consumption orderNo : " + value.data.orderNo + "/ spCoin : " + value.data.spCoin + "/ rebate : " + value.data.rebate, Toast.LENGTH_SHORT).show();
+                    });
+                } 
+            }
+        });
 ```
 
 #### AppLinkData ConsumeSP Response:
@@ -780,16 +865,36 @@ $jsonData = file_get_contents('php://input');
 // Parse ConsumeSP JSON
 $data = json_decode($jsonData, true);
 if ($data != null) {
-
-  // Create sign data
-  $dataString = "{\"transactionId\":\"" . $data['transactionId'] . "\",\"orderNo\":\"" . $data['orderNo'] . "\",\"spCoin\":" . $data['spCoin'] . ",\"rebate\":" . $data['rebate'] . ",\"orderStatus\":\"" . $data['orderStatus'] . "\",\"state\":\"" . $data['state'] . "\",\"notifyUrl\":\"" . $data['notifyUrl'] . "\"}";
+  // Create sign data 
   $signatureFinal =  $data['sign'];
 
-  // Get RSAstr 
+  unset($data["sign"]);
+
+  $dataString = '{';
+  $index = 0;
+  foreach ($data as $id => $val) { 
+    $dataString = $dataString . '"' . $id . '":';
+    if ($id == 'transactionId' || $id == 'orderNo'  || $id == 'tradeNo' || $id == 'orderStatus' || $id == 'state' || $id == 'notifyUrl' || $id == 'currencyCode' || $id == 'createdOn') {
+      $dataString = $dataString . '"' . $val . '"';
+    } else if ($id == 'spCoin' || $id == 'rebate' || $id == 'payMethod' || $id == 'status' || $id == 'totalAmt') {
+      $dataString = $dataString . $val;
+    } else {
+      if (is_numeric($val)) {
+        $dataString = $dataString . $val;
+      } else {
+        $dataString = $dataString . '"' . $val . '"';
+      }
+    }
+
+    if ($index != count($data) - 1) {
+      $dataString = $dataString . ',';
+    } else {
+      $dataString = $dataString . '}';
+    }
+    $index++;
+  }
   $privateKeyId = openssl_pkey_get_private(file_get_contents('./key.pem'));
   openssl_sign($dataString, $signature, $privateKeyId, 'RSA-SHA256');
-  // echo "signature: \n" . base64_encode($signature) . "\n";
-
   if ($signatureFinal == base64_encode($signature)) {
     echo 'Verification successful';
   } else {
