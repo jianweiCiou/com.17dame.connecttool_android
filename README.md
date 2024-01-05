@@ -3,7 +3,8 @@
 ## Table of Contents  
 - [Prerequisites](#prerequisites)
     - [Minimum requirements](#minimum-requirements)
-- [Installation](#installation) 
+- [Installation](#installation)
+    - [Importing AAR](#installation)
 - [Setting](#setting)
 - [Authorize Flow](#authorize-flow)
 - [ConnectTool function](#connecttool-function)  
