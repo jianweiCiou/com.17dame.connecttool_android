@@ -1,8 +1,17 @@
 <resources>
 
+    <string name="redirect_uri">redirect_uri</string>
+    <string name="RSAstr">RSAstr</string>
+    <string name="X_Developer_Id">X_Developer_Id</string>
+    <string name="client_secret">client_secret</string>
+    <string name="Game_id">Game_id</string>
+    <string name="expiresTs">expiresTs</string>
+
+    <string name="requestNumber">requestNumber</string>
     <string name="access_token">access_token</string>
     <string name="refresh_token">refresh_token</string>
     <string name="me">me</string>
+
 
     <string name="purchase_purchaseOrderId">purchase_purchaseOrderId</string>
     <string name="purchase_spCoinItemPriceId">purchase_spCoinItemPriceId</string>
@@ -29,6 +38,8 @@
 
 
     <string name="getUserCards_requestNumber">getUserCards_requestNumber</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>
