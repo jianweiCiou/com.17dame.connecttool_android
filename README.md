@@ -6,6 +6,7 @@
 - [Installation](#installation)
     - [Importing AAR](#importing-aar)
 - [Setting](#setting)
+    - [ConnectToolBroadcastReceiver](#importing-aar)
 - [Authorize Flow](#authorize-flow)
 - [ConnectTool function](#connecttool-function)  
     - [OpenRegisterURL, OpenLoginURL ](#openregisterurl-openloginurl)
@@ -106,6 +107,28 @@ dependencies {
     implementation(project(":connecttool"))
 }
 ```
+### ConnectToolBroadcastReceiver
+- import:
+```java
+import com.r17dame.connecttool.ConnectTool;
+import com.r17dame.connecttool.ConnectToolBroadcastReceiver;
+```
+- Assign: 
+```java
+connectToolReceiver = new ConnectToolBroadcastReceiver();
+IntentFilter itFilter = new IntentFilter();
+itFilter.addAction("com.r17dame.CONNECT_ACTION");
+registerReceiver(connectToolReceiver, itFilter);
+```
+- UnregisterReceiver: 
+```java
+@Override
+protected void onDestroy() {
+	super.onDestroy();
+	unregisterReceiver(connectToolReceiver);
+}
+```
+
 
 ## Authorize Flow
 Here is a simple flow chart:
