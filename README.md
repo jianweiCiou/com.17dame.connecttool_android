@@ -52,7 +52,23 @@ Your application needs to support :
 
 - Downliad libary:[connecttool-v1.0.0.aar](https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/Tutorial/connecttool-v1.0.0.aar)
 - Connect Tool AAR Tutorial-v1.0.0.pdf (for Authorize): [View](https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/Tutorial/Connect%20Tool%20AAR%20Tutorial-v1.0.0.pdf)
-  
+
+### Importing AAR 
+- Create 'libs' Directory : Start by creating a 'libs' directory at the root level of your Android project.
+- Copy AAR File to 'libs'
+- Update Gradle Configuration: implementation files('libs/connecttool.aar')
+- AndroidManifest.xml add:
+```txt
+    // ConnectTool http request
+    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+    implementation 'com.squareup.okhttp3:okhttp:3.4.1'
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation files('libs/connecttool.aar')
+```
+
 ## Setting
 - Open \app\src\main\AndroidManifest.xml to add:
 ```xml
