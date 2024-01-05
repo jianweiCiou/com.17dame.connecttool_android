@@ -35,8 +35,5 @@ public class CreateSPCoinResponse {
         @SerializedName("notifyUrl")
         @Expose
         public String notifyUrl;
-        @SerializedName("sign")
-        @Expose
-        public String sign;
     }
 }
