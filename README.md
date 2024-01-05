@@ -6,7 +6,7 @@
 - [Installation](#installation)
     - [Importing AAR](#importing-aar)
 - [Setting](#setting)
-    - [ConnectToolBroadcastReceiver](#importing-aar)
+    - [ConnectToolBroadcastReceiver](#connecttoolbroadcastreceiver)
 - [Authorize Flow](#authorize-flow)
 - [ConnectTool function](#connecttool-function)  
     - [OpenRegisterURL, OpenLoginURL ](#openregisterurl-openloginurl)
