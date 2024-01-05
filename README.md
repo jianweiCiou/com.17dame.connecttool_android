@@ -10,7 +10,7 @@
 - [Authorize Flow](#authorize-flow)
 - [ConnectTool function](#connecttool-function)  
     - [OpenRegisterURL, OpenLoginURL ](#openregisterurl-openloginurl)
-    - [App-side event response (Register, Login)　](#app-side-event-response-register-login-logout)
+    - [App-side event response (Register, Login)　](#app-side-event-response-register-login)
     - [OpenAuthorizeURL](#openauthorizeurl)
     	- [Authorize subsequent events ](#authorize-subsequent-events)
     	- [Authorize response.body](#authorize-responsebody)
