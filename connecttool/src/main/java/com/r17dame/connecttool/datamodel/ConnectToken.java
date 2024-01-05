@@ -9,20 +9,18 @@ public class ConnectToken {
     public String token_type;
     @SerializedName("expires_in")
     public String expires_in;
-    @SerializedName("scope")
-    public String scope;
+//    @SerializedName("scope")
+//    public String scope;
     @SerializedName("refresh_token")
     public String refresh_token;
 
     public ConnectToken(String access_token,
                         String token_type,
                         String expires_in,
-                        String scope,
                         String refresh_token) {
         this.access_token = access_token;
         this.token_type = token_type;
         this.expires_in = expires_in;
-        this.scope = scope;
         this.refresh_token = refresh_token;
     }
 }
