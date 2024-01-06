@@ -425,6 +425,9 @@ public class ConnectTool {
                 access_token = tokenData.access_token;
                 refresh_token = tokenData.refresh_token;
 
+                // 儲存時間
+                saveExpiresTs(tokenData.expires_in);
+
                 SharedPreferences.Editor editor = pref.edit();
                 editor.putString(String.valueOf(R.string.access_token), tokenData.access_token);
                 editor.putString(String.valueOf(R.string.refresh_token), tokenData.refresh_token);
