@@ -683,7 +683,7 @@ sequenceDiagram
 - if NotifyCheck true，If there is a NotifyCheck requirement, it will be notified after the NotifyUrl is sent.
 - NotifyCheck will continue send to NotifyUrl for one minute.
 - NotifyCheck JSON format:
-```JSON
+```txt
 {
 	Url (string) = Game-side NotifyUrl,
 	JsonData (string) = Contents of NotifyUrl,
