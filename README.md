@@ -25,7 +25,7 @@
     - [GetPurchaseOrderOne](#getpurchaseorderone)
 - [ConsumeSP function](#consumesp-function)
     - [ConsumeSP flow](#consumesp-flow)  
-    - [Consumption verification process](# )  
+    - [NotifyCheck](# )  
     - [Open ConsumeSP page](#open-consumesp-page)
     - [ConsumeSP subsequent events ](#consumesp-subsequent-events)
     	-[AppLinkData ConsumeSP Response](#applinkdata-consumesp-response) 
@@ -650,7 +650,7 @@ sequenceDiagram
 8. If the user cannot afford the SPCoin value, the user can open the Recharge page.
 9. When consumption is completed, App can query tx by bringing OrderNo or TransactionId into [_connectTool.Get_SPCoin_tx](#query-consumesp-by-transactionid) function.
  
-### Consumption verification process
+### NotifyCheck
 
 ### Open ConsumeSP page  
 - Open ConsumeSP page.
