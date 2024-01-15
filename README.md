@@ -683,10 +683,10 @@ sequenceDiagram
 - if NotifyCheck true，If there is a NotifyCheck requirement, it will be notified after the NotifyUrl is sent.
 - NotifyCheck will continue send to NotifyUrl for one minute.
 - NotifyCheck JSON format:
-```json
+```JSON
 {
 	Url (string) = Game-side NotifyUrl,
-	JsonData (string) = NotifyUrl 的內容,
+	JsonData (string) = Contents of NotifyUrl,
 	 CreatedTS (long) = Send NotifyCheck's TimeStamp,
 	IsNotifyRefund (bool) = Notify whether to refund
 }
@@ -695,7 +695,7 @@ sequenceDiagram
 - Game-side’s response format :
 ```txt
 header : text/plain; charset=utf-8
-StatusCode 200, response 字串"ok"或"true"
+StatusCode 200, response is "ok" or "true"
 ```
 - If Game-side does not reply within one minute, the host will refund SPcoin the user.
  
