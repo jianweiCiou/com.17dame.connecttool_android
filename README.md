@@ -25,7 +25,7 @@
     - [GetPurchaseOrderOne](#getpurchaseorderone)
 - [ConsumeSP function](#consumesp-function)
     - [ConsumeSP flow](#consumesp-flow)  
-    - [NotifyCheck](# )  
+    - [NotifyCheck](#notifycheck)
     - [Open ConsumeSP page](#open-consumesp-page)
     - [ConsumeSP subsequent events ](#consumesp-subsequent-events)
     	-[AppLinkData ConsumeSP Response](#applinkdata-consumesp-response) 
@@ -651,6 +651,55 @@ sequenceDiagram
 9. When consumption is completed, App can query tx by bringing OrderNo or TransactionId into [_connectTool.Get_SPCoin_tx](#query-consumesp-by-transactionid) function.
  
 ### NotifyCheck
+```mermaid
+sequenceDiagram
+    autonumber
+    participant GS as Game Server 
+    participant hs as host Sever
+
+    
+
+    hs->>GS: After Consume complete, call NotifyUrl() 
+    
+    activate hs
+    note over hs: NotifyCheck 
+             alt Set isNotifyCheck true
+                hs->>GS: Send NotifyCheck
+                note over hs: Keep sending for one minute
+            end
+
+    note over GS: Game-side response NotifyCheck 
+
+            alt Response true
+                GS-->>hs: StatusCode 200, response  "ok" or "true"
+                note over hs:  Complete consumption.
+ 
+            else Game side no response (within one minute)
+                note over hs:  Refund (SPcoin) to user.
+            end
+    deactivate hs 
+```
+- Game settings : isNotifyCheck　（default:false）
+- if NotifyCheck true，If there is a NotifyCheck requirement, it will be notified after the NotifyUrl is sent.
+- NotifyCheck will continue send to NotifyUrl for one minute.
+- NotifyCheck JSON format:
+```json
+{
+	Url (string) = Game-side NotifyUrl,
+	JsonData (string) = NotifyUrl 的內容,
+	 CreatedTS (long) = Send NotifyCheck's TimeStamp,
+	IsNotifyRefund (bool) = Notify whether to refund
+}
+```
+- The Game-side’s response after receiving.
+- Game-side’s response format :
+```txt
+header : text/plain; charset=utf-8
+StatusCode 200, response 字串"ok"或"true"
+```
+- If Game-side does not reply within one minute, the host will refund SPcoin the user.
+ 
+
 
 ### Open ConsumeSP page  
 - Open ConsumeSP page.
