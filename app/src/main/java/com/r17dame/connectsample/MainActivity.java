@@ -1,14 +1,12 @@
 package com.r17dame.connectsample;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
-
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
@@ -58,19 +56,21 @@ public class MainActivity extends AppCompatActivity {
             Register_pageButton = findViewById(com.r17dame.connecttool.R.id.Register_pageButton);
             Register_pageButton.setOnClickListener(view -> _connectTool.OpenRegisterURL());
 
-            //頁面登入
-            Login_pageButton = findViewById(com.r17dame.connecttool.R.id.Login_pageButton);
-            Login_pageButton.setOnClickListener(view -> _connectTool.OpenLoginURL());
-
-            //更新 Acctoken 與 MeInfo
+            //用戶登入 (更新 Acctoken 與 MeInfo)
             getConnectAuthorizeButton = findViewById(com.r17dame.connecttool.R.id.getConnectAuthorizeButton);
             getConnectAuthorizeButton.setOnClickListener(view -> {
                 String state = "App-side-State";
                 _connectTool.OpenAuthorizeURL(state);
             });
 
-            postConnectRefreshTokenButton = findViewById(com.r17dame.connecttool.R.id.postConnectRefreshTokenButton);
-            postConnectRefreshTokenButton.setOnClickListener(view -> _connectTool.GetRefreshToken_Coroutine(value -> Log.v(TAG, "RefreshToken callback : " + value.access_token)));
+            /**
+             * 切換帳號 (功能與 OpenLoginURL 相同)
+             * 亦可用: Login_pageButton.setOnClickListener(view -> _connectTool.OpenLoginURL());
+             * @see <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#openregisterurl-openloginurl">Description</a>
+             */
+            Login_pageButton = findViewById(com.r17dame.connecttool.R.id.Login_pageButton);
+            Login_pageButton.setOnClickListener(view -> _connectTool.SwitchAccountURL());
+            //或是  Login_pageButton.setOnClickListener(view -> _connectTool.OpenLoginURL());
 
             //Get MeInfo
             getMeButton = findViewById(com.r17dame.connecttool.R.id.getMeButton);
@@ -140,15 +140,14 @@ public class MainActivity extends AppCompatActivity {
             OpenConsumeSPButton.setOnClickListener(view -> {
                 String notifyUrl = "";// NotifyUrl is a URL customized by the game developer
                 String state = UUID.randomUUID().toString(); // Custom state , default random
-
                 // Step1. Set notifyUrl and state,
                 _connectTool.set_purchase_notifyData(notifyUrl, state);
 
-                int consume_spCoin = 50;
+                int consume_spCoin = 10;
                 String orderNo = UUID.randomUUID().toString(); // orderNo is customized by the game developer
                 String requestNumber = UUID.randomUUID().toString(); // requestNumber is customized by the game developer, default random
-                String GameName = "Good 18 Game";
-                String productName = "10 of the best diamonds";
+                String GameName = "GameName";
+                String productName = "productName";
                 _connectTool.OpenConsumeSPURL(consume_spCoin, orderNo, GameName, productName, notifyUrl, state, requestNumber);
             });
 
