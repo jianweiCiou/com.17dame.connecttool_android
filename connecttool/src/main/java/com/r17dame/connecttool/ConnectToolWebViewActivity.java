@@ -102,6 +102,7 @@ public class ConnectToolWebViewActivity extends AppCompatActivity {
                 String requestNumber = pref.getString(String.valueOf(R.string.requestNumber), "");
                 String redirect_uri = pref.getString(String.valueOf(R.string.redirect_uri), "");
 
+                // 填充資訊
                 connectWebView.loadUrl("javascript:localStorage.setItem('Secret','" + Secret + "');");
                 connectWebView.loadUrl("javascript:localStorage.setItem('ClientID','" + ClientID + "');");
                 connectWebView.loadUrl("javascript:localStorage.setItem('me','" + _me + "');");
@@ -128,10 +129,14 @@ public class ConnectToolWebViewActivity extends AppCompatActivity {
 //                connectWebView.loadUrl("javascript:(function(){document.getElementById('Input_Password').value = '" + Input_Password + "';})()");
 //                connectWebView.loadUrl("javascript:(function(){document.getElementById('Input_ConfirmPassword').value = '" + Input_ConfirmPassword + "';})()");
 
-                // 設定註冊測試
-
+                // 設定遊戲註冊
+                if (url.contains("/Account/Login")) {
+                    String AppRegisterUrl = "'/account/AppRegister/" + Uri.encode(_connectTool.connectBasic.Game_id) + "/" + Uri.encode(_connectTool.referralCode) + "?returnUrl=" + Uri.encode(_connectTool.redirect_uri) + "'";
+                    connectWebView.loadUrl("javascript:(function(){document.getElementById('goToRegister').href=" + AppRegisterUrl + ";})()");
+                }
                 Uri appLinkData = Uri.parse(url);
-                if (appLinkData.getScheme().equals(_connectTool.scheme)) {
+                // Oauth 回應
+                if (url.contains("Account/connectlink")) {
                     // auth
                     // Open by Account Page (Register, Login) :
                     if (appLinkData.getQueryParameterNames().contains("accountBackType")) {
