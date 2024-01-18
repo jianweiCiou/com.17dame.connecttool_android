@@ -18,6 +18,36 @@ import java.util.Date;
 
 public class Tool {
 
+//    Currency Code
+//    Code	USD	TWD	CNY	JPY	KRW	VND	THB	MYR	SGD
+//    key	1	2	4	8	16	32	64	128	256
+    public static String getCurrencyCode(String _code){
+
+        int code = Integer.parseInt(_code);
+        switch (code){
+            case 1:
+                return "USD";
+            case 2:
+                return "TWD";
+            case 4:
+                return "CNY";
+            case 8:
+                return "JPY";
+            case 16:
+                return "KRW";
+            case 32:
+                return "VND";
+            case 64:
+                return "THB";
+            case 128:
+                return "MYR";
+            case 256:
+                return "SGD";
+            default:
+                return "_";
+        }
+    };
+
     public static String getTimestamp() {
         Date currentDate = new Date();
         System.out.println("Current Timestamp: " + currentDate.getTime() + " milliseconds");
