@@ -63,7 +63,6 @@ public class ConnectTool {
     public String redirect_uri;
     public String scheme;
     String payMentBaseurl = "https://gamar18portal.azurewebsites.net";
-    // String payMentBaseurl = "https://08ba-114-24-113-159.ngrok-free.app";
     Boolean isRunAuthorize = false;
     Boolean isRunCompleteConsumeSP = false;
     Boolean isRunCompleteCompletePurchase = false;
@@ -108,6 +107,9 @@ public class ConnectTool {
         if (!_refresh_token.equals("")) {
             refresh_token = _refresh_token;
         }
+
+
+        redirect_uri = payMentBaseurl + "/Account/connectlink";
     }
 
 
@@ -187,7 +189,16 @@ public class ConnectTool {
             return;
         }
         String notifyUrl = (_notifyUrl.equals("")) ? "none_notifyUrl" : _notifyUrl;
-        String url = payMentBaseurl + "/member/recharge/" + Uri.encode(connectBasic.X_Developer_Id) + "/" + Uri.encode(redirect_uri) + "/2/" + currencyCode + "/" + Uri.encode(notifyUrl) + "/" + Uri.encode(state) + "/" + Uri.encode(referralCode);
+        String url = payMentBaseurl +
+                "/MemberRecharge/Recharge?X_Developer_Id=" +
+                Uri.encode(connectBasic.X_Developer_Id) + "&accessScheme=" +
+                Uri.encode(redirect_uri) + "&accessType=" +
+                "2" + "&currencyCode=" +
+                Tool.getCurrencyCode(currencyCode) + "&notifyUrl=" +
+                Uri.encode(notifyUrl) + "&state=" +
+                Uri.encode(state) + "&state=referralCode" +
+                Uri.encode(referralCode);
+
         Log.v(TAG, "OpenRechargeURL " + url);
 
         if (isOverExpiresTs()) {
@@ -250,7 +261,19 @@ public class ConnectTool {
         editor.apply();
 
         String notifyUrl = (_notifyUrl.equals("")) ? "none_notifyUrl" : _notifyUrl;
-        String url = payMentBaseurl + "/member/consumesp/" + Uri.encode(connectBasic.X_Developer_Id) + "/" + Uri.encode(redirect_uri) + "/2/" + Uri.encode(connectBasic.Game_id) + "/" + Uri.encode(GameName) + "/" + Uri.encode(orderNo) + "/" + Uri.encode(productName) + "/" + abs(consume_spCoin) + "/" + abs(0) + "/" + Uri.encode(notifyUrl) + "/" + Uri.encode(state) + "/" + Uri.encode(referralCode);
+        String url = payMentBaseurl + "/member/consumesp?xDeveloperId=" +
+                Uri.encode(connectBasic.X_Developer_Id) + "&accessScheme=" +
+                Uri.encode(redirect_uri) + "&accessType=" +
+                "2" + "&gameId=" +
+                Uri.encode(connectBasic.Game_id) + "&gameName=" +
+                Uri.encode(GameName) + "&orderNo=" +
+                Uri.encode(orderNo) + "&productName=" +
+                Uri.encode(productName) + "&consumeSpCoin=" +
+                abs(consume_spCoin) + "&consumeRebate=" +
+                abs(0) + "&notifyUrl=" +
+                Uri.encode(notifyUrl) + "&state=" +
+                Uri.encode(state) + "&referralCode=" +
+                Uri.encode(referralCode);
 
         Log.v(TAG, "OpenConsumeSPURL " + url);
 
@@ -277,6 +300,7 @@ public class ConnectTool {
         editor.putString(String.valueOf(R.string.refresh_token), "");
         editor.apply();
 
+        // payMentBaseurl = "https://4ed9-114-24-106-49.ngrok-free.app";
         String _redirect_uri = redirect_uri + "?accountBackType=Register";
         String url = payMentBaseurl + "/account/AppRegister/" + connectBasic.Game_id + "/" + referralCode + "?returnUrl=" + Uri.encode(_redirect_uri);
         Log.v(TAG, "OpenRegisterURL " + url);
@@ -289,6 +313,16 @@ public class ConnectTool {
 
 //        Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("" + url));
 //        startActivity(urlIntent);
+    }
+
+
+    /**
+     * 切換帳號
+     *
+     * @see <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#openregisterurl-openloginurl">Description</a>
+     */
+    public void SwitchAccountURL() {
+        OpenLoginURL();
     }
 
     /**
