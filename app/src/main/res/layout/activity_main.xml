@@ -13,13 +13,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView_page"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Page access" />
-
         <LinearLayout
             android:id="@+id/layout3_access"
             android:layout_width="wrap_content"
@@ -30,12 +23,12 @@
                 android:id="@+id/Register_pageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Register Link" />
+                android:text="用戶註冊" />
             <Button
                 android:id="@+id/Login_pageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Login Link" />
+                android:text="用戶切換帳號" />
         </LinearLayout>
 
         <TextView
@@ -55,13 +48,8 @@
                 android:id="@+id/getConnectAuthorizeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Authorize" />
+                android:text="用戶登入" />
 
-            <Button
-                android:id="@+id/postConnectRefreshTokenButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Refresh Token" />
         </LinearLayout>
 
 
@@ -88,7 +76,7 @@
                     android:id="@+id/getMeButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Me Info" />
+                    android:text="取得用戶資訊" />
 
                 <TextView
                     android:id="@+id/textViewMeInfo"
@@ -127,7 +115,6 @@
                 android:text="Purchase Order " />
         </LinearLayout>
 
-
         <LinearLayout
             android:id="@+id/layout_pay_d"
             android:layout_width="wrap_content"
@@ -137,7 +124,7 @@
                 android:id="@+id/rechargeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Recharge Link" />
+                android:text="SPcoin 儲值" />
         </LinearLayout>
 
         <TextView
@@ -157,7 +144,7 @@
                 android:id="@+id/OpenConsumeSPButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Consume SP Link" />
+                android:text="消費 SP coin" />
 
             <TextView
                 android:id="@+id/ConsumeSPInfo"
