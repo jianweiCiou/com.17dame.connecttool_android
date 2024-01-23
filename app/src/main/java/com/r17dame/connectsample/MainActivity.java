@@ -1,12 +1,16 @@
 package com.r17dame.connectsample;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
+
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
@@ -16,11 +20,11 @@ import com.r17dame.connecttool.ConnectToolBroadcastReceiver;
 
 public class MainActivity extends AppCompatActivity {
 
+    String TAG = "connectToolPageBack test";
     private ConnectToolBroadcastReceiver connectToolReceiver;
-
+    IntentFilter itFilter;
     ConnectTool _connectTool;
     Button getConnectAuthorizeButton;
-    Button postConnectRefreshTokenButton;
     Button getMeButton;
 
     // page access
@@ -33,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     Button OpenConsumeSPButton;
     Button QueryConsumeSPButton;
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 _connectTool.OpenAuthorizeURL(state);
             });
 
-            /**
+            /*
              * 切換帳號 (功能與 OpenLoginURL 相同)
              * 亦可用: Login_pageButton.setOnClickListener(view -> _connectTool.OpenLoginURL());
              * @see <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#openregisterurl-openloginurl">Description</a>
@@ -174,15 +179,19 @@ public class MainActivity extends AppCompatActivity {
 
         //Assign ConnectToolReceiver
         connectToolReceiver = new ConnectToolBroadcastReceiver();
-        IntentFilter itFilter = new IntentFilter();
+        itFilter = new IntentFilter();
         itFilter.addAction("com.r17dame.CONNECT_ACTION");
-        registerReceiver(connectToolReceiver, itFilter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            // 修正 Android 14+ 的廣播註冊
+            this.registerReceiver(connectToolReceiver, itFilter, RECEIVER_EXPORTED);
+        } else {
+            registerReceiver(connectToolReceiver, itFilter);
+        }
 
         connectToolReceiver.registerCallback(new ConnectToolBroadcastReceiver.ConnectToolReceiverCallback() {
             @Override
             public void connectToolPageBack(Intent intent, String accountBackType) {
                 String backType = intent.getStringExtra("accountBackType");
-                String TAG = "connectToolPageBack test";
                 Log.v(TAG, "connectToolPageBack : " + backType);
                 // Open by Account Page (Register, Login) :
                 if (backType.equals("Register")) {
@@ -244,6 +253,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(connectToolReceiver);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            // 修正 Android 14+ 的廣播註冊
+            this.registerReceiver(connectToolReceiver, itFilter, RECEIVER_EXPORTED);
+        } else {
+            unregisterReceiver(connectToolReceiver);
+        }
     }
 }
