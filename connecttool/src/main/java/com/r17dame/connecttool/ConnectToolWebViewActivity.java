@@ -1,6 +1,5 @@
 package com.r17dame.connecttool;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -34,18 +33,15 @@ public class ConnectToolWebViewActivity extends AppCompatActivity {
     WebView connectWebView;
 
     SharedPreferences pref;
-
+    IntentFilter itFilter;
     @SuppressLint("SetJavaScriptEnabled")
     @Override
-    @RequiresApi(api = Build.VERSION_CODES.O)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect_tool_web_view);
 
         // init callback
         this.context = this;
-
-        CookieManager.getInstance().setAcceptCookie(true);
 
         this.pref = ((Activity) context).getSharedPreferences("ConnectToolP", Context.MODE_PRIVATE);
         String redirect_uri = pref.getString(String.valueOf(R.string.redirect_uri), "");
@@ -61,9 +57,15 @@ public class ConnectToolWebViewActivity extends AppCompatActivity {
                 X_Developer_Id, client_secret, Game_id);
 
         // Init registerReceiver
-        IntentFilter itFilter = new IntentFilter("com.r17dame.CONNECT_ACTION");
+        itFilter = new IntentFilter();
+        itFilter.addAction("com.r17dame.CONNECT_ACTION");
         connectReceiver = new ConnectToolBroadcastReceiver();
-        registerReceiver(connectReceiver, itFilter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            // 修正 Android 14+ 的廣播註冊
+            this.registerReceiver(connectReceiver, itFilter, RECEIVER_EXPORTED);
+        } else {
+            registerReceiver(connectReceiver, itFilter);
+        }
 
         // 開網頁
         Bundle extras = getIntent().getExtras();
@@ -169,6 +171,14 @@ public class ConnectToolWebViewActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+        // 調整登入 Cookie 問題
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            CookieManager.getInstance().setAcceptThirdPartyCookies(connectWebView, true);
+        } else {
+            CookieManager.getInstance().setAcceptCookie(true);
+        }
     }
 
     @Override
@@ -184,7 +194,12 @@ public class ConnectToolWebViewActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
 
-        unregisterReceiver(connectReceiver);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            // 修正 Android 14+ 的廣播註冊
+            this.registerReceiver(connectReceiver, itFilter, RECEIVER_EXPORTED);
+        } else {
+            unregisterReceiver(connectReceiver);
+        }
     }
 
     @JavascriptInterface
@@ -193,7 +208,9 @@ public class ConnectToolWebViewActivity extends AppCompatActivity {
         finish();
     }
 
-    // 註冊結束
+    /**
+     * 註冊結束
+     */
     @JavascriptInterface
     public void CompleteRegistration() {
         Intent it = new Intent("com.r17dame.CONNECT_ACTION");
