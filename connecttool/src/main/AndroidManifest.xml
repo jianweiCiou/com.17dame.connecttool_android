@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.r17dame.connecttool">
 
     <application>
-
         <receiver android:name="ConnectToolBroadcastReceiver"
             android:exported="true">
             <intent-filter>
@@ -10,23 +9,7 @@
             </intent-filter>
         </receiver>
 
-
-        <activity
-            android:name=".ConnectToolSampleActivity"
-            android:exported="true"
-            android:label="ConnectToolSampleActivity"
-            android:theme="@style/Theme.ConnectSample">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="connectlink"
-                    android:scheme="r17dame" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".ConnectToolWebViewActivity"
+        <activity android:name="com.r17dame.connecttool.ConnectToolWebViewActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
