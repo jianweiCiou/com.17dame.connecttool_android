@@ -58,7 +58,6 @@ public class CreatePurchaseOrderRequest {
         return gson.fromJson(requestObject.toString(),CreatePurchaseOrderRequest.class);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public static String get_X_Signature(SharedPreferences pref,String RSAstr){
         Gson gson = new Gson();
         CreatePurchaseOrderRequest payWithPrimeRequest = CreatePurchaseOrderRequest.getRequestBody(pref);
