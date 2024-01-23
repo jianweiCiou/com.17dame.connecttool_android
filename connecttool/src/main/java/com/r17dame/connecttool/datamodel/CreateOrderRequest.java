@@ -61,7 +61,6 @@ public class CreateOrderRequest {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public static String get_X_Signature(SharedPreferences pref,String RSAstr,String _gameId){
         Gson gson = new Gson();
         CreateOrderRequest payWithPrimeRequest = CreateOrderRequest.getRequestBody(pref,_gameId);
