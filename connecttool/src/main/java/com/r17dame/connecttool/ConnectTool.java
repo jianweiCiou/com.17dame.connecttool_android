@@ -34,6 +34,7 @@ import com.r17dame.connecttool.datamodel.PurchaseOrderOneResponse;
 import com.r17dame.connecttool.datamodel.Tool;
 import com.r17dame.connecttool.datamodel.UserCard;
 import com.r17dame.connecttool.datamodel.UserCardRequest;
+import com.unity3d.player.UnityPlayer;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
@@ -296,9 +297,7 @@ public class ConnectTool {
         }
 
         SharedPreferences.Editor editor = pref.edit();
-        editor.putString(String.valueOf(R.string.access_token), "");
-        editor.putString(String.valueOf(R.string.refresh_token), "");
-        editor.apply();
+        Tool.RemoveAccessToken(editor);
 
         // payMentBaseurl = "https://4ed9-114-24-106-49.ngrok-free.app";
         String _redirect_uri = redirect_uri + "?accountBackType=Register";
@@ -336,9 +335,7 @@ public class ConnectTool {
         }
 
         SharedPreferences.Editor editor = pref.edit();
-        editor.putString(String.valueOf(R.string.access_token), "");
-        editor.putString(String.valueOf(R.string.refresh_token), "");
-        editor.apply();
+        Tool.RemoveAccessToken(editor);
 
         String _redirect_uri = redirect_uri + "?accountBackType=Login";
         String url = payMentBaseurl + "/account/AppLogin/" + connectBasic.Game_id + "/" + referralCode + "?returnUrl=" + Uri.encode(_redirect_uri);
@@ -392,6 +389,7 @@ public class ConnectTool {
                 try {
                     connectTokenCall.callbackConnectToken(tokenData);
                 } catch (NoSuchAlgorithmException e) {
+                    Tool.RemoveAccessToken(editor);
                     throw new RuntimeException(e);
                 }
             }
@@ -402,6 +400,8 @@ public class ConnectTool {
                 try {
                     connectTokenCall.callbackConnectToken(null);
                 } catch (NoSuchAlgorithmException e) {
+                    SharedPreferences.Editor editor = pref.edit();
+                    Tool.RemoveAccessToken(editor);
                     throw new RuntimeException(e);
                 }
             }
@@ -412,7 +412,9 @@ public class ConnectTool {
     private Boolean isOverExpiresTs() {
 
         String expiresTs = pref.getString(String.valueOf(R.string.expiresTs), "");
-        if (expiresTs.equals("")) {
+        String access_token = pref.getString(String.valueOf(R.string.access_token), "");
+        String refresh_token = pref.getString(String.valueOf(R.string.refresh_token), "");
+        if (expiresTs.equals("") || access_token.equals("") || refresh_token.equals("")) {
             return true;
         } else {
             Double expiresTsDouble = Double.parseDouble(expiresTs);
@@ -446,6 +448,7 @@ public class ConnectTool {
     }
 
     public void GetRefreshToken_Coroutine(ConnectTokenCall connectTokenCall) {
+
         if (!_checkConstructorParametersComplete()) {
             return;
         }
@@ -470,6 +473,7 @@ public class ConnectTool {
                 try {
                     connectTokenCall.callbackConnectToken(tokenData);
                 } catch (NoSuchAlgorithmException e) {
+                    Tool.RemoveAccessToken(editor);
                     throw new RuntimeException(e);
                 }
             }
@@ -480,6 +484,8 @@ public class ConnectTool {
                 try {
                     connectTokenCall.callbackConnectToken(null);
                 } catch (NoSuchAlgorithmException e) {
+                    SharedPreferences.Editor editor = pref.edit();
+                    Tool.RemoveAccessToken(editor);
                     throw new RuntimeException(e);
                 }
             }
@@ -493,12 +499,12 @@ public class ConnectTool {
      * @param callback            -
      * @see <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#query-consumesp-by-transactionid">說明</a>
      */
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public void GetMe_Coroutine(UUID _GetMeRequestNumber, MeCallback callback) throws NoSuchAlgorithmException {
         if (!_checkConstructorParametersComplete()) {
             return;
         }
         if (isOverExpiresTs()) {
+            // 無 token
             // token 到期
             GetRefreshToken_Coroutine(value -> getMeData(_GetMeRequestNumber, callback));
         } else {
@@ -506,7 +512,6 @@ public class ConnectTool {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     private void getMeData(UUID _GetMeRequestNumber, MeCallback callback) throws NoSuchAlgorithmException {
 
         apiInterface = APIClient.getGame_api_hostClient().create(APIInterface.class);
@@ -521,7 +526,6 @@ public class ConnectTool {
             throw new RuntimeException(e);
         }
 
-        // headers data
         access_token = pref.getString(String.valueOf(R.string.access_token), "");
         String authorization = "Bearer " + access_token;
         Call<MeInfo> call1 = apiInterface.getMeData(authorization, connectBasic.X_Developer_Id, X_Signature, _GetMeRequestNumber.toString(), timestamp);
@@ -543,10 +547,13 @@ public class ConnectTool {
             @Override
             public void onFailure(Call<MeInfo> call, Throwable t) {
                 call.cancel();
+                SharedPreferences.Editor editor = pref.edit();
+                Tool.RemoveAccessToken(editor);
                 callback.callbackMeInfo(null);
             }
         });
     }
+
 
     /**
      * Get Consumption by transactionId.
@@ -556,7 +563,6 @@ public class ConnectTool {
      * @param callback                     - Consumption Response
      * @see <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#query-consumesp-by-transactionid">說明</a>
      */
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public void Get_SPCoin_tx(UUID queryConsumeSP_requestNumber, String transactionId, GetSPCoinTxCallback callback) throws NoSuchAlgorithmException {
         if (!_checkConstructorParametersComplete()) {
             return;
@@ -631,7 +637,6 @@ public class ConnectTool {
      * @param callback -
      * @see <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#getpurchaseorderlist">說明</a>
      */
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public void GetPurchaseOrderList(GetPurchaseOrderListCallback callback) throws NoSuchAlgorithmException {
         if (!_checkConstructorParametersComplete()) {
             return;
@@ -669,7 +674,6 @@ public class ConnectTool {
      * @param tradeNo  -
      * @see <a href="https://github.com/jianweiCiou/com.17dame.connecttool_android/blob/main/README.md#getpurchaseorderone">說明</a>
      */
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public void GetPurchaseOrderOne(PurchaseOrderCallback callback, String tradeNo) throws NoSuchAlgorithmException {
         if (!_checkConstructorParametersComplete()) {
             return;
@@ -706,7 +710,6 @@ public class ConnectTool {
         });
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public void GetUserCards(GetUserCardsCallback callback) {
         if (!_checkConstructorParametersComplete()) {
             return;
@@ -748,7 +751,6 @@ public class ConnectTool {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public void appLinkDataCallBack_CompletePurchase(Intent intent, PurchaseOrderCallback appLinkcallback) {
         if (isRunCompleteCompletePurchase.equals(false)) {
             isRunCompleteCompletePurchase = true;
@@ -769,7 +771,6 @@ public class ConnectTool {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public void appLinkDataCallBack_CompleteConsumeSP(Intent intent, UUID queryConsumeSP_requestNumber, GetSPCoinTxCallback appLinkcallback) {
         if (isRunCompleteConsumeSP.equals(false)) {
             isRunCompleteConsumeSP = true;
@@ -796,8 +797,6 @@ public class ConnectTool {
         }
     }
 
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public void appLinkDataCallBack_OpenAuthorize(Intent intent, String _state, UUID GetMe_RequestNumber, AuthorizeCallback authCallback) {
 
         if (isRunAuthorize.equals(false)) {
@@ -828,7 +827,6 @@ public class ConnectTool {
         Toast.makeText(unityActivity, msg, Toast.LENGTH_SHORT).show();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public void appLinkData(String url) {
         Log.v(TAG, "appLinkData url " + url);
         Uri appLinkData = Uri.parse(url);
@@ -854,5 +852,27 @@ public class ConnectTool {
         }
     }
 
+
+    /**
+     * Unity 2018
+     */
+    // This function will be called from Unity
+    public static void ShowToast(String message) {
+        // Display the toast popup
+        Toast.makeText(UnityPlayer.currentActivity, message, Toast.LENGTH_SHORT).show();
+
+        // Send a message back to Unity
+        UnityPlayer.UnitySendMessage(
+                // game object name
+                "ToastObject",
+                // function name
+                "ReceiveFromAndroid",
+                // arguments
+                "Displayed toast with message: " + message
+        );
+    }
+
+    public void UnityCallOpenAuthorizeURL() {
+    }
 }
 
