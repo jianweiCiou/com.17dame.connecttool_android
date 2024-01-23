@@ -41,8 +41,6 @@ public class PurchaseOrderOneRequest {
         return gson.fromJson(requestObject.toString(),PurchaseOrderOneRequest.class);
     }
 
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public static String get_X_Signature(SharedPreferences pref,String RSAstr){
         Gson gson = new Gson();
         PurchaseOrderOneRequest payWithPrimeRequest = PurchaseOrderOneRequest.getRequestBody(pref);
