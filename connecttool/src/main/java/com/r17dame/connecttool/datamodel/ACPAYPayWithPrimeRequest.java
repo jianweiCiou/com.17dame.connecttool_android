@@ -51,7 +51,6 @@ public class ACPAYPayWithPrimeRequest {
     return gson.fromJson(requestObject.toString(),ACPAYPayWithPrimeRequest.class);
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.O)
   public static String get_X_Signature(SharedPreferences pref,String RSAstr){
     Gson gson = new Gson();
     ACPAYPayWithPrimeRequest payWithPrimeRequest = ACPAYPayWithPrimeRequest.getRequestBody(pref);
