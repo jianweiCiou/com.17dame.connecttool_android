@@ -3,10 +3,10 @@ package com.r17dame.connecttool;
 
 public class ConnectBasic {
 
-    String client_id;
-    String X_Developer_Id;
-    String client_secret;
-    String Game_id;
+    public String client_id;
+    public String X_Developer_Id;
+    public String client_secret;
+    public String Game_id;
 
     public ConnectBasic(
             String _client_id,
