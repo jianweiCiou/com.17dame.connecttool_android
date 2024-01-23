@@ -37,7 +37,6 @@ public class UserCardRequest {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public static String get_X_Signature(SharedPreferences pref,String RSAstr){
         Gson gson = new Gson();
         UserCardRequest payWithPrimeRequest = UserCardRequest.getRequestBody(pref);
