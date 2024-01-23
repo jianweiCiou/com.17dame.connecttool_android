@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".unity.UnityMainActivity">
+
+
+    <LinearLayout
+        android:id="@+id/layout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/layout3_access"
+            android:layout_width="wrap_content"
+            android:layout_height="110px"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/Register_pageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="用戶註冊" />
+            <Button
+                android:id="@+id/Login_pageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="用戶切換帳號" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView_Get_a"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Get access token" />
+
+        <LinearLayout
+            android:id="@+id/layout_access"
+            android:layout_width="wrap_content"
+            android:layout_height="110px"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/getConnectAuthorizeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="用戶登入" />
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/textView_me_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Account info" />
+
+        <LinearLayout
+            android:id="@+id/layout_me"
+            android:layout_width="wrap_content"
+            android:layout_height="180px"
+            android:gravity="center_horizontal">
+
+            <LinearLayout
+                android:id="@+id/layout2_m"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/getMeButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="取得用戶資訊" />
+
+                <TextView
+                    android:id="@+id/textViewMeInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="100px"
+                    android:layout_weight="1"
+                    android:text="" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/textViewPayment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Payment" />
+
+        <LinearLayout
+            android:id="@+id/layout_pay"
+            android:layout_width="wrap_content"
+            android:layout_height="110px"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/GetPurchaseOrderListButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Purchase Order List" />
+
+            <Button
+                android:id="@+id/GetPurchaseOrderButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Purchase Order " />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_pay_d"
+            android:layout_width="wrap_content"
+            android:layout_height="110px"
+            android:gravity="center_horizontal">
+            <Button
+                android:id="@+id/rechargeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SPcoin 儲值" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textViewTP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Consume" />
+
+        <LinearLayout
+            android:id="@+id/layout_pay_TP"
+            android:layout_width="wrap_content"
+            android:layout_height="110px"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/OpenConsumeSPButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="消費 SP coin" />
+
+            <TextView
+                android:id="@+id/ConsumeSPInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="100px"
+                android:layout_weight="1"
+                android:text="" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/layout_Query_d"
+            android:layout_width="wrap_content"
+            android:layout_height="110px"
+            android:gravity="center_horizontal">
+            <Button
+                android:id="@+id/QueryConsumeSPButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Query SPCoin tx" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/ConnectCallbackText"
+            android:layout_width="match_parent"
+            android:layout_height="111dp"
+
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"
+            android:textSize="30sp"
+            tools:text="__" />
+    </LinearLayout>
+
+
+
+</RelativeLayout>
