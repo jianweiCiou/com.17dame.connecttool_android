@@ -68,7 +68,7 @@ interface APIInterface {
             ,@Field("redirect_uri")String redirect_uri
             ,@Field("grant_type")String grant_type);
 
-    @Headers("Content-Type: application/json; charset=utf-8" )
+    @Headers("Content-Type: application/json" )
     @GET("/api/Me")
     Call<MeInfo> getMeData(
             @Header("Authorization") String authorization,
