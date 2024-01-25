@@ -698,7 +698,7 @@ header : text/plain; charset=utf-8
 StatusCode 200, response is "ok" or "true"
 ```
 - If Game-side does not reply within one minute, the host will refund SPcoin the user.
- 
+- Refund SPcoin service is not default.
 
 
 ### Open ConsumeSP page  
