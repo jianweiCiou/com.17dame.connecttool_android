@@ -24,6 +24,8 @@ class APIClient {
     private static Retrofit retrofit = null;
     public static String host = "https://gamar18portal.azurewebsites.net";
     public static String game_api_host = "https://r18gameapi.azurewebsites.net";
+//    public static String host = "https://www.17dame.com";
+//    public static String game_api_host = "https://gameapi.17dame.com";
 
     static Retrofit getHostClient() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
