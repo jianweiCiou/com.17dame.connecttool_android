@@ -56,14 +56,13 @@ public class ConnectTool {
     SharedPreferences pref;
     // Interface
     APIInterface apiInterface;
-    public String referralCode = "Or16888";
+    public String referralCode = "1688";
     public String code;
     public String RSAstr;
     public String access_token = "";
     public String refresh_token = "";
     public String redirect_uri;
     public String scheme;
-    String payMentBaseurl = "https://gamar18portal.azurewebsites.net";
     Boolean isRunAuthorize = false;
     Boolean isRunCompleteConsumeSP = false;
     Boolean isRunCompleteCompletePurchase = false;
@@ -110,7 +109,7 @@ public class ConnectTool {
         }
 
 
-        redirect_uri = payMentBaseurl + "/Account/connectlink";
+        redirect_uri = APIClient.host + "/Account/connectlink";
     }
 
 
@@ -152,7 +151,7 @@ public class ConnectTool {
             Log.w(TAG, "No state");
             return;
         }
-        String url = payMentBaseurl + "/connect/Authorize?response_type=code&client_id=" + connectBasic.client_id + "&redirect_uri=" + redirect_uri + "&scope=game+offline_access&state=" + state;
+        String url = APIClient.host + "/connect/Authorize?response_type=code&client_id=" + connectBasic.client_id + "&redirect_uri=" + redirect_uri + "&scope=game+offline_access&state=" + state;
         Log.v(TAG, "AuthorizeURL " + url);
 
         // Open connectWebView
@@ -190,7 +189,7 @@ public class ConnectTool {
             return;
         }
         String notifyUrl = (_notifyUrl.equals("")) ? "none_notifyUrl" : _notifyUrl;
-        String url = payMentBaseurl +
+        String url = APIClient.host +
                 "/MemberRecharge/Recharge?X_Developer_Id=" +
                 Uri.encode(connectBasic.X_Developer_Id) + "&accessScheme=" +
                 Uri.encode(redirect_uri) + "&accessType=" +
@@ -262,7 +261,7 @@ public class ConnectTool {
         editor.apply();
 
         String notifyUrl = (_notifyUrl.equals("")) ? "none_notifyUrl" : _notifyUrl;
-        String url = payMentBaseurl + "/member/consumesp?xDeveloperId=" +
+        String url = APIClient.host + "/member/consumesp?xDeveloperId=" +
                 Uri.encode(connectBasic.X_Developer_Id) + "&accessScheme=" +
                 Uri.encode(redirect_uri) + "&accessType=" +
                 "2" + "&gameId=" +
@@ -301,7 +300,7 @@ public class ConnectTool {
 
         // payMentBaseurl = "https://4ed9-114-24-106-49.ngrok-free.app";
         String _redirect_uri = redirect_uri + "?accountBackType=Register";
-        String url = payMentBaseurl + "/account/AppRegister/" + connectBasic.Game_id + "/" + referralCode + "?returnUrl=" + Uri.encode(_redirect_uri);
+        String url = APIClient.host + "/account/AppRegister/" + connectBasic.Game_id + "/" + referralCode + "?returnUrl=" + Uri.encode(_redirect_uri);
         Log.v(TAG, "OpenRegisterURL " + url);
 
 
@@ -338,7 +337,7 @@ public class ConnectTool {
         Tool.RemoveAccessToken(editor);
 
         String _redirect_uri = redirect_uri + "?accountBackType=Login";
-        String url = payMentBaseurl + "/account/AppLogin/" + connectBasic.Game_id + "/" + referralCode + "?returnUrl=" + Uri.encode(_redirect_uri);
+        String url = APIClient.host + "/account/AppLogin/" + connectBasic.Game_id + "/" + referralCode + "?returnUrl=" + Uri.encode(_redirect_uri);
         Log.v(TAG, "OpenLoginURL " + url);
 
         // Open connectWebView
@@ -428,7 +427,6 @@ public class ConnectTool {
                 return false;
             }
         }
-
     }
 
 
@@ -516,8 +514,10 @@ public class ConnectTool {
 
         apiInterface = APIClient.getGame_api_hostClient().create(APIInterface.class);
 
+
+         // GameId ReferralCode
         String timestamp = Tool.getTimestamp();
-        String signdata = "?RequestNumber=" + _GetMeRequestNumber + "&Timestamp=" + timestamp;
+        String signdata = "?GameId=&"+ connectBasic.Game_id+"ReferralCode="+referralCode+"&RequestNumber=" + _GetMeRequestNumber + "&Timestamp=" + timestamp;
 
         String X_Signature;
         try {
@@ -528,7 +528,7 @@ public class ConnectTool {
 
         access_token = pref.getString(String.valueOf(R.string.access_token), "");
         String authorization = "Bearer " + access_token;
-        Call<MeInfo> call1 = apiInterface.getMeData(authorization, connectBasic.X_Developer_Id, X_Signature, _GetMeRequestNumber.toString(), timestamp);
+        Call<MeInfo> call1 = apiInterface.getMeData(authorization, connectBasic.X_Developer_Id, X_Signature, _GetMeRequestNumber.toString(), timestamp,connectBasic.Game_id,referralCode);
         call1.enqueue(new Callback<MeInfo>() {
             @Override
             public void onResponse(Call<MeInfo> call, retrofit2.Response<MeInfo> response) {

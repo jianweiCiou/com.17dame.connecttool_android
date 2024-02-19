@@ -75,9 +75,10 @@ interface APIInterface {
             @Header("X-Developer-Id") String X_Developer_Id,
             @Header("X-Signature") String X_Signature,
             @Query("RequestNumber") String RequestNumber,
-            @Query("Timestamp") String Timestamp);
-
-
+            @Query("Timestamp") String Timestamp,
+            @Query("GameId") String GameId,
+            @Query("ReferralCode") String ReferralCode
+    );
 //    {
 //        "requestNumber": "ebe4ae28-dda1-499d-bdbc-1066ce080a6f",
 //            "timestamp": "2023-12-01T13:30:44.518Z",
