@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.r17dame.connecttool">
-
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.r17dame.connecttool">
     <application>
-        <receiver android:name="ConnectToolBroadcastReceiver"
+        <receiver
+            android:name=".ConnectToolBroadcastReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.r17dame.CONNECT_ACTION"/>
+                <action android:name="com.r17dame.CONNECT_ACTION" />
             </intent-filter>
         </receiver>
 
-        <activity android:name="com.r17dame.connecttool.ConnectToolWebViewActivity"
-            android:exported="true" >
+        <activity
+            android:name=".ConnectToolWebViewActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="connectlink"
                     android:scheme="r17dame" />
             </intent-filter>
         </activity>
     </application>
-
 </manifest>
