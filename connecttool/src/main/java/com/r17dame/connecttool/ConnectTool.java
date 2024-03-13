@@ -1,19 +1,28 @@
 package com.r17dame.connecttool;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 
 import static java.lang.Math.abs;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 import android.app.Activity;
+import android.view.Gravity;
+import android.view.WindowManager;
+import android.webkit.CookieManager;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import androidx.annotation.RequiresApi;
 
 import com.google.gson.Gson;
 import com.r17dame.connecttool.callback.AuthorizeCallback;
@@ -43,9 +52,30 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@SuppressLint("SetJavaScriptEnabled")
 public class ConnectTool {
+
+    // Version
+    //platform
+    public enum TOOL_VERSION {
+        testVS, releaseVS
+    }
+
+    public enum PLATFORM_VERSION {
+        nativeVS, cocos2dVS
+    }
+
+
+    // 預設測試
+    TOOL_VERSION toolVersion = TOOL_VERSION.testVS;
+
+    // 預設 native
+    PLATFORM_VERSION platformVersion = PLATFORM_VERSION.nativeVS;
+
     private final static String TAG = "ConnectTool test";
     private static Activity unityActivity;
+    private static Context cocosContext;
+    private Activity webViewActivity;
     Context context;
     Intent i;
     // basic info
@@ -53,7 +83,7 @@ public class ConnectTool {
     public ConnectToken tokenData;
     // User
     public MeInfo me;
-    SharedPreferences pref;
+    public SharedPreferences pref;
     // Interface
     APIInterface apiInterface;
     public String referralCode = "1688";
@@ -67,9 +97,18 @@ public class ConnectTool {
     Boolean isRunCompleteConsumeSP = false;
     Boolean isRunCompleteCompletePurchase = false;
 
+
+    // For cocos2d
+    public String page_url = "";
+    public WebView connectWebView;
+    public FrameLayout connectCocos_webLayout;
+    LinearLayout connectCocos_topLayout;
+    Button connectCocos_backButton;
+
     // constructors
     public ConnectTool(Context context, String _redirect_uri, String _RSAstr, String _X_Developer_Id, String _client_secret, String _Game_id) {
 
+        cocosContext = context;
         this.context = context;
         this.pref = ((Activity) context).getSharedPreferences("ConnectToolP", Context.MODE_PRIVATE);
 
@@ -112,6 +151,33 @@ public class ConnectTool {
         redirect_uri = APIClient.host + "/Account/connectlink";
     }
 
+    /**
+     * 設定平台 native or cocos2d
+     *
+     * @param _platformVersion -
+     */
+    public void setPlatformVersion(PLATFORM_VERSION _platformVersion) {
+        platformVersion = _platformVersion;
+    }
+
+    /**
+     * 設定發行板或是測試版
+     *
+     * @param _toolVersion -
+     */
+    public void setToolVersion(TOOL_VERSION _toolVersion) {
+        toolVersion = _toolVersion;
+
+        if (toolVersion == TOOL_VERSION.testVS) {
+            APIClient.host = "https://gamar18portal.azurewebsites.net";
+            APIClient.game_api_host = "https://r18gameapi.azurewebsites.net";
+
+        } else {
+            APIClient.host = "https://www.17dame.com";
+            APIClient.game_api_host = "https://gameapi.17dame.com";
+            redirect_uri = APIClient.host + "/Account/connectlink";
+        }
+    }
 
     private boolean _checkConstructorParametersComplete() {
         if (redirect_uri.equals("")) {
@@ -151,7 +217,7 @@ public class ConnectTool {
             Log.w(TAG, "No state");
             return;
         }
-        String url = APIClient.host + "/connect/Authorize?response_type=code&client_id=" + connectBasic.client_id + "&redirect_uri=" + redirect_uri + "&scope=game+offline_access&state=" + state;
+        String url = getAuthorizeURL(state);
         Log.v(TAG, "AuthorizeURL " + url);
 
         // Open connectWebView
@@ -167,6 +233,10 @@ public class ConnectTool {
 //        startActivity(urlIntent);
     }
 
+    public String getAuthorizeURL(String state) {
+        page_url = APIClient.host + "/connect/Authorize?response_type=code&client_id=" + connectBasic.client_id + "&redirect_uri=" + redirect_uri + "&scope=game+offline_access&state=" + state;
+        return page_url;
+    }
 
     /**
      * Open SP Coin Recharge page.
@@ -188,16 +258,7 @@ public class ConnectTool {
             Log.w(TAG, "No state");
             return;
         }
-        String notifyUrl = (_notifyUrl.equals("")) ? "none_notifyUrl" : _notifyUrl;
-        String url = APIClient.host +
-                "/MemberRecharge/Recharge?X_Developer_Id=" +
-                Uri.encode(connectBasic.X_Developer_Id) + "&accessScheme=" +
-                Uri.encode(redirect_uri) + "&accessType=" +
-                "2" + "&currencyCode=" +
-                Tool.getCurrencyCode(currencyCode) + "&notifyUrl=" +
-                Uri.encode(notifyUrl) + "&state=" +
-                Uri.encode(state) + "&state=referralCode" +
-                Uri.encode(referralCode);
+        String url = getRechargeURL(currencyCode, _notifyUrl, state);
 
         Log.v(TAG, "OpenRechargeURL " + url);
 
@@ -207,6 +268,12 @@ public class ConnectTool {
         } else {
             openhostPage(url);
         }
+    }
+
+    public String getRechargeURL(String currencyCode, String _notifyUrl, String state) {
+        String notifyUrl = (_notifyUrl.equals("")) ? "none_notifyUrl" : _notifyUrl;
+        page_url = APIClient.host + "/MemberRecharge/Recharge?X_Developer_Id=" + Uri.encode(connectBasic.X_Developer_Id) + "&accessScheme=" + Uri.encode(redirect_uri) + "&accessType=" + "2" + "&currencyCode=" + Tool.getCurrencyCode(currencyCode) + "&notifyUrl=" + Uri.encode(notifyUrl) + "&state=" + Uri.encode(state) + "&state=referralCode" + Uri.encode(referralCode);
+        return page_url;
     }
 
     private void openhostPage(String url) {
@@ -234,10 +301,6 @@ public class ConnectTool {
         if (!_checkConstructorParametersComplete()) {
             return;
         }
-        if (orderNo.equals("")) {
-            Log.w(TAG, "No OrderNo");
-            return;
-        }
         if (GameName.equals("")) {
             Log.w(TAG, "No GameName");
             return;
@@ -255,25 +318,12 @@ public class ConnectTool {
             return;
         }
 
+        String _orderNo = orderNo;
+        if (_orderNo.equals("")) {
+            _orderNo = UUID.randomUUID().toString();
+        }
 
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString(String.valueOf(R.string.requestNumber), requestNumber);
-        editor.apply();
-
-        String notifyUrl = (_notifyUrl.equals("")) ? "none_notifyUrl" : _notifyUrl;
-        String url = APIClient.host + "/member/consumesp?xDeveloperId=" +
-                Uri.encode(connectBasic.X_Developer_Id) + "&accessScheme=" +
-                Uri.encode(redirect_uri) + "&accessType=" +
-                "2" + "&gameId=" +
-                Uri.encode(connectBasic.Game_id) + "&gameName=" +
-                Uri.encode(GameName) + "&orderNo=" +
-                Uri.encode(orderNo) + "&productName=" +
-                Uri.encode(productName) + "&consumeSpCoin=" +
-                abs(consume_spCoin) + "&consumeRebate=" +
-                abs(0) + "&notifyUrl=" +
-                Uri.encode(notifyUrl) + "&state=" +
-                Uri.encode(state) + "&referralCode=" +
-                Uri.encode(referralCode);
+        String url = getConsumeSPURL(consume_spCoin, _orderNo, GameName, productName, _notifyUrl, state, requestNumber);
 
         Log.v(TAG, "OpenConsumeSPURL " + url);
 
@@ -283,6 +333,16 @@ public class ConnectTool {
         } else {
             openhostPage(url);
         }
+    }
+
+    public String getConsumeSPURL(int consume_spCoin, String orderNo, String GameName, String productName, String _notifyUrl, String state, String requestNumber) {
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(String.valueOf(R.string.requestNumber), requestNumber);
+        editor.apply();
+
+        String notifyUrl = (_notifyUrl.equals("")) ? "none_notifyUrl" : _notifyUrl;
+        page_url = APIClient.host + "/member/consumesp?xDeveloperId=" + Uri.encode(connectBasic.X_Developer_Id) + "&accessScheme=" + Uri.encode(redirect_uri) + "&accessType=" + "2" + "&gameId=" + Uri.encode(connectBasic.Game_id) + "&gameName=" + Uri.encode(GameName) + "&orderNo=" + Uri.encode(orderNo) + "&productName=" + Uri.encode(productName) + "&consumeSpCoin=" + abs(consume_spCoin) + "&consumeRebate=" + abs(0) + "&notifyUrl=" + Uri.encode(notifyUrl) + "&state=" + Uri.encode(state) + "&referralCode=" + Uri.encode(referralCode);
+        return page_url;
     }
 
     /**
@@ -298,9 +358,8 @@ public class ConnectTool {
         SharedPreferences.Editor editor = pref.edit();
         Tool.RemoveAccessToken(editor);
 
-        // payMentBaseurl = "https://4ed9-114-24-106-49.ngrok-free.app";
         String _redirect_uri = redirect_uri + "?accountBackType=Register";
-        String url = APIClient.host + "/account/AppRegister/" + connectBasic.Game_id + "/" + referralCode + "?returnUrl=" + Uri.encode(_redirect_uri);
+        String url = APIClient.host + "/account/AppRegister/" + connectBasic.Game_id + "/" + referralCode + "?returnUrl=" + Uri.encode(_redirect_uri) + "&utm_source=xizheng&utm_medium=app&utm_campaign=s1";
         Log.v(TAG, "OpenRegisterURL " + url);
 
 
@@ -333,11 +392,7 @@ public class ConnectTool {
             return;
         }
 
-        SharedPreferences.Editor editor = pref.edit();
-        Tool.RemoveAccessToken(editor);
-
-        String _redirect_uri = redirect_uri + "?accountBackType=Login";
-        String url = APIClient.host + "/account/AppLogin/" + connectBasic.Game_id + "/" + referralCode + "?returnUrl=" + Uri.encode(_redirect_uri);
+        String url = getLoginURL();
         Log.v(TAG, "OpenLoginURL " + url);
 
         // Open connectWebView
@@ -348,6 +403,15 @@ public class ConnectTool {
 
 //        Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("" + url));
 //        startActivity(urlIntent);
+    }
+
+    public String getLoginURL() {
+        SharedPreferences.Editor editor = pref.edit();
+        Tool.RemoveAccessToken(editor);
+
+        String _redirect_uri = redirect_uri + "?accountBackType=Login";
+        page_url = APIClient.host + "/account/AppLogin/" + connectBasic.Game_id + "/" + referralCode + "?returnUrl=" + Uri.encode(_redirect_uri);
+        return page_url;
     }
 
     private void startActivity(Intent intent) {
@@ -367,7 +431,7 @@ public class ConnectTool {
         if (!_checkConstructorParametersComplete()) {
             return;
         }
-        apiInterface = APIClient.getHostClient().create(APIInterface.class);
+        apiInterface = APIClient.getHostClient(toolVersion).create(APIInterface.class);
 
         Call<ConnectToken> call1 = apiInterface.getConnectToken(_code, connectBasic.client_id, connectBasic.client_secret, redirect_uri, "authorization_code");
         call1.enqueue(new Callback<ConnectToken>() {
@@ -450,7 +514,7 @@ public class ConnectTool {
         if (!_checkConstructorParametersComplete()) {
             return;
         }
-        apiInterface = APIClient.getHostClient().create(APIInterface.class);
+        apiInterface = APIClient.getHostClient(toolVersion).create(APIInterface.class);
 
         Call<ConnectToken> call1 = apiInterface.getRefreshTokenData(refresh_token, connectBasic.client_id, connectBasic.client_secret, redirect_uri, "refresh_token");
         call1.enqueue(new Callback<ConnectToken>() {
@@ -512,12 +576,12 @@ public class ConnectTool {
 
     private void getMeData(UUID _GetMeRequestNumber, MeCallback callback) throws NoSuchAlgorithmException {
 
-        apiInterface = APIClient.getGame_api_hostClient().create(APIInterface.class);
+        apiInterface = APIClient.getGame_api_hostClient(toolVersion).create(APIInterface.class);
 
 
-         // GameId ReferralCode
+        // GameId ReferralCode
         String timestamp = Tool.getTimestamp();
-        String signdata = "?GameId=&"+ connectBasic.Game_id+"ReferralCode="+referralCode+"&RequestNumber=" + _GetMeRequestNumber + "&Timestamp=" + timestamp;
+        String signdata = "?GameId=&" + connectBasic.Game_id + "ReferralCode=" + referralCode + "&RequestNumber=" + _GetMeRequestNumber + "&Timestamp=" + timestamp;
 
         String X_Signature;
         try {
@@ -528,7 +592,7 @@ public class ConnectTool {
 
         access_token = pref.getString(String.valueOf(R.string.access_token), "");
         String authorization = "Bearer " + access_token;
-        Call<MeInfo> call1 = apiInterface.getMeData(authorization, connectBasic.X_Developer_Id, X_Signature, _GetMeRequestNumber.toString(), timestamp,connectBasic.Game_id,referralCode);
+        Call<MeInfo> call1 = apiInterface.getMeData(authorization, connectBasic.X_Developer_Id, X_Signature, _GetMeRequestNumber.toString(), timestamp, connectBasic.Game_id, referralCode);
         call1.enqueue(new Callback<MeInfo>() {
             @Override
             public void onResponse(Call<MeInfo> call, retrofit2.Response<MeInfo> response) {
@@ -571,7 +635,7 @@ public class ConnectTool {
             Log.w(TAG, "No transactionId");
             return;
         }
-        apiInterface = APIClient.getGame_api_hostClient().create(APIInterface.class);
+        apiInterface = APIClient.getGame_api_hostClient(toolVersion).create(APIInterface.class);
 
         String timestamp = Tool.getTimestamp();
         String signdata = "?RequestNumber=" + queryConsumeSP_requestNumber + "&Timestamp=" + timestamp;
@@ -641,7 +705,7 @@ public class ConnectTool {
         if (!_checkConstructorParametersComplete()) {
             return;
         }
-        apiInterface = APIClient.getGame_api_hostClient().create(APIInterface.class);
+        apiInterface = APIClient.getGame_api_hostClient(toolVersion).create(APIInterface.class);
 
         SharedPreferences.Editor editor = pref.edit();
         String purchaseOrderList_requestNumber = UUID.randomUUID().toString();
@@ -683,7 +747,7 @@ public class ConnectTool {
             return;
         }
 
-        apiInterface = APIClient.getGame_api_hostClient().create(APIInterface.class);
+        apiInterface = APIClient.getGame_api_hostClient(toolVersion).create(APIInterface.class);
 
         SharedPreferences.Editor editor = pref.edit();
         String purchaseOrderOne_requestNumber = UUID.randomUUID().toString();
@@ -714,7 +778,7 @@ public class ConnectTool {
         if (!_checkConstructorParametersComplete()) {
             return;
         }
-        apiInterface = APIClient.getGame_api_hostClient().create(APIInterface.class);
+        apiInterface = APIClient.getGame_api_hostClient(toolVersion).create(APIInterface.class);
 
         String getUserCards_requestNumber = UUID.randomUUID().toString();
 
@@ -797,6 +861,14 @@ public class ConnectTool {
         }
     }
 
+    /**
+     * OpenAuthorize Callback
+     *
+     * @param intent
+     * @param _state
+     * @param GetMe_RequestNumber
+     * @param authCallback
+     */
     public void appLinkDataCallBack_OpenAuthorize(Intent intent, String _state, UUID GetMe_RequestNumber, AuthorizeCallback authCallback) {
 
         if (isRunAuthorize.equals(false)) {
@@ -814,7 +886,6 @@ public class ConnectTool {
 
         }
     }
-
 
     /*
      * Update for Unity 2018
@@ -868,11 +939,258 @@ public class ConnectTool {
                 // function name
                 "ReceiveFromAndroid",
                 // arguments
-                "Displayed toast with message: " + message
-        );
+                "Displayed toast with message: " + message);
     }
 
     public void UnityCallOpenAuthorizeURL() {
+    }
+
+    /*
+     * Cocos2d
+     */
+    @SuppressLint("JavascriptInterface")
+    public void initConnectWebview(Context activity, String _Url_entrance) {
+        webViewActivity = ((Activity) activity);
+
+        connectWebView = new WebView(activity);
+        connectWebView.loadUrl(_Url_entrance);
+        WebSettings webSettings = connectWebView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setUseWideViewPort(true);
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setSupportMultipleWindows(true);
+        webSettings.setSupportZoom(true);
+        webSettings.setBuiltInZoomControls(true);
+        webSettings.setPluginState(WebSettings.PluginState.ON);
+
+        // add webview to layout
+        frameLayoutAddWebView(this.context);
+
+        // 設定遊戲註冊
+        if (_Url_entrance.contains("/Account/Login")) {
+            String AppRegisterUrl = "'/account/AppRegister/" + Uri.encode(connectBasic.Game_id) + "/" + Uri.encode(referralCode) + "?returnUrl=" + Uri.encode(redirect_uri) + "'";
+            connectWebView.loadUrl("javascript:(function(){document.getElementById('goToRegister').href=" + AppRegisterUrl + ";})()");
+        }
+
+        // ADD js
+        connectWebView.addJavascriptInterface(this, "Android");
+        class JsObject {
+            @JavascriptInterface
+            public String toString() {
+                return "injectedObject";
+            }
+        }
+        connectWebView.addJavascriptInterface(new JsObject(), "injectedObject");
+        //connectWebView.loadData("", "text/html", null);
+
+        connectWebView.setWebViewClient(new WebViewClient() {
+            @SuppressLint("JavascriptInterface")
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                Log.v(TAG, "onPageFinished " + url);
+
+                //*********************** 填充資訊 *************************************************
+                // Set localStorage
+                String RSAstr = pref.getString(String.valueOf(com.r17dame.connecttool.R.string.RSAstr), "");
+                String _me = pref.getString(String.valueOf(com.r17dame.connecttool.R.string.me), "");
+                String _access_token = pref.getString(String.valueOf(com.r17dame.connecttool.R.string.access_token), "");
+                String ClientID = pref.getString(String.valueOf(com.r17dame.connecttool.R.string.X_Developer_Id), "");
+                String Secret = pref.getString(String.valueOf(com.r17dame.connecttool.R.string.client_secret), "");
+                String requestNumber = pref.getString(String.valueOf(com.r17dame.connecttool.R.string.requestNumber), "");
+                String redirect_uri = pref.getString(String.valueOf(com.r17dame.connecttool.R.string.redirect_uri), "");
+
+                connectWebView.loadUrl("javascript:localStorage.setItem('Secret','" + Secret + "');");
+                connectWebView.loadUrl("javascript:localStorage.setItem('ClientID','" + ClientID + "');");
+                connectWebView.loadUrl("javascript:localStorage.setItem('me','" + _me + "');");
+                connectWebView.loadUrl("javascript:localStorage.setItem('access_token','" + _access_token + "');");
+                connectWebView.loadUrl("javascript:localStorage.setItem('RSAstr','" + RSAstr + "');");
+                connectWebView.loadUrl("javascript:localStorage.setItem('requestNumber','" + requestNumber + "');");
+                connectWebView.loadUrl("javascript:localStorage.setItem('redirect_uri','" + redirect_uri + "');");
+                connectWebView.loadUrl("javascript:localStorage.setItem('referralCode','" + referralCode + "');");
+                //************************************************************************
+
+                // 設定登入測試
+//                String Input_Email = "";
+//                String Input_Password = "";
+//                String Input_ConfirmPassword = "";
+//                // 註冊新
+//                if (url.contains("AppRegister")) {
+//                    Input_Email = Input_Email;
+//                }
+//                //燈入
+//                if (url.contains("AppLogin")) {
+//                    Input_Email = Input_Email;
+//                }
+//                connectWebView.loadUrl("javascript:(function(){document.getElementById('Input_Email').value = '" + Input_Email + "';})()");
+//                connectWebView.loadUrl("javascript:(function(){document.getElementById('Input_Password').value = '" + Input_Password + "';})()");
+//                connectWebView.loadUrl("javascript:(function(){document.getElementById('Input_ConfirmPassword').value = '" + Input_ConfirmPassword + "';})()");
+
+                // 設定遊戲註冊
+                if (url.contains("/Account/Login")) {
+                    String AppRegisterUrl = "'/account/AppRegister/" + Uri.encode(connectBasic.Game_id) + "/" + Uri.encode(referralCode) + "?returnUrl=" + Uri.encode(redirect_uri) + "'";
+                    connectWebView.loadUrl("javascript:(function(){document.getElementById('goToRegister').href=" + AppRegisterUrl + ";})()");
+                }
+
+                //**********************************************************
+                Uri appLinkData = Uri.parse(url);
+                // Oauth 回應
+                if (url.contains("Account/connectlink")) {
+                    // auth
+                    // Open by Account Page (Register, Login) :
+                    if (appLinkData.getQueryParameterNames().contains("accountBackType")) {
+                        String accountBackType = appLinkData.getQueryParameter("accountBackType");
+                        Log.v(TAG, "accountBackType  " + accountBackType);
+
+                        if (accountBackType.equals("Register")) {
+                            Intent it = new Intent("com.r17dame.CONNECT_ACTION");
+                            it.putExtra("accountBackType", "Register");
+                            context.sendBroadcast(it);
+                            finishWebPage();
+                        }
+                        if (accountBackType.equals("Login")) {
+                            Intent it = new Intent("com.r17dame.CONNECT_ACTION");
+                            it.putExtra("accountBackType", "Login");
+                            context.sendBroadcast(it);
+                            finishWebPage();
+                        }
+                    }
+
+                    if (appLinkData.getQueryParameterNames().contains("code")) {
+                        String code = appLinkData.getQueryParameter("code");
+                        Intent it = new Intent("com.r17dame.CONNECT_ACTION");
+                        it.putExtra("accountBackType", "Authorize");
+                        it.putExtra("code", code);
+                        context.sendBroadcast(it);
+                        finishWebPage();
+                    }
+
+                }
+            }
+        });
+
+        // 調整登入 Cookie 問題
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            CookieManager.getInstance().setAcceptThirdPartyCookies(connectWebView, true);
+        } else {
+            CookieManager.getInstance().setAcceptCookie(true);
+        }
+    }
+
+    /**
+     * FrameLayout 樣式設定
+     */
+    public FrameLayout.LayoutParams getFrameLayoutParams() {
+        FrameLayout.LayoutParams lypt = new FrameLayout.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+        lypt.gravity = Gravity.CENTER;
+        return lypt;
+    }
+
+
+    /**
+     * 增加 connectWebView 到 webLayout
+     *
+     * @param activity -
+     */
+    private void frameLayoutAddWebView(Context activity) {
+        // topLayout
+        connectCocos_topLayout = new LinearLayout(activity);
+        connectCocos_topLayout.setOrientation(LinearLayout.VERTICAL);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        connectCocos_topLayout.setLayoutParams(params);
+        connectCocos_topLayout.setBackgroundColor(Color.parseColor("#000000"));
+
+        connectCocos_topLayout.addView(connectWebView, params);
+        connectCocos_webLayout.addView(connectCocos_topLayout);
+    }
+
+
+    public void removeWebView() {
+        Log.v(TAG, "removeWebView  ");
+
+        connectCocos_webLayout.removeView(connectCocos_topLayout);
+        connectCocos_topLayout.destroyDrawingCache();
+
+        connectCocos_topLayout.removeView(connectWebView);
+        connectWebView.destroy();
+    }
+
+    public String getHost() {
+        return APIClient.host;
+    }
+
+    public String getGameApiHost() {
+        return APIClient.game_api_host;
+    }
+
+    // **************** JavascriptInterface **************************
+    @JavascriptInterface
+    public void sendFinish() {
+        // Want to call this via the vue.js app
+        finishWebPage();
+    }
+
+    /**
+     * 註冊結束
+     */
+    @JavascriptInterface
+    public void CompleteRegistration() {
+        Intent it = new Intent("com.r17dame.CONNECT_ACTION");
+        it.putExtra("accountBackType", "Register");
+        context.sendBroadcast(it);
+        finishWebPage();
+    }
+
+    @JavascriptInterface
+    public void CompleteLogin() {
+        Intent it = new Intent("com.r17dame.CONNECT_ACTION");
+        it.putExtra("accountBackType", "Login");
+        context.sendBroadcast(it);
+        finishWebPage();
+    }
+
+    // 消費
+    @JavascriptInterface
+    public void appLinkDataCallBack_CompleteConsumeSP(String consumeSPresponseData) {
+        Gson gson = new Gson();
+        CreateSPCoinResponse SPCoinResponse = gson.fromJson(consumeSPresponseData, CreateSPCoinResponse.class);
+
+        Intent it = new Intent("com.r17dame.CONNECT_ACTION");
+        it.putExtra("accountBackType", "CompleteConsumeSP");
+        it.putExtra("CompleteConsumeSP", consumeSPresponseData);
+        it.putExtra("consume_transactionId", SPCoinResponse.data.transactionId);
+        it.putExtra("consume_status", SPCoinResponse.data.orderStatus);
+        context.sendBroadcast(it);
+        Log.v(TAG, "consumeSPresponseData " + consumeSPresponseData);
+        finishWebPage();
+    }
+
+    // 購買
+    @JavascriptInterface
+    public void appLinkDataCallBack_CompletePurchase(String state, String TradeNo, String PurchaseOrderId) {
+        // Want to call this via the vue.js app
+
+        Intent it = new Intent("com.r17dame.CONNECT_ACTION");
+        it.putExtra("accountBackType", "CompletePurchase");
+        it.putExtra("state", state);
+        it.putExtra("TradeNo", TradeNo);
+        it.putExtra("PurchaseOrderId", PurchaseOrderId);
+        context.sendBroadcast(it);
+
+        Log.v(TAG, "purchaseOrderOneResponseData " + state);
+        Log.v(TAG, "purchaseOrderOneResponseData " + TradeNo);
+        Log.v(TAG, "purchaseOrderOneResponseData " + PurchaseOrderId);
+        finishWebPage();
+    }
+
+    private void finishWebPage() {
+        if (platformVersion.equals(PLATFORM_VERSION.nativeVS)) {
+            webViewActivity.finish();
+        } else if (platformVersion.equals(PLATFORM_VERSION.cocos2dVS)) {
+            removeWebView();
+        }
     }
 }
 
