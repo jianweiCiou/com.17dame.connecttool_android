@@ -24,16 +24,18 @@ class APIClient {
     private static Retrofit retrofit = null;
     public static String host = "https://gamar18portal.azurewebsites.net";
     public static String game_api_host = "https://r18gameapi.azurewebsites.net";
-//    public static String host = "https://www.17dame.com";
-//    public static String game_api_host = "https://gameapi.17dame.com";
+//  public static String host = "https://www.17dame.com";
+//  public static String game_api_host = "https://gameapi.17dame.com";
 
-    static Retrofit getHostClient() {
+    static Retrofit getHostClient(ConnectTool.TOOL_VERSION _toolVS) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
+        String _host = _toolVS.equals(ConnectTool.TOOL_VERSION.testVS) ? "https://gamar18portal.azurewebsites.net" : "https://www.17dame.com";
+
         retrofit = new Retrofit.Builder()
-                .baseUrl(host)
+                .baseUrl(_host)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
@@ -41,13 +43,15 @@ class APIClient {
         return retrofit;
     }
 
-    static Retrofit getGame_api_hostClient() {
+    static Retrofit getGame_api_hostClient(ConnectTool.TOOL_VERSION _toolVS) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
+        String _game_api_host = _toolVS.equals(ConnectTool.TOOL_VERSION.testVS) ? "https://r18gameapi.azurewebsites.net" : "https://gameapi.17dame.com";
+
         retrofit = new Retrofit.Builder()
-                .baseUrl(game_api_host)
+                .baseUrl(_game_api_host)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
