@@ -506,7 +506,7 @@ connectToolReceiver.registerCallback(new ConnectToolBroadcastReceiver.ConnectToo
 #### Currency Code
 | Code  | USD |TWD |CNY |JPY |KRW |VND |THB |MYR |SGD |  
 | --- | --- |--- |--- |--- |--- |--- |--- |--- |--- |
-| key  | 1 |2 |4 |8 |16 |32 |64 |128 |256 |   
+| key  | 1 |2 |3 |4 |5 |6 |7 |8 |9 |   
 
 #### PayMethods
 | Method  | Credit Card |Credit Card(Bind) |Apple Pay |Google Pay | 
