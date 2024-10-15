@@ -182,11 +182,12 @@ _connectTool = new ConnectTool(
 ```java
 // Register
 Register_pageButton.setOnClickListener(view -> {
+	String culture = "ms"; //  Traditional Chinese : zh-TW,  Simplified Chinese : zh-CN,  Malay : ms
 	_connectTool.OpenRegisterURL();
 });
 // Login
 Login_pageButton.setOnClickListener(view -> {
-	_connectTool.OpenLoginURL();
+	_connectTool.OpenLoginURL(culture);
 }); 
 ``` 
 ### App-side event response (Register, Login)　
@@ -473,8 +474,11 @@ _connectTool.set_purchase_notifyData(notifyUrl, state);
 // Step2. Set currencyCode
 String currencyCode = "2";
 
-// Step3. Open Recharge Page
-_connectTool.OpenRechargeURL(currencyCode, notifyUrl, state);
+// Step3. Set culture
+String culture = "ms"; //  Traditional Chinese : zh-TW,  Simplified Chinese : zh-CN,  Malay : ms
+
+// Step4. Open Recharge Page
+_connectTool.OpenRechargeURL(currencyCode, notifyUrl, state, culture);
 ```
 - `notifyUrl` & `state` : Please refer to [NotifyUrl & State](#notifyurl--state)
 - `currencyCode` : Please refer to [Currency Code](#currency-code)
@@ -727,7 +731,8 @@ OpenConsumeSPButton.setOnClickListener(view -> {
                 String requestNumber= UUID.randomUUID().toString(); // requestNumber is customized by the game developer, default random
                 String GameName = "Good 18 Game";
                 String productName = "10 of the best diamonds";
-                _connectTool.OpenConsumeSPURL(consume_spCoin,   orderNo, GameName, productName, notifyUrl, state,requestNumber);
+                String culture = "ms"; //  Traditional Chinese : zh-TW,  Simplified Chinese : zh-CN,  Malay : ms
+                _connectTool.OpenConsumeSPURL(consume_spCoin,   orderNo, GameName, productName, notifyUrl, state,requestNumber, culture);
             });
 ```
 
