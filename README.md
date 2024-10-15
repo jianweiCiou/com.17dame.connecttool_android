@@ -165,7 +165,9 @@ if (appLinkData != null && appLinkData.isHierarchical()) {
     - _RSAstr,
     - _X_Developer_Id,
     - _client_secret,
-    - _Game_id
+    - _Game_id,
+    - _culture
+    - _currencyCode
 ```csharp
 _connectTool = new ConnectTool(
        this,
@@ -173,10 +175,13 @@ _connectTool = new ConnectTool(
        "-----BEGIN RSA PRIVATE KEY-----\n" + "MIIEowIBAAKCAQEAudt2mFGvE.......",
        "ebe4ae.......", 
        "AQAAAA.......",
-       "07d5c2......."); 
+       "07d5c2.......",
+       "ms",
+       "128",
+); 
 ``` 
 
-### OpenRegisterURL, OpenLoginURL　
+### OpenRegisterURL, 　
 - Open the host page, perform registration and login.
 - Will sign out first.
 ```java
@@ -187,7 +192,8 @@ Register_pageButton.setOnClickListener(view -> {
 });
 // Login
 Login_pageButton.setOnClickListener(view -> {
-	_connectTool.OpenLoginURL(culture);
+	String state = "App-side-State";
+	_connectTool.OpenAuthorizeURL(state);
 }); 
 ``` 
 ### App-side event response (Register, Login)　
@@ -474,11 +480,8 @@ _connectTool.set_purchase_notifyData(notifyUrl, state);
 // Step2. Set currencyCode
 String currencyCode = "2";
 
-// Step3. Set culture
-String culture = "ms"; //  Traditional Chinese : zh-TW,  Simplified Chinese : zh-CN,  Malay : ms
-
-// Step4. Open Recharge Page
-_connectTool.OpenRechargeURL(currencyCode, notifyUrl, state, culture);
+// Step3. Open Recharge Page
+_connectTool.OpenRechargeURL(currencyCode, notifyUrl, state);
 ```
 - `notifyUrl` & `state` : Please refer to [NotifyUrl & State](#notifyurl--state)
 - `currencyCode` : Please refer to [Currency Code](#currency-code)
@@ -731,8 +734,7 @@ OpenConsumeSPButton.setOnClickListener(view -> {
                 String requestNumber= UUID.randomUUID().toString(); // requestNumber is customized by the game developer, default random
                 String GameName = "Good 18 Game";
                 String productName = "10 of the best diamonds";
-                String culture = "ms"; //  Traditional Chinese : zh-TW,  Simplified Chinese : zh-CN,  Malay : ms
-                _connectTool.OpenConsumeSPURL(consume_spCoin,   orderNo, GameName, productName, notifyUrl, state,requestNumber, culture);
+                _connectTool.OpenConsumeSPURL(consume_spCoin,   orderNo, GameName, productName, notifyUrl, state,requestNumber);
             });
 ```
 
