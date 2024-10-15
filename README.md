@@ -281,6 +281,7 @@ sequenceDiagram
 ### OpenAuthorizeURL　  
 - Obtain user information and update access_token.
 - `state` : Please fill in what you want to verify,`state` can be query through redirect_uri. 
+- `culture` : Front-end page language. 
 - Open host page to log in.
 - You will get `code` and `state` from redirect_uri's parameter after log in. 
 Send OpenAuthorizeURL:
@@ -502,6 +503,11 @@ connectToolReceiver.registerCallback(new ConnectToolBroadcastReceiver.ConnectToo
         });
 ```
 #### AppLinkData Recharge Response:
+
+#### Culture Code
+| Code  | Traditional Chinese |Simplified Chinese |Malay|  
+| --- | --- |--- |--- |
+| key  | zh-TW |zh-CN |ms |  
 
 #### Currency Code
 | Code  | USD |TWD |CNY |JPY |KRW |VND |THB |MYR |SGD |  
