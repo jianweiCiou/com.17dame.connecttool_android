@@ -51,8 +51,9 @@ public class MainActivity extends AppCompatActivity {
                     "",
                     "",
                     "",
+                    "",
+                    "",
                     "");
-
             /*
              * Page access
              * */
@@ -106,7 +107,8 @@ public class MainActivity extends AppCompatActivity {
                 _connectTool.set_purchase_notifyData(notifyUrl, state);
 
                 // Step2. Set currencyCode
-                String currencyCode = "2";
+                //String currencyCode = "2";
+                String currencyCode = "128"; // MYR
 
                 // Step3. Open Recharge Page
                 _connectTool.OpenRechargeURL(currencyCode, notifyUrl, state);

@@ -77,7 +77,8 @@ interface APIInterface {
             @Query("RequestNumber") String RequestNumber,
             @Query("Timestamp") String Timestamp,
             @Query("GameId") String GameId,
-            @Query("ReferralCode") String ReferralCode
+            @Query("ReferralCode") String ReferralCode,
+            @Query("PlatformType") String PlatformType
     );
 //    {
 //        "requestNumber": "ebe4ae28-dda1-499d-bdbc-1066ce080a6f",

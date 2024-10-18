@@ -46,6 +46,7 @@ import com.r17dame.connecttool.datamodel.UserCardRequest;
 import com.unity3d.player.UnityPlayer;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Random;
 import java.util.UUID;
 
 import retrofit2.Call;
@@ -100,13 +101,15 @@ public class ConnectTool {
 
     // For cocos2d
     public String page_url = "";
+    public String culture = "";
+    public String currencyCode = "";
     public WebView connectWebView;
     public FrameLayout connectCocos_webLayout;
     LinearLayout connectCocos_topLayout;
     Button connectCocos_backButton;
 
     // constructors
-    public ConnectTool(Context context, String _redirect_uri, String _RSAstr, String _X_Developer_Id, String _client_secret, String _Game_id) {
+    public ConnectTool(Context context, String _redirect_uri, String _RSAstr, String _X_Developer_Id, String _client_secret, String _Game_id, String _culture, String _currencyCode) {
 
         cocosContext = context;
         this.context = context;
@@ -119,6 +122,8 @@ public class ConnectTool {
         editor.putString(String.valueOf(R.string.X_Developer_Id), _X_Developer_Id);
         editor.putString(String.valueOf(R.string.client_secret), _client_secret);
         editor.putString(String.valueOf(R.string.Game_id), _Game_id);
+        editor.putString(String.valueOf(R.string.culture), _culture);
+        editor.putString(String.valueOf(R.string.currencyCode), _currencyCode);
         editor.apply();
 
         // get scheme
@@ -128,6 +133,8 @@ public class ConnectTool {
         // init
         redirect_uri = _redirect_uri;
         RSAstr = _RSAstr;
+        culture = _culture;
+        currencyCode = _currencyCode;
 
         // connectBasic setting
         connectBasic = new ConnectBasic(_X_Developer_Id, _X_Developer_Id, _client_secret, _Game_id);
@@ -169,8 +176,8 @@ public class ConnectTool {
         toolVersion = _toolVersion;
 
         if (toolVersion == TOOL_VERSION.testVS) {
-            APIClient.host = "https://gamar18portal.azurewebsites.net";
-            APIClient.game_api_host = "https://r18gameapi.azurewebsites.net";
+            APIClient.host = "https://r18stage-portal.azurewebsites.net";
+            APIClient.game_api_host = "https://r18stage-gameapi.azurewebsites.net";
 
         } else {
             APIClient.host = "https://www.17dame.com";
@@ -217,12 +224,13 @@ public class ConnectTool {
             Log.w(TAG, "No state");
             return;
         }
-        String url = getAuthorizeURL(state);
+        String url = getAuthorizeURL(state );
         Log.v(TAG, "AuthorizeURL " + url);
 
         // Open connectWebView
         Intent intent = new Intent(context, ConnectToolWebViewActivity.class);
         intent.putExtra("url", url);
+        intent.putExtra("culture", culture);
         startActivity(intent);
 //        intent.putExtra("targetIntent",intent);
 
@@ -234,7 +242,7 @@ public class ConnectTool {
     }
 
     public String getAuthorizeURL(String state) {
-        page_url = APIClient.host + "/connect/Authorize?response_type=code&client_id=" + connectBasic.client_id + "&redirect_uri=" + redirect_uri + "&scope=game+offline_access&state=" + state;
+        page_url = APIClient.host + "/connect/Authorize?response_type=code&client_id=" + connectBasic.client_id + "&scope=game+offline_access&state=" + state + "&redirect_uri=" + redirect_uri + "&culture=" + culture;
         return page_url;
     }
 
@@ -272,7 +280,7 @@ public class ConnectTool {
 
     public String getRechargeURL(String currencyCode, String _notifyUrl, String state) {
         String notifyUrl = (_notifyUrl.equals("")) ? "none_notifyUrl" : _notifyUrl;
-        page_url = APIClient.host + "/MemberRecharge/Recharge?X_Developer_Id=" + Uri.encode(connectBasic.X_Developer_Id) + "&accessScheme=" + Uri.encode(redirect_uri) + "&accessType=" + "2" + "&currencyCode=" + Tool.getCurrencyCode(currencyCode) + "&notifyUrl=" + Uri.encode(notifyUrl) + "&state=" + Uri.encode(state) + "&state=referralCode" + Uri.encode(referralCode);
+        page_url = APIClient.host + "/MemberRecharge/Recharge?X_Developer_Id=" + Uri.encode(connectBasic.X_Developer_Id) + "&accessScheme=" + Uri.encode(redirect_uri) + "&accessType=" + "2" + "&currencyCode=" + Tool.getCurrencyCode(currencyCode) + "&notifyUrl=" + Uri.encode(notifyUrl) + "&state=" + Uri.encode(state) + "&state=referralCode" + Uri.encode(referralCode) + "&culture="+culture;
         return page_url;
     }
 
@@ -341,7 +349,7 @@ public class ConnectTool {
         editor.apply();
 
         String notifyUrl = (_notifyUrl.equals("")) ? "none_notifyUrl" : _notifyUrl;
-        page_url = APIClient.host + "/member/consumesp?xDeveloperId=" + Uri.encode(connectBasic.X_Developer_Id) + "&accessScheme=" + Uri.encode(redirect_uri) + "&accessType=" + "2" + "&gameId=" + Uri.encode(connectBasic.Game_id) + "&gameName=" + Uri.encode(GameName) + "&orderNo=" + Uri.encode(orderNo) + "&productName=" + Uri.encode(productName) + "&consumeSpCoin=" + abs(consume_spCoin) + "&consumeRebate=" + abs(0) + "&notifyUrl=" + Uri.encode(notifyUrl) + "&state=" + Uri.encode(state) + "&referralCode=" + Uri.encode(referralCode);
+        page_url = APIClient.host + "/member/consumesp?xDeveloperId=" + Uri.encode(connectBasic.X_Developer_Id) + "&accessScheme=" + Uri.encode(redirect_uri) + "&accessType=" + "2" + "&gameId=" + Uri.encode(connectBasic.Game_id) + "&gameName=" + Uri.encode(GameName) + "&orderNo=" + Uri.encode(orderNo) + "&productName=" + Uri.encode(productName) + "&consumeSpCoin=" + abs(consume_spCoin) + "&consumeRebate=" + abs(0) + "&notifyUrl=" + Uri.encode(notifyUrl) + "&state=" + Uri.encode(state) + "&referralCode=" + Uri.encode(referralCode) + "&culture=" + culture + "&currencyCode=" + Tool.getCurrencyCode(currencyCode) ;
         return page_url;
     }
 
@@ -359,7 +367,7 @@ public class ConnectTool {
         Tool.RemoveAccessToken(editor);
 
         String _redirect_uri = redirect_uri + "?accountBackType=Register";
-        String url = APIClient.host + "/account/AppRegister/" + connectBasic.Game_id + "/" + referralCode + "?returnUrl=" + Uri.encode(_redirect_uri) + "&utm_source=xizheng&utm_medium=app&utm_campaign=s1";
+        String url = APIClient.host + "/account/AppRegister/" + connectBasic.Game_id + "/" + referralCode + "?returnUrl=" + Uri.encode(_redirect_uri) + "&utm_source=xizheng&utm_medium=app&utm_campaign=s1&culture=" + culture;
         Log.v(TAG, "OpenRegisterURL " + url);
 
 
@@ -592,7 +600,7 @@ public class ConnectTool {
 
         access_token = pref.getString(String.valueOf(R.string.access_token), "");
         String authorization = "Bearer " + access_token;
-        Call<MeInfo> call1 = apiInterface.getMeData(authorization, connectBasic.X_Developer_Id, X_Signature, _GetMeRequestNumber.toString(), timestamp, connectBasic.Game_id, referralCode);
+        Call<MeInfo> call1 = apiInterface.getMeData(authorization, connectBasic.X_Developer_Id, X_Signature, _GetMeRequestNumber.toString(), timestamp, connectBasic.Game_id, referralCode,"4");
         call1.enqueue(new Callback<MeInfo>() {
             @Override
             public void onResponse(Call<MeInfo> call, retrofit2.Response<MeInfo> response) {
@@ -1011,25 +1019,9 @@ public class ConnectTool {
                 connectWebView.loadUrl("javascript:localStorage.setItem('referralCode','" + referralCode + "');");
                 //************************************************************************
 
-                // 設定登入測試
-//                String Input_Email = "";
-//                String Input_Password = "";
-//                String Input_ConfirmPassword = "";
-//                // 註冊新
-//                if (url.contains("AppRegister")) {
-//                    Input_Email = Input_Email;
-//                }
-//                //燈入
-//                if (url.contains("AppLogin")) {
-//                    Input_Email = Input_Email;
-//                }
-//                connectWebView.loadUrl("javascript:(function(){document.getElementById('Input_Email').value = '" + Input_Email + "';})()");
-//                connectWebView.loadUrl("javascript:(function(){document.getElementById('Input_Password').value = '" + Input_Password + "';})()");
-//                connectWebView.loadUrl("javascript:(function(){document.getElementById('Input_ConfirmPassword').value = '" + Input_ConfirmPassword + "';})()");
-
                 // 設定遊戲註冊
                 if (url.contains("/Account/Login")) {
-                    String AppRegisterUrl = "'/account/AppRegister/" + Uri.encode(connectBasic.Game_id) + "/" + Uri.encode(referralCode) + "?returnUrl=" + Uri.encode(redirect_uri) + "'";
+                    String AppRegisterUrl = "'/account/AppRegister/" + Uri.encode(connectBasic.Game_id) + "/" + Uri.encode(referralCode) + "?returnUrl=" + Uri.decode(redirect_uri) + "'";
                     connectWebView.loadUrl("javascript:(function(){document.getElementById('goToRegister').href=" + AppRegisterUrl + ";})()");
                 }
 

@@ -59,12 +59,15 @@ public class ConnectToolWebViewActivity extends UnityPlayerActivity {
         String X_Developer_Id = pref.getString(String.valueOf(R.string.X_Developer_Id), "");
         String client_secret = pref.getString(String.valueOf(R.string.client_secret), "");
         String Game_id = pref.getString(String.valueOf(R.string.Game_id), "");
+        String culture = pref.getString(String.valueOf(R.string.culture), "");
+        String currencyCode = pref.getString(String.valueOf(R.string.currencyCode), "");
+
 
         // init connectTool
         _connectTool = new ConnectTool(
                 context, redirect_uri,
                 RSAstr,
-                X_Developer_Id, client_secret, Game_id);
+                X_Developer_Id, client_secret, Game_id,culture,currencyCode);
 
         // Init registerReceiver
         itFilter = new IntentFilter();

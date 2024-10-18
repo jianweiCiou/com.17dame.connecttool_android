@@ -22,8 +22,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 class APIClient {
 
     private static Retrofit retrofit = null;
-    public static String host = "https://gamar18portal.azurewebsites.net";
-    public static String game_api_host = "https://r18gameapi.azurewebsites.net";
+    public static String host = "https://r18stage-portal.azurewebsites.net";
+    public static String game_api_host = "https://r18stage-gameapi.azurewebsites.net";
+
 //  public static String host = "https://www.17dame.com";
 //  public static String game_api_host = "https://gameapi.17dame.com";
 
@@ -32,7 +33,7 @@ class APIClient {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
-        String _host = _toolVS.equals(ConnectTool.TOOL_VERSION.testVS) ? "https://gamar18portal.azurewebsites.net" : "https://www.17dame.com";
+        String _host = _toolVS.equals(ConnectTool.TOOL_VERSION.testVS) ? "https://r18stage-portal.azurewebsites.net" : "https://www.17dame.com";
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(_host)
@@ -48,7 +49,7 @@ class APIClient {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
-        String _game_api_host = _toolVS.equals(ConnectTool.TOOL_VERSION.testVS) ? "https://r18gameapi.azurewebsites.net" : "https://gameapi.17dame.com";
+        String _game_api_host = _toolVS.equals(ConnectTool.TOOL_VERSION.testVS) ? "https://r18stage-gameapi.azurewebsites.net" : "https://gameapi.17dame.com";
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(_game_api_host)

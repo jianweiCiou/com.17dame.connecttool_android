@@ -5,6 +5,8 @@
     <string name="X_Developer_Id">X_Developer_Id</string>
     <string name="client_secret">client_secret</string>
     <string name="Game_id">Game_id</string>
+    <string name="culture">culture</string>
+    <string name="currencyCode">currencyCode</string>
     <string name="expiresTs">expiresTs</string>
 
     <string name="requestNumber">requestNumber</string>
@@ -39,7 +41,6 @@
 
     <string name="getUserCards_requestNumber">getUserCards_requestNumber</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>
