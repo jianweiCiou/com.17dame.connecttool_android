@@ -54,6 +54,10 @@ public class MainActivity extends AppCompatActivity {
                     "",
                     "",
                     "");
+            _connectTool.setPlatformVersion(ConnectTool.PLATFORM_VERSION.nativeVS);
+            _connectTool.setToolVersion(ConnectTool.TOOL_VERSION.testVS);
+            //   _connectTool.setToolVersion(ConnectTool.TOOL_VERSION.releaseVS);
+
             /*
              * Page access
              * */
@@ -145,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
             // Open Consume URL
             OpenConsumeSPButton = findViewById(com.r17dame.connecttool.R.id.OpenConsumeSPButton);
             OpenConsumeSPButton.setOnClickListener(view -> {
-                String notifyUrl = "";// NotifyUrl is a URL customized by the game developer
+                String notifyUrl = "http://localhost:8080/17dame/ConsumeSP/gameserver/TradeNotify/";// NotifyUrl is a URL customized by the game developer
                 String state = UUID.randomUUID().toString(); // Custom state , default random
                 // Step1. Set notifyUrl and state,
                 _connectTool.set_purchase_notifyData(notifyUrl, state);
