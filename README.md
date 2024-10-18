@@ -165,7 +165,9 @@ if (appLinkData != null && appLinkData.isHierarchical()) {
     - _RSAstr,
     - _X_Developer_Id,
     - _client_secret,
-    - _Game_id
+    - _Game_id,
+    - _culture
+    - _currencyCode
 ```csharp
 _connectTool = new ConnectTool(
        this,
@@ -173,20 +175,25 @@ _connectTool = new ConnectTool(
        "-----BEGIN RSA PRIVATE KEY-----\n" + "MIIEowIBAAKCAQEAudt2mFGvE.......",
        "ebe4ae.......", 
        "AQAAAA.......",
-       "07d5c2......."); 
+       "07d5c2.......",
+       "ms",
+       "128",
+); 
 ``` 
 
-### OpenRegisterURL, OpenLoginURL　
+### OpenRegisterURL, 　
 - Open the host page, perform registration and login.
 - Will sign out first.
 ```java
 // Register
 Register_pageButton.setOnClickListener(view -> {
+	String culture = "ms"; //  Traditional Chinese : zh-TW,  Simplified Chinese : zh-CN,  Malay : ms
 	_connectTool.OpenRegisterURL();
 });
 // Login
 Login_pageButton.setOnClickListener(view -> {
-	_connectTool.OpenLoginURL();
+	String state = "App-side-State";
+	_connectTool.OpenAuthorizeURL(state);
 }); 
 ``` 
 ### App-side event response (Register, Login)　
@@ -281,6 +288,7 @@ sequenceDiagram
 ### OpenAuthorizeURL　  
 - Obtain user information and update access_token.
 - `state` : Please fill in what you want to verify,`state` can be query through redirect_uri. 
+- `culture` : Front-end page language. 
 - Open host page to log in.
 - You will get `code` and `state` from redirect_uri's parameter after log in. 
 Send OpenAuthorizeURL:
@@ -503,10 +511,15 @@ connectToolReceiver.registerCallback(new ConnectToolBroadcastReceiver.ConnectToo
 ```
 #### AppLinkData Recharge Response:
 
+#### Culture Code
+| Code  | Traditional Chinese |Simplified Chinese |Malay|  
+| --- | --- |--- |--- |
+| key  | zh-TW |zh-CN |ms |  
+
 #### Currency Code
 | Code  | USD |TWD |CNY |JPY |KRW |VND |THB |MYR |SGD |  
 | --- | --- |--- |--- |--- |--- |--- |--- |--- |--- |
-| key  | 1 |2 |4 |8 |16 |32 |64 |128 |256 |   
+| key  | 1 |2 |3 |4 |5 |6 |7 |8 |9 |   
 
 #### PayMethods
 | Method  | Credit Card |Credit Card(Bind) |Apple Pay |Google Pay | 
